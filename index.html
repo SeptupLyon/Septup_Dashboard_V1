@@ -889,7 +889,7 @@ async function loadSessions(email) {
 }
 
 async function loadScripts(clientId, email) {
-  var filter = clientId ? 'FIND("' + clientId + '",ARRAYJOIN({Client}))' : 'FALSE()';
+  var filter = email ? '{Email_client}="' + email + '"' : 'FALSE()';
   var records = await atFetch('Scripts', filter, 'sort[0][field]=Date_creation&sort[0][direction]=desc');
   scriptsStore = {};
   var months = ['jan.','fev.','mars','avr.','mai','juin','juil.','aout','sep.','oct.','nov.','dec.'];
@@ -1087,6 +1087,7 @@ async function saveEditor() {
         'Titre': title, 'Contenu': content,
         'Score_viralite': parseFloat(score) || 0,
         'Statut': 'Validé', 'Client': [clientRecord.id],
+        'Email_client': currentUser ? currentUser.email : '',
         'Date_creation': new Date().toISOString()
       });
     }
@@ -1237,6 +1238,7 @@ function validateScript() {
       'Angle': angles[genData.angle] || 'Éducatif',
       'Score_viralite': parseFloat(document.getElementById('gen-vir-score').textContent) || 0,
       'Statut': 'Validé', 'Client': [clientRecord.id],
+      'Email_client': currentUser ? currentUser.email : '',
       'Date_creation': new Date().toISOString()
     }).then(function(rec) {
       if (rec.id && scriptsStore[id]) { scriptsStore[id].airtableId = rec.id; scriptsStore[rec.id] = scriptsStore[id]; delete scriptsStore[id]; renderScriptsList(); }
