@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Septup V2</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -32,7 +33,6 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .np { width: 48px; height: 48px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; cursor: pointer; margin-top: -20px; border: 3px solid var(--bg); flex-shrink: 0; }
 .np-icon { font-size: 22px; color: #000; font-weight: 300; line-height: 1; }
 .scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-.card { background: var(--bg2); border-radius: 20px; border: 1px solid var(--border); padding: 20px; margin: 0 16px; }
 .card-sm { background: var(--bg2); border-radius: 16px; border: 1px solid var(--border); padding: 4px 0; margin: 0 16px; }
 .hero-card { margin: 16px; background: var(--bg2); border-radius: 20px; border: 1px solid var(--border); padding: 22px; cursor: pointer; }
 .palier-badge { display: inline-flex; align-items: center; gap: 7px; background: var(--adim); border: 1px solid var(--aborder); border-radius: 20px; padding: 5px 12px; margin-bottom: 18px; }
@@ -123,7 +123,6 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .export-btn { font-size: 11px; font-weight: 700; color: #000; background: var(--accent); border: none; border-radius: 8px; padding: 5px 12px; cursor: pointer; }
 .av-big { width: 64px; height: 64px; border-radius: 50%; background: var(--bg3); border: 2px solid var(--aborder); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: var(--accent); margin: 0 auto 12px; }
 .crow { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--border); cursor: pointer; }
-.crow:active { background: var(--bg2); }
 .crow-lbl { font-size: 14px; font-weight: 500; }
 .logout-btn { margin: 20px 16px; width: calc(100% - 32px); background: transparent; border: 1px solid rgba(255,95,95,0.25); border-radius: 12px; padding: 14px; font-size: 13px; color: var(--red); cursor: pointer; font-weight: 600; }
 .auth-hero { background: var(--bg2); padding: 48px 24px 36px; }
@@ -207,10 +206,6 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .section-body { color: var(--text); white-space: pre-line; }
 .section-body.cta-body { color: var(--accent); font-weight: 600; }
 .result-actions { display: flex; flex-direction: column; gap: 8px; }
-.vir-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.vir-score-big { font-size: 28px; font-weight: 700; color: var(--accent); line-height: 1; }
-.vir-label { font-size: 11px; color: var(--text2); }
-.vir-tip { font-size: 11px; color: var(--text3); margin-top: 4px; }
 .fillout-modal { height: 92vh; }
 .fillout-body { flex: 1; overflow: hidden; position: relative; }
 .fillout-container { width: 100%; height: 100%; }
@@ -226,7 +221,6 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .story-actions { margin: 0 16px 24px; display: flex; flex-direction: column; gap: 8px; }
 .story-copy { width: 100%; background: var(--accent); border: none; border-radius: 12px; padding: 15px; font-size: 14px; font-weight: 700; color: #000; cursor: pointer; }
 .story-close-btn { width: 100%; background: transparent; border: 1px solid var(--border2); border-radius: 12px; padding: 13px; font-size: 13px; color: var(--text2); cursor: pointer; }
-.regen-modal { padding-bottom: 28px; }
 .regen-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
 .regen-chip { border: 1px solid var(--border2); border-radius: 30px; padding: 7px 14px; cursor: pointer; font-size: 13px; font-weight: 500; }
 .regen-chip.sel { border-color: var(--accent); background: var(--adim); color: var(--accent); }
@@ -242,22 +236,18 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .editor-vir-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.5s; }
 .editor-vir-tip { font-size: 10px; color: var(--text3); margin-top: 4px; }
 .editor-vir-grade { font-size: 11px; color: var(--accent); font-weight: 600; text-align: right; }
-.editor-toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-.editor-tag { font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px; cursor: pointer; border: none; }
-.editor-tag.ac { background: var(--adim); color: var(--accent); border: 1px solid var(--aborder); }
-.editor-tag.co { background: var(--bg3); color: var(--text2); border: 1px solid var(--border2); }
 .editor-ta { width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: 12px; padding: 16px; color: var(--text); font-size: 15px; font-family: var(--font); outline: none; line-height: 1.9; min-height: 300px; white-space: pre-wrap; }
 .editor-ta:focus { border-color: var(--accent); }
 .editor-ta .script-section-title { display: inline-block; background: var(--accent); color: #000; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 2px 10px; border-radius: 4px; margin-bottom: 4px; }
+.editor-ta:empty:before { content: attr(data-placeholder); color: var(--text3); }
+.editor-regen-btn { width: 100%; background: transparent; border: 1px solid var(--aborder); border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 600; color: var(--accent); cursor: pointer; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.copy-script-btn { background: var(--adim); border: 1px solid var(--aborder); border-radius: 12px; padding: 12px 16px; font-size: 13px; font-weight: 600; color: var(--accent); cursor: pointer; width: 100%; text-align: center; margin-top: 10px; }
 .editor-footer { padding: 12px 20px 24px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
 .sv-btn { flex: 1; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; }
 .sv-btn.primary { background: var(--accent); color: #000; border: none; }
 .sv-btn.ghost { background: transparent; border: 1px solid var(--border2); color: var(--text2); }
-.editor-ta:empty:before { content: attr(data-placeholder); color: var(--text3); pointer-events: none; }
-.editor-regen-btn { width: 100%; background: transparent; border: 1px solid var(--aborder); border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 600; color: var(--accent); cursor: pointer; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.editor-regen-btn:active { background: var(--adim); }
+.sv-btn.danger { background: transparent; border: 1px solid rgba(255,95,95,0.3); color: var(--red); }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="app">
@@ -267,18 +257,16 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   <div class="auth-hero">
     <div class="auth-studio">Studio Lyon</div>
     <div class="auth-title">Bienvenue sur<br>ton <span>espace client</span></div>
-    <div class="auth-sub">Sessions, scripts, cours et fidélité</div>
+    <div class="auth-sub">Sessions, scripts, cours et fidelite</div>
   </div>
   <div class="auth-body">
-    <div class="field"><label class="field-lbl">Email</label><input class="field-input" type="email" placeholder="hello@studio.fr"></div>
-    <div class="field"><label class="field-lbl">Mot de passe</label><input class="field-input" type="password" placeholder="••••••••"></div>
+    <div class="field"><label class="field-lbl">Email</label><input class="field-input" type="email" id="login-email" placeholder="hello@studio.fr"></div>
+    <div class="field"><label class="field-lbl">Mot de passe</label><input class="field-input" type="password" id="login-password" placeholder="••••••••"></div>
     <div class="sp"></div>
     <button class="btn" onclick="doLogin()"><span class="btn-txt">Se connecter</span><span class="btn-arr">→</span></button>
-    <button class="btn-ghost" onclick="go('ob1')">Créer un compte</button>
-    <button class="btn-ghost" onclick="doLoginGoogle()" style="display:flex;align-items:center;justify-content:center;gap:10px;">
-  <span style="font-size:16px;">G</span> Continuer avec Google
-</button>
-<div class="auth-link" onclick="go('forgot')">Mot de passe oublié ?</div>
+    <button class="btn-ghost" onclick="go('ob1')">Creer un compte</button>
+    <button class="btn-ghost" style="display:flex;align-items:center;justify-content:center;gap:10px;" onclick="doLoginGoogle()"><span style="font-size:15px;font-weight:700;color:#4285F4;">G</span> Continuer avec Google</button>
+    <div class="auth-link" onclick="go('forgot')">Mot de passe oublie ?</div>
   </div>
 </div>
 
@@ -287,15 +275,15 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;"><div class="logo">septup.</div><div style="font-size:12px;color:var(--text3);">1 / 5</div></div>
   <div class="ob-wrap">
     <div class="ob-prog"><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
-    <div class="ob-bloc">Bloc 1 — Qui tu es</div>
-    <div class="ob-q">Tu représentes ?</div>
+    <div class="ob-bloc">Bloc 1 - Qui tu es</div>
+    <div class="ob-q">Tu representes ?</div>
     <div class="ob-opts">
-      <div class="ob-opt" onclick="selOpt(this,'ob1t')">Moi-même (personal brand)</div>
-      <div class="ob-opt" onclick="selOpt(this,'ob1t')">Une entreprise</div>
-      <div class="ob-opt" onclick="selOpt(this,'ob1t')">Une marque</div>
+      <div class="ob-opt" onclick="selOpt(this)">Moi-meme (personal brand)</div>
+      <div class="ob-opt" onclick="selOpt(this)">Une entreprise</div>
+      <div class="ob-opt" onclick="selOpt(this)">Une marque</div>
     </div>
-    <div class="field"><label class="field-lbl">Secteur d'activité</label><input class="field-input" placeholder="Ex: Immobilier, Tech, Restauration..."></div>
-    <div class="field"><label class="field-lbl">Complète cette phrase</label><textarea class="field-ta" rows="2" placeholder="J'aide [qui] à [quoi] grâce à [comment]"></textarea></div>
+    <div class="field"><label class="field-lbl">Secteur</label><input class="field-input" id="ob1-secteur" placeholder="Ex: Immobilier, Tech..."></div>
+    <div class="field"><label class="field-lbl">J aide [qui] a [quoi] grace a [comment]</label><textarea class="field-ta" id="ob1-activite" rows="2" placeholder="J aide..."></textarea></div>
     <div class="ob-nav"><div class="ob-back" onclick="go('login')">Annuler</div><button class="btn" style="width:auto;padding:13px 24px;" onclick="go('ob2')"><span class="btn-txt">Suivant</span><span class="btn-arr">→</span></button></div>
   </div>
 </div>
@@ -305,21 +293,21 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;"><div class="logo">septup.</div><div style="font-size:12px;color:var(--text3);">2 / 5</div></div>
   <div class="ob-wrap">
     <div class="ob-prog"><div class="ob-dot done"></div><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
-    <div class="ob-bloc">Bloc 2 — Ton contenu</div>
+    <div class="ob-bloc">Bloc 2 - Ton contenu</div>
     <div class="ob-q">Type de contenu ?</div>
     <div class="ob-opts">
-      <div class="ob-opt" onclick="selOpt(this,'ob2t')">Contenu court</div>
-      <div class="ob-opt" onclick="selOpt(this,'ob2t')">Podcast</div>
-      <div class="ob-opt" onclick="selOpt(this,'ob2t')">Les deux</div>
+      <div class="ob-opt" onclick="selOpt(this)">Contenu court</div>
+      <div class="ob-opt" onclick="selOpt(this)">Podcast</div>
+      <div class="ob-opt" onclick="selOpt(this)">Les deux</div>
     </div>
     <div class="ob-bloc">Objectif principal</div>
     <div class="ob-chips">
-      <div class="ob-chip" onclick="this.classList.toggle('sel')">Notoriété</div>
+      <div class="ob-chip" onclick="this.classList.toggle('sel')">Notoriete</div>
       <div class="ob-chip" onclick="this.classList.toggle('sel')">Vendre</div>
-      <div class="ob-chip" onclick="this.classList.toggle('sel')">Éduquer</div>
+      <div class="ob-chip" onclick="this.classList.toggle('sel')">Eduquer</div>
       <div class="ob-chip" onclick="this.classList.toggle('sel')">Inspirer</div>
     </div>
-    <div class="field"><label class="field-lbl">Fréquence visée</label><input class="field-input" placeholder="Ex: 2x par semaine"></div>
+    <div class="field"><label class="field-lbl">Frequence visee</label><input class="field-input" id="ob2-freq" placeholder="Ex: 2x par semaine"></div>
     <div class="ob-nav"><div class="ob-back" onclick="go('ob1')">← Retour</div><button class="btn" style="width:auto;padding:13px 24px;" onclick="go('ob3')"><span class="btn-txt">Suivant</span><span class="btn-arr">→</span></button></div>
   </div>
 </div>
@@ -329,15 +317,15 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;"><div class="logo">septup.</div><div style="font-size:12px;color:var(--text3);">3 / 5</div></div>
   <div class="ob-wrap">
     <div class="ob-prog"><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
-    <div class="ob-bloc">Bloc 3 — Ta cible</div>
+    <div class="ob-bloc">Bloc 3 - Ta cible</div>
     <div class="ob-q">Qui est ta cible ?</div>
     <div class="ob-opts">
-      <div class="ob-opt" onclick="selOpt(this,'ob3t')">B2B</div>
-      <div class="ob-opt" onclick="selOpt(this,'ob3t')">B2C</div>
-      <div class="ob-opt" onclick="selOpt(this,'ob3t')">Les deux</div>
+      <div class="ob-opt" onclick="selOpt(this)">B2B</div>
+      <div class="ob-opt" onclick="selOpt(this)">B2C</div>
+      <div class="ob-opt" onclick="selOpt(this)">Les deux</div>
     </div>
-    <div class="field"><label class="field-lbl">Qui regarde ton contenu ?</label><textarea class="field-ta" rows="2" placeholder="Décris ton audience en quelques mots"></textarea></div>
-    <div class="field"><label class="field-lbl">Le plus grand problème que tu résous</label><input class="field-input" placeholder="Ex: Manque de visibilité, peur de la caméra..."></div>
+    <div class="field"><label class="field-lbl">Qui regarde ton contenu ?</label><textarea class="field-ta" id="ob3-cible" rows="2" placeholder="Decris ton audience"></textarea></div>
+    <div class="field"><label class="field-lbl">Le plus grand probleme que tu resous</label><input class="field-input" id="ob3-probleme" placeholder="Ex: Manque de visibilite..."></div>
     <div class="ob-nav"><div class="ob-back" onclick="go('ob2')">← Retour</div><button class="btn" style="width:auto;padding:13px 24px;" onclick="go('ob4')"><span class="btn-txt">Suivant</span><span class="btn-arr">→</span></button></div>
   </div>
 </div>
@@ -347,17 +335,17 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;"><div class="logo">septup.</div><div style="font-size:12px;color:var(--text3);">4 / 5</div></div>
   <div class="ob-wrap">
     <div class="ob-prog"><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot active"></div><div class="ob-dot"></div></div>
-    <div class="ob-bloc">Bloc 4 — Ta voix</div>
+    <div class="ob-bloc">Bloc 4 - Ta voix</div>
     <div class="ob-q">Ton ton ?</div>
     <div class="ob-chips">
-      <div class="ob-chip" onclick="this.classList.toggle('sel')">Sérieux</div>
-      <div class="ob-chip" onclick="this.classList.toggle('sel')">Décalé</div>
+      <div class="ob-chip" onclick="this.classList.toggle('sel')">Serieux</div>
+      <div class="ob-chip" onclick="this.classList.toggle('sel')">Decale</div>
       <div class="ob-chip" onclick="this.classList.toggle('sel')">Expert</div>
       <div class="ob-chip" onclick="this.classList.toggle('sel')">Accessible</div>
       <div class="ob-chip" onclick="this.classList.toggle('sel')">Inspirant</div>
     </div>
-    <div class="field"><label class="field-lbl">Un créateur dont tu aimes le style (optionnel)</label><input class="field-input" placeholder="Ex: Alex Hormozi, Angèle..."></div>
-    <div class="field"><label class="field-lbl">Ce qui te différencie dans ton domaine</label><textarea class="field-ta" rows="2" placeholder="Ce que tu fais que personne d'autre ne fait..."></textarea></div>
+    <div class="field"><label class="field-lbl">Un createur dont tu aimes le style (optionnel)</label><input class="field-input" id="ob4-style" placeholder="Ex: Alex Hormozi..."></div>
+    <div class="field"><label class="field-lbl">Ce qui te differencie</label><textarea class="field-ta" id="ob4-diff" rows="2" placeholder="Ce que tu fais que personne ne fait..."></textarea></div>
     <div class="ob-nav"><div class="ob-back" onclick="go('ob3')">← Retour</div><button class="btn" style="width:auto;padding:13px 24px;" onclick="go('ob5')"><span class="btn-txt">Suivant</span><span class="btn-arr">→</span></button></div>
   </div>
 </div>
@@ -367,16 +355,16 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;"><div class="logo">septup.</div><div style="font-size:12px;color:var(--text3);">5 / 5</div></div>
   <div class="ob-wrap">
     <div class="ob-prog"><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot active"></div></div>
-    <div class="ob-bloc">Bloc 5 — À l'aise devant la caméra ?</div>
-    <div class="ob-q">Ton niveau à l'écran ?</div>
+    <div class="ob-bloc">Bloc 5 - A l aise devant la camera ?</div>
+    <div class="ob-q">Ton niveau a l ecran ?</div>
     <div class="ob-opts">
-      <div class="ob-opt" onclick="selOpt(this,'ob5t')">Pas du tout à l'aise</div>
-      <div class="ob-opt" onclick="selOpt(this,'ob5t')">Un peu timide</div>
-      <div class="ob-opt" onclick="selOpt(this,'ob5t')">Correct mais perfectible</div>
-      <div class="ob-opt" onclick="selOpt(this,'ob5t')">Très à l'aise</div>
+      <div class="ob-opt" onclick="selOpt(this)">Pas du tout a l aise</div>
+      <div class="ob-opt" onclick="selOpt(this)">Un peu timide</div>
+      <div class="ob-opt" onclick="selOpt(this)">Correct mais perfectible</div>
+      <div class="ob-opt" onclick="selOpt(this)">Tres a l aise</div>
     </div>
-    <div class="field" style="margin-top:8px;"><label class="field-lbl">Email</label><input class="field-input" type="email" id="ob-email" placeholder="hello@studio.fr"></div>
-    <div class="field"><label class="field-lbl">Mot de passe</label><input class="field-input" type="password" id="ob-password" placeholder="Min. 8 caractères"></div>
+    <div class="field" style="margin-top:16px;"><label class="field-lbl">Email</label><input class="field-input" type="email" id="ob-email" placeholder="hello@studio.fr"></div>
+    <div class="field"><label class="field-lbl">Mot de passe</label><input class="field-input" type="password" id="ob-password" placeholder="Min. 8 caracteres"></div>
     <div class="ob-nav"><div class="ob-back" onclick="go('ob4')">← Retour</div><button class="btn" style="width:auto;padding:13px 24px;" onclick="doSignup()"><span class="btn-txt">Terminer</span><span class="btn-arr">→</span></button></div>
   </div>
 </div>
@@ -385,16 +373,15 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 <div class="screen" id="screen-ob-done">
   <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;">
     <div style="font-size:48px;margin-bottom:16px;">✦</div>
-    <div style="font-size:26px;font-weight:700;margin-bottom:8px;">Profil créé !</div>
-    <div style="font-size:14px;color:var(--text2);margin-bottom:8px;line-height:1.7;">Ton profil de marque est prêt.<br>L'IA va s'adapter à ton style.</div>
-    <div class="palier-badge" style="margin-bottom:36px;"><div class="palier-dot"></div><span class="palier-txt">Bienvenue chez Septup</span></div>
-    <button class="btn" style="max-width:280px;" onclick="go('home')"><span class="btn-txt">Accéder à l'app</span><span class="btn-arr">→</span></button>
+    <div style="font-size:26px;font-weight:700;margin-bottom:8px;">Profil cree !</div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:36px;line-height:1.7;">Ton profil de marque est pret.<br>L IA va s adapter a ton style.</div>
+    <button class="btn" style="max-width:280px;" onclick="go('home')"><span class="btn-txt">Acceder a l app</span><span class="btn-arr">→</span></button>
   </div>
 </div>
 
 <!-- FORGOT -->
 <div class="screen" id="screen-forgot">
-  <div class="auth-hero"><div class="auth-studio">Studio Lyon</div><div class="auth-title">Mot de passe<br><span>oublié</span></div></div>
+  <div class="auth-hero"><div class="auth-studio">Studio Lyon</div><div class="auth-title">Mot de passe<br><span>oublie</span></div></div>
   <div class="auth-body">
     <button class="back-btn" onclick="go('login')">← Retour</button>
     <div class="field"><label class="field-lbl">Email</label><input class="field-input" type="email" placeholder="hello@studio.fr"></div>
@@ -405,31 +392,31 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 
 <!-- HOME -->
 <div class="screen" id="screen-home">
-  <div class="topbar"><div class="logo">septup.</div><div class="tr"><button class="ibtn" onclick="toggleTheme()">☀</button><div class="ibtn av" onclick="go('compte')">JS</div></div></div>
+  <div class="topbar"><div class="logo">septup.</div><div class="tr"><button class="ibtn" onclick="toggleTheme()">☀</button><div class="ibtn av" id="home-av" onclick="go('compte')">JS</div></div></div>
   <div class="scroll">
     <div class="hero-card" onclick="go('points')">
       <div style="font-size:13px;color:var(--text2);margin-bottom:2px;">Bonjour,</div>
-      <div style="font-size:24px;font-weight:700;margin-bottom:14px;">Jean 👋</div>
-      <div class="palier-badge"><div class="palier-dot"></div><div class="palier-txt">Bronze</div></div>
-      <div class="pts-big">420</div>
-      <div class="pts-lbl">points de fidélité · touche pour voir le détail</div>
-      <div class="bar-wrap"><div class="bar-fill" style="width:70%"></div></div>
-      <div class="bar-labels"><span>Bronze · 0</span><span>Silver à 600 pts</span></div>
+      <div class="pts-big" style="font-size:24px;font-weight:700;margin-bottom:14px;letter-spacing:0;" id="home-name">Jean 👋</div>
+      <div class="palier-badge"><div class="palier-dot"></div><div class="palier-txt" id="home-palier">Bronze</div></div>
+      <div class="pts-big" id="home-pts">420</div>
+      <div class="pts-lbl">points de fidelite · touche pour voir le detail</div>
+      <div class="bar-wrap"><div class="bar-fill" id="home-bar" style="width:70%"></div></div>
+      <div class="bar-labels"><span id="home-bar-left">Bronze · 0</span><span id="home-bar-right">Silver a 600 pts</span></div>
     </div>
     <div style="height:14px;"></div>
     <div class="cta" style="margin-bottom:14px;" onclick="openResa()">
-      <div><div class="cta-lbl">Nouvelle session</div><div class="cta-title">Réserver un tournage</div></div>
+      <div><div class="cta-lbl">Nouvelle session</div><div class="cta-title">Reserver un tournage</div></div>
       <div class="cta-arr">→</div>
     </div>
     <div class="mini-grid" style="margin-bottom:16px;">
-      <div class="mini" onclick="go('sessions')"><div class="mini-lbl">Sessions</div><div class="mini-val">5</div><div class="mini-sub">1 à venir</div></div>
-      <div class="mini" onclick="go('scripts')"><div class="mini-lbl">Scripts</div><div class="mini-val">3</div><div class="mini-sub">2 validés</div></div>
+      <div class="mini" onclick="go('sessions')"><div class="mini-lbl">Sessions</div><div class="mini-val" id="home-nb-sess">0</div><div class="mini-sub" id="home-sess-sub">0 a venir</div></div>
+      <div class="mini" onclick="go('scripts')"><div class="mini-lbl">Scripts</div><div class="mini-val" id="home-nb-scripts">0</div><div class="mini-sub">generes</div></div>
     </div>
     <div class="sec-lbl" style="margin-bottom:10px;">Prochaine session</div>
     <div class="next-sess">
-      <div class="tag-up">À venir</div>
-      <div class="sess-date">Mardi 8 avril 2025</div>
-      <div class="sess-meta"><span>🕐 14h00 · 2h</span><span>📍 Studio Septup</span><span>💡 Essentiel</span></div>
+      <div class="tag-up">A venir</div>
+      <div class="sess-date" id="home-next-sess">Aucune session</div>
+      <div class="sess-meta" id="home-next-meta"></div>
     </div>
     <div style="height:16px;"></div>
   </div>
@@ -444,21 +431,15 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 
 <!-- SESSIONS -->
 <div class="screen" id="screen-sessions">
-  <div class="topbar"><div class="logo">septup.</div><div class="tr"><button class="ibtn" onclick="toggleTheme()">☀</button><div class="ibtn av" onclick="go('compte')">JS</div></div></div>
+  <div class="topbar"><div class="logo">septup.</div><div class="tr"><button class="ibtn" onclick="toggleTheme()">☀</button><div class="ibtn av" id="sess-av" onclick="go('compte')">JS</div></div></div>
   <div class="scroll">
     <div style="padding:8px 16px 16px;font-size:22px;font-weight:700;">Mes sessions</div>
     <div class="tab-row">
-      <button class="tab-btn active" id="tab-p" onclick="showTab('passees')">Passées</button>
-      <button class="tab-btn" id="tab-a" onclick="showTab('avenir')">À venir</button>
+      <button class="tab-btn active" id="tab-p" onclick="showTab('passees')">Passees</button>
+      <button class="tab-btn" id="tab-a" onclick="showTab('avenir')">A venir</button>
     </div>
-    <div id="sess-passees">
-      <div class="sblock"><div class="sblock-hdr" onclick="toggleFiles(this)"><div><div class="sb-date">15 mars 2025</div><div class="sb-meta">Formule Essentiel · 2h</div></div><div class="sb-r"><div class="sb-pts">+150 pts</div><div class="tag-done">Terminé</div><div class="facture">Facture →</div></div></div><div class="sfiles"><div class="frow"><div><div class="fname">Rushes session</div><div class="fsize">4.2 Go</div></div><div style="text-align:right"><div class="ftimer ok">J-5</div><div class="fdl">Télécharger</div></div></div></div></div>
-      <div class="sblock"><div class="sblock-hdr" onclick="toggleFiles(this)"><div><div class="sb-date">28 fév. 2025</div><div class="sb-meta">Formule Basic · 1h</div></div><div class="sb-r"><div class="sb-pts">+60 pts</div><div class="tag-done">Terminé</div><div class="facture">Facture →</div></div></div><div class="sfiles"><div class="frow"><div><div class="fname">Rushes session</div><div class="fsize">1.8 Go</div></div><div style="text-align:right"><div class="ftimer urgent">J-1</div><div class="fdl">Télécharger</div></div></div></div></div>
-      <div class="sblock"><div class="sblock-hdr" onclick="toggleFiles(this)"><div><div class="sb-date">10 fév. 2025</div><div class="sb-meta">Formule Essentiel · 1h</div></div><div class="sb-r"><div class="sb-pts">+75 pts</div><div class="tag-done">Terminé</div><div class="facture">Facture →</div></div></div><div class="sfiles"><div class="frow"><div><div class="fname">Rushes session</div><div class="fsize">2.1 Go</div></div><div style="text-align:right"><div class="ftimer exp">Expiré</div></div></div></div></div>
-    </div>
-    <div id="sess-avenir" style="display:none;">
-      <div class="sblock"><div class="sblock-hdr"><div><div class="sb-date">8 avril 2025</div><div class="sb-meta">Formule Essentiel · 2h</div></div><div class="sb-r"><div class="sb-pts">+150 pts</div><div class="tag-up">À venir</div></div></div></div>
-    </div>
+    <div id="sess-passees"><div style="padding:20px 16px;font-size:13px;color:var(--text3);">Chargement...</div></div>
+    <div id="sess-avenir" style="display:none;"><div style="padding:20px 16px;font-size:13px;color:var(--text3);">Chargement...</div></div>
     <div style="height:16px;"></div>
   </div>
   <div class="bnav">
@@ -477,7 +458,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
     <div style="padding:8px 16px 16px;font-size:22px;font-weight:700;">Cours</div>
     <div class="sec-lbl" style="margin-bottom:10px;">Montage</div>
     <div class="cours-grid" style="margin-bottom:16px;">
-      <div class="ccard" id="c1" onclick="openCours('76979871','Cutter une vidéo','c1')"><div class="cthumb">✂️<div class="cseen" id="seen-c1">✓</div></div><div class="cbody"><div class="ccat">Montage</div><div class="ctitle">Cutter une vidéo</div><div class="cdur">8 min</div></div></div>
+      <div class="ccard" id="c1" onclick="openCours('76979871','Cutter une video','c1')"><div class="cthumb">✂️<div class="cseen" id="seen-c1">✓</div></div><div class="cbody"><div class="ccat">Montage</div><div class="ctitle">Cutter une video</div><div class="cdur">8 min</div></div></div>
       <div class="ccard" id="c2" onclick="openCours('76979871','Transitions pro','c2')"><div class="cthumb">🎞️<div class="cseen" id="seen-c2">✓</div></div><div class="cbody"><div class="ccat">Montage</div><div class="ctitle">Les transitions pro</div><div class="cdur">12 min</div></div></div>
       <div class="ccard" id="c3" onclick="openCours('76979871','Color grading','c3')"><div class="cthumb">🎨<div class="cseen" id="seen-c3">✓</div></div><div class="cbody"><div class="ccat">Montage</div><div class="ctitle">Color grading</div><div class="cdur">15 min</div></div></div>
       <div class="ccard" id="c4" onclick="openCours('76979871','Audio post','c4')"><div class="cthumb">🎙️<div class="cbadge">Silver</div><div class="cseen" id="seen-c4">✓</div></div><div class="cbody"><div class="ccat">Montage</div><div class="ctitle">Audio en post-prod</div><div class="cdur">10 min · Exclusif</div></div></div>
@@ -485,7 +466,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
     <div class="sec-lbl" style="margin-bottom:10px;">Tournage</div>
     <div class="cours-grid" style="margin-bottom:16px;">
       <div class="ccard" id="c5" onclick="openCours('76979871','Cadrage','c5')"><div class="cthumb">📷<div class="cseen" id="seen-c5">✓</div></div><div class="cbody"><div class="ccat">Tournage</div><div class="ctitle">Cadrage et compo</div><div class="cdur">11 min</div></div></div>
-      <div class="ccard" id="c6" onclick="openCours('76979871','Lumière','c6')"><div class="cthumb">💡<div class="cbadge">Gold</div><div class="cseen" id="seen-c6">✓</div></div><div class="cbody"><div class="ccat">Tournage</div><div class="ctitle">Maîtriser la lumière</div><div class="cdur">18 min · Exclusif</div></div></div>
+      <div class="ccard" id="c6" onclick="openCours('76979871','Lumiere','c6')"><div class="cthumb">💡<div class="cbadge">Gold</div><div class="cseen" id="seen-c6">✓</div></div><div class="cbody"><div class="ccat">Tournage</div><div class="ctitle">Maitriser la lumiere</div><div class="cdur">18 min · Exclusif</div></div></div>
     </div>
   </div>
   <div class="bnav">
@@ -503,42 +484,14 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   <div class="scroll">
     <div style="padding:8px 16px 16px;font-size:22px;font-weight:700;">Mes <span style="color:var(--accent);">scripts</span></div>
     <div id="export-bar" style="display:none;" class="export-bar">
-      <div class="export-count" id="export-count">0 sélectionné</div>
+      <div class="export-count" id="export-count">0 selectionne</div>
       <div class="export-btns">
         <button class="export-btn" onclick="exportScripts('pdf')">PDF</button>
         <button class="export-btn" onclick="exportScripts('word')">Word</button>
         <button class="export-btn" onclick="exportScripts('txt')">TXT</button>
       </div>
     </div>
-    <div id="scripts-list">
-      <div class="script-card">
-        <div class="script-cb" id="cb-s1" onclick="toggleScript(this,'s1')"></div>
-        <div class="script-info" onclick="openEditor('Comment recruter les bons talents','ACCROCHE\n\nVous perdez vos meilleurs candidats en 48h. Voici pourquoi.\n\nCORPS\n\nLa plupart des entreprises font la même erreur : elles recrutent sur le CV, pas sur la motivation. Résultat ? Le candidat signe ailleurs.\n\nVoici ce qu\'on fait :\n→ On répond dans les 24h\n→ On montre la culture avant le salaire\n→ On implique l\'équipe dès le premier entretien\n\nCONCLUSION\n\nLe recrutement, c\'est du marketing. Traitez vos candidats comme vos clients.\n\nCTA\n\nEnregistre ce post si tu recrutes bientôt.','s1')">
-          <div class="script-title">Comment recruter les bons talents</div>
-          <div class="script-meta">Reel 60s · Éducatif · 15 avr. 2025</div>
-          <div class="script-status st-valid">Validé</div>
-        </div>
-        <div class="script-arrow" onclick="openEditor('Comment recruter les bons talents','ACCROCHE\n\nVous perdez vos meilleurs candidats en 48h. Voici pourquoi.\n\nCORPS\n\nLa plupart des entreprises font la même erreur : elles recrutent sur le CV, pas sur la motivation.\n\nVoici ce qu\'on fait :\n→ On répond dans les 24h\n→ On montre la culture avant le salaire\n→ On implique l\'équipe dès le premier entretien\n\nCONCLUSION\n\nLe recrutement, c\'est du marketing. Traitez vos candidats comme vos clients.\n\nCTA\n\nEnregistre ce post si tu recrutes bientôt.','s1')">›</div>
-      </div>
-      <div class="script-card">
-        <div class="script-cb" id="cb-s2" onclick="toggleScript(this,'s2')"></div>
-        <div class="script-info" onclick="openEditor('3 erreurs qui tuent ta visibilité','ACCROCHE\n\nTu postes mais personne ne regarde. Normal. Tu fais probablement ces 3 erreurs.\n\nCORPS\n\nErreur 1 : Tu parles de toi, pas de ton audience\nErreur 2 : Ton accroche dure plus de 2 secondes\nErreur 3 : Tu n\'as pas de call-to-action clair\n\nCONCLUSION\n\nCorrige juste ces 3 points. La différence est immédiate.\n\nCTA\n\nCommente \"SCRIPT\" pour recevoir ma méthode complète.','s2')">
-          <div class="script-title">3 erreurs qui tuent ta visibilité</div>
-          <div class="script-meta">Reel 30s · Storytelling · 10 avr. 2025</div>
-          <div class="script-status st-valid">Validé</div>
-        </div>
-        <div class="script-arrow" onclick="openEditor('3 erreurs qui tuent ta visibilité','ACCROCHE\n\nTu postes mais personne ne regarde. Normal. Tu fais probablement ces 3 erreurs.\n\nCORPS\n\nErreur 1 : Tu parles de toi, pas de ton audience\nErreur 2 : Ton accroche dure plus de 2 secondes\nErreur 3 : Tu n\'as pas de call-to-action clair\n\nCONCLUSION\n\nCorrige juste ces 3 points. La différence est immédiate.\n\nCTA\n\nCommente \"SCRIPT\" pour recevoir ma méthode complète.','s2')">›</div>
-      </div>
-      <div class="script-card">
-        <div class="script-cb" id="cb-s3" onclick="toggleScript(this,'s3')"></div>
-        <div class="script-info" onclick="openEditor('Intro podcast — Épisode pilote','ACCROCHE\n\nBienvenue dans ce podcast. Pas de bullshit, pas de théorie creuse. Que du concret.\n\nCORPS\n\nChaque semaine, j\'invite des experts pour parler de ce qui marche vraiment. Des entrepreneurs qui ont échoué, appris, et reconstruit.\n\nCet épisode pilote, c\'est moi qui me présente. Qui je suis, pourquoi j\'ai lancé ça, et ce que tu vas gagner à écouter.\n\nCONCLUSION\n\nSi tu cherches des raccourcis, ce podcast n\'est pas pour toi. Si tu veux du vrai, reste avec moi.\n\nCTA\n\nAbonne-toi pour ne pas rater le premier épisode.','s3')">
-          <div class="script-title">Intro podcast — Épisode pilote</div>
-          <div class="script-meta">Podcast · Branding · 5 avr. 2025</div>
-          <div class="script-status st-draft">Brouillon</div>
-        </div>
-        <div class="script-arrow" onclick="openEditor('Intro podcast — Épisode pilote','ACCROCHE\n\nBienvenue dans ce podcast. Pas de bullshit, pas de théorie creuse. Que du concret.\n\nCORPS\n\nChaque semaine, j\'invite des experts pour parler de ce qui marche vraiment.\n\nCet épisode pilote, c\'est moi qui me présente. Qui je suis, pourquoi j\'ai lancé ça, et ce que tu vas gagner à écouter.\n\nCONCLUSION\n\nSi tu cherches des raccourcis, ce podcast n\'est pas pour toi. Si tu veux du vrai, reste avec moi.\n\nCTA\n\nAbonne-toi pour ne pas rater le premier épisode.','s3')">›</div>
-      </div>
-    </div>
+    <div id="scripts-list"><div style="padding:24px 16px;text-align:center;font-size:13px;color:var(--text3);">Chargement...</div></div>
     <div style="height:16px;"></div>
   </div>
   <div class="bnav">
@@ -556,31 +509,28 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   <div class="scroll">
     <div class="hero-card" style="cursor:default;margin-bottom:16px;">
       <div style="font-size:13px;color:var(--text2);margin-bottom:4px;">Solde actuel</div>
-      <div class="pts-big">420</div>
-      <div class="pts-lbl">points · Palier Bronze</div>
-      <div class="bar-wrap"><div class="bar-fill" style="width:70%"></div></div>
-      <div class="bar-labels"><span>420 pts</span><span>Silver dans 180 pts</span></div>
+      <div class="pts-big" id="pts-big">420</div>
+      <div class="pts-lbl" id="pts-lbl">points · Palier Bronze</div>
+      <div class="bar-wrap"><div class="bar-fill" id="pts-bar" style="width:70%"></div></div>
+      <div class="bar-labels"><span id="pts-bar-left">420 pts</span><span id="pts-bar-right">Silver dans 180 pts</span></div>
     </div>
     <div class="sec-lbl" style="margin-bottom:10px;">Paliers</div>
     <div class="palier-row" style="margin-bottom:16px;">
-      <div class="pal-card active"><div class="pal-name">🥉 Bronze</div><div class="pal-range">0 – 599</div></div>
-      <div class="pal-card"><div class="pal-name">🥈 Silver</div><div class="pal-range">600 – 1199</div></div>
-      <div class="pal-card"><div class="pal-name">🥇 Gold</div><div class="pal-range">1200+</div></div>
+      <div class="pal-card active" id="pal-bronze"><div class="pal-name">🥉 Bronze</div><div class="pal-range">0 – 599</div></div>
+      <div class="pal-card" id="pal-silver"><div class="pal-name">🥈 Silver</div><div class="pal-range">600 – 1199</div></div>
+      <div class="pal-card" id="pal-gold"><div class="pal-name">🥇 Gold</div><div class="pal-range">1200+</div></div>
     </div>
-    <div class="sec-lbl" style="margin-bottom:4px;">Récompenses</div>
+    <div class="sec-lbl" style="margin-bottom:4px;">Recompenses</div>
     <div class="card-sm" style="margin-bottom:16px;">
       <div class="rcard"><div><div class="rtitle">Badge profil</div><div class="rsub">Bronze · actif</div></div><div class="ract">Actif</div></div>
       <div class="rcard" style="opacity:0.4;"><div><div class="rtitle">Montage offert</div><div class="rsub">Silver requis</div></div><div class="rlock">🔒 Silver</div></div>
       <div class="rcard" style="opacity:0.4;"><div><div class="rtitle">Cours exclusifs</div><div class="rsub">Silver requis</div></div><div class="rlock">🔒 Silver</div></div>
-      <div class="rcard" style="opacity:0.4;"><div><div class="rtitle">Épisode podcast offert</div><div class="rsub">Gold requis</div></div><div class="rlock">🔒 Gold</div></div>
+      <div class="rcard" style="opacity:0.4;"><div><div class="rtitle">Episode podcast offert</div><div class="rsub">Gold requis</div></div><div class="rlock">🔒 Gold</div></div>
       <div class="rcard" style="opacity:0.4;"><div><div class="rtitle">1h tournage offerte</div><div class="rsub">Gold requis</div></div><div class="rlock">🔒 Gold</div></div>
     </div>
     <div class="sec-lbl" style="margin-bottom:4px;">Historique</div>
-    <div class="card-sm" style="margin-bottom:16px;">
-      <div class="lrow"><div><div class="lmotif">Session Essentiel 2h</div><div class="ldate">15 mars 2025</div></div><div class="lpts">+150</div></div>
-      <div class="lrow"><div><div class="lmotif">Session Basic 1h</div><div class="ldate">28 fév. 2025</div></div><div class="lpts">+60</div></div>
-      <div class="lrow"><div><div class="lmotif">Session Essentiel 1h</div><div class="ldate">10 fév. 2025</div></div><div class="lpts">+75</div></div>
-      <div class="lrow"><div><div class="lmotif">Session Basic 2h</div><div class="ldate">20 jan. 2025</div></div><div class="lpts">+120</div></div>
+    <div class="card-sm" style="margin-bottom:16px;" id="pts-history">
+      <div class="lrow"><div><div class="lmotif">Chargement...</div></div></div>
     </div>
   </div>
   <div class="bnav">
@@ -597,19 +547,18 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   <div class="topbar"><button onclick="go('home')" style="background:none;border:none;font-size:13px;color:var(--text2);cursor:pointer;">← Retour</button><button class="ibtn" onclick="toggleTheme()">☀</button></div>
   <div class="scroll">
     <div style="padding:8px 16px 24px;text-align:center;">
-      <div class="av-big">JS</div>
-      <div style="font-size:20px;font-weight:700;margin-bottom:4px;">Jean Sérafin</div>
-      <div style="font-size:13px;color:var(--text3);margin-bottom:10px;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4d27282c230d3e3938292422632b3f">[email&#160;protected]</a></div>
-      <div class="palier-badge"><div class="palier-dot"></div><div class="palier-txt">Bronze</div></div>
+      <div class="av-big" id="compte-av">JS</div>
+      <div style="font-size:20px;font-weight:700;margin-bottom:4px;" id="compte-name">Jean Serafin</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:10px;" id="compte-email">jean@studio.fr</div>
+      <div class="palier-badge"><div class="palier-dot"></div><div class="palier-txt" id="compte-palier">Bronze</div></div>
     </div>
     <div class="card-sm" style="margin-bottom:16px;">
-      <div class="crow"><div class="crow-lbl">Modifier le profil de marque</div><div style="font-size:12px;color:var(--accent);">Éditer ›</div></div>
+      <div class="crow"><div class="crow-lbl">Modifier le profil de marque</div><div style="font-size:12px;color:var(--accent);">Editer ›</div></div>
       <div class="crow"><div class="crow-lbl">Modifier le nom</div><div style="color:var(--text3);">›</div></div>
-      <div class="crow"><div class="crow-lbl">Modifier l'email</div><div style="color:var(--text3);">›</div></div>
-      <div class="crow"><div class="crow-lbl">Changer le mot de passe</div><div style="color:var(--text3);">›</div></div>
-      <div class="crow" style="border-bottom:none;"><div class="crow-lbl">Palier actuel</div><div style="font-size:12px;color:var(--accent);">🥉 Bronze</div></div>
+      <div class="crow"><div class="crow-lbl">Modifier l email</div><div style="color:var(--text3);">›</div></div>
+      <div class="crow" style="border-bottom:none;"><div class="crow-lbl">Palier actuel</div><div style="font-size:12px;color:var(--accent);" id="compte-palier2">🥉 Bronze</div></div>
     </div>
-    <button class="logout-btn" onclick="doLogout()">Se déconnecter</button>
+    <button class="logout-btn" onclick="doLogout()">Se deconnecter</button>
   </div>
   <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="nd">🏠</div><div class="nl">Accueil</div></div>
@@ -619,7 +568,6 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
     <div class="ni" onclick="go('scripts')"><div class="nd">✦</div><div class="nl">Scripts</div></div>
   </div>
 </div>
-
 </div>
 
 <!-- MODAL HUB -->
@@ -627,34 +575,28 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   <div class="modal hub-modal" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
     <div class="modal-hdr"><div class="modal-title">Que veux-tu faire ?</div><button class="modal-close" onclick="closeHub()">✕</button></div>
-    <div class="hub-btn primary" onclick="closeHub();openGen()">
-      <div><div class="hub-title">✦ Générer un script IA</div><div class="hub-sub">Script sur mesure basé sur ton profil de marque</div></div>
-      <div style="font-size:20px;color:var(--accent);">→</div>
-    </div>
-    <div class="hub-btn" onclick="closeHub();openStory()">
-      <div><div class="hub-title">Template story Instagram</div><div class="hub-sub">Partager ta session sur Instagram</div></div>
-      <div style="font-size:20px;color:var(--text3);">→</div>
-    </div>
+    <div class="hub-btn primary" onclick="closeHub();openGen()"><div><div class="hub-title">✦ Generer un script IA</div><div class="hub-sub">Script sur mesure base sur ton profil de marque</div></div><div style="font-size:20px;color:var(--accent);">→</div></div>
+    <div class="hub-btn" onclick="closeHub();openStory()"><div><div class="hub-title">Template story Instagram</div><div class="hub-sub">Partager ta session sur Instagram</div></div><div style="font-size:20px;color:var(--text3);">→</div></div>
     <div style="height:16px;"></div>
   </div>
 </div>
 
-<!-- MODAL GÉNÉRATION -->
+<!-- MODAL GENERATION -->
 <div class="modal-overlay" id="modal-gen" onclick="if(event.target===this)closeGen()">
   <div class="modal gen-modal" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
-    <div class="modal-hdr"><div class="modal-title">Générer un script</div><button class="modal-close" onclick="closeGen()">✕</button></div>
+    <div class="modal-hdr"><div class="modal-title">Generer un script</div><button class="modal-close" onclick="closeGen()">✕</button></div>
     <div class="gen-body">
       <div class="gen-step active" id="gen-step-1">
         <div class="gen-prog"><div class="gen-prog-dot done"></div><div class="gen-prog-dot"></div><div class="gen-prog-dot"></div></div>
         <div class="gen-q">Quel est le sujet ?</div>
-        <div class="gen-sub">Décris l'idée principale de ton contenu</div>
+        <div class="gen-sub">Decris l idee principale de ton contenu</div>
         <textarea class="gen-ta" id="gen-sujet" placeholder="Ex: Pourquoi 90% des entrepreneurs ratent leur lancement..."></textarea>
       </div>
       <div class="gen-step" id="gen-step-2">
         <div class="gen-prog"><div class="gen-prog-dot done"></div><div class="gen-prog-dot done"></div><div class="gen-prog-dot"></div></div>
-        <div class="gen-q">Format & Angle ?</div>
-        <div class="gen-sub">Choisis le format puis l'angle narratif</div>
+        <div class="gen-q">Format et Angle ?</div>
+        <div class="gen-sub">Choisis le format puis l angle narratif</div>
         <div class="gen-opts">
           <div class="gen-opt" onclick="selGen(this,'format','reel30')">Reel 30s</div>
           <div class="gen-opt" onclick="selGen(this,'format','reel60')">Reel 60s</div>
@@ -663,10 +605,10 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
         </div>
         <div class="gen-sub" style="margin-top:4px;">Angle narratif</div>
         <div class="gen-chips">
-          <div class="gen-chip" onclick="selGenChip(this,'angle','edu')">Éducatif</div>
+          <div class="gen-chip" onclick="selGenChip(this,'angle','edu')">Educatif</div>
           <div class="gen-chip" onclick="selGenChip(this,'angle','story')">Storytelling</div>
           <div class="gen-chip" onclick="selGenChip(this,'angle','vente')">Vente</div>
-          <div class="gen-chip" onclick="selGenChip(this,'angle','temo')">Témoignage</div>
+          <div class="gen-chip" onclick="selGenChip(this,'angle','temo')">Temoignage</div>
         </div>
       </div>
       <div class="gen-step" id="gen-step-3">
@@ -677,16 +619,12 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
         <div class="script-result" id="script-result">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
             <div class="gen-q">Ton script</div>
-            <div style="text-align:right;">
-              <div style="font-size:10px;color:var(--text3);margin-bottom:2px;">Viralité</div>
-              <div style="font-size:24px;font-weight:700;color:var(--accent);line-height:1;" id="gen-vir-score">—</div>
-              <div style="font-size:10px;color:var(--text3);">/10</div>
-            </div>
+            <div style="text-align:right;"><div style="font-size:10px;color:var(--text3);margin-bottom:2px;">Viralite</div><div style="font-size:24px;font-weight:700;color:var(--accent);line-height:1;" id="gen-vir-score">-</div><div style="font-size:10px;color:var(--text3);">/10</div></div>
           </div>
           <div class="script-rendered" id="script-rendered"></div>
           <div class="result-actions">
             <button class="btn" onclick="validateScript()"><span class="btn-txt">Valider et sauvegarder</span><span class="btn-arr">→</span></button>
-            <button class="btn-ghost" onclick="openRegen()">Régénérer ✦</button>
+            <button class="btn-ghost" onclick="openRegen()">Regenerer ✦</button>
           </div>
         </div>
       </div>
@@ -699,29 +637,29 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 
 <!-- MODAL REGEN -->
 <div class="modal-overlay" id="modal-regen" onclick="if(event.target===this)closeRegen()">
-  <div class="modal regen-modal" onclick="event.stopPropagation()">
+  <div class="modal" style="padding-bottom:28px;" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
     <div class="modal-hdr"><div class="modal-title">Modifier le script</div><button class="modal-close" onclick="closeRegen()">✕</button></div>
     <div style="padding:16px 20px 4px;">
       <div style="font-size:12px;color:var(--text2);margin-bottom:10px;">Suggestions rapides</div>
       <div class="regen-chips">
-        <div class="regen-chip" onclick="setRegen(this,'Rends l\'accroche plus percutante et brutale, première ligne choc')">Accroche + forte</div>
-        <div class="regen-chip" onclick="setRegen(this,'Raccourcis le script de 30%, garde seulement l\'essentiel')">Plus court</div>
-        <div class="regen-chip" onclick="setRegen(this,'Ajoute plus d\'émotion et de storytelling personnel')">+ Émotion</div>
-        <div class="regen-chip" onclick="setRegen(this,'Rends le CTA plus urgent et direct, crée de la rareté')">CTA + fort</div>
-        <div class="regen-chip" onclick="setRegen(this,'Adapte le ton pour une audience B2B senior et exigeante')">Ton B2B</div>
-        <div class="regen-chip" onclick="setRegen(this,'Ajoute des données chiffrées et exemples concrets')">+ Data</div>
+        <div class="regen-chip" id="rc1" onclick="setRegen(this,'Rends l accroche plus percutante et brutale')">Accroche + forte</div>
+        <div class="regen-chip" id="rc2" onclick="setRegen(this,'Raccourcis le script de 30 pourcent')">Plus court</div>
+        <div class="regen-chip" id="rc3" onclick="setRegen(this,'Ajoute plus d emotion et de storytelling')">+ Emotion</div>
+        <div class="regen-chip" id="rc4" onclick="setRegen(this,'Rends le CTA plus urgent et direct')">CTA + fort</div>
+        <div class="regen-chip" id="rc5" onclick="setRegen(this,'Adapte pour une audience B2B senior')">Ton B2B</div>
+        <div class="regen-chip" id="rc6" onclick="setRegen(this,'Ajoute des donnees chiffrees et exemples concrets')">+ Data</div>
       </div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Ou décris le changement</div>
-      <textarea class="regen-ta" id="regen-instruction" placeholder="Ex: Rends l'accroche plus brutale, ajoute une stat choc dès la première ligne..."></textarea>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Ou decris le changement</div>
+      <textarea class="regen-ta" id="regen-instruction" placeholder="Ex: Rends l accroche plus brutale, ajoute une stat choc..."></textarea>
     </div>
     <div style="padding:0 20px 20px;">
-      <button class="btn" onclick="doRegen()"><span class="btn-txt">Régénérer avec ces instructions</span><span class="btn-arr">→</span></button>
+      <button class="btn" onclick="doRegen()"><span class="btn-txt">Regenerer avec ces instructions</span><span class="btn-arr">→</span></button>
     </div>
   </div>
 </div>
 
-<!-- MODAL ÉDITEUR -->
+<!-- MODAL EDITEUR -->
 <div class="modal-overlay" id="modal-editor" onclick="if(event.target===this)closeEditor()">
   <div class="modal editor-modal" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
@@ -729,37 +667,34 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
     <div class="editor-body">
       <div class="editor-vir">
         <div class="editor-vir-left">
-          <div class="editor-vir-lbl">Score de viralité</div>
-          <div style="display:flex;align-items:baseline;gap:4px;">
-            <div class="editor-vir-num" id="editor-vir-score">—</div>
-            <div style="font-size:12px;color:var(--text3);">/10</div>
-          </div>
+          <div class="editor-vir-lbl">Score de viralite</div>
+          <div style="display:flex;align-items:baseline;gap:4px;"><div class="editor-vir-num" id="editor-vir-score">-</div><div style="font-size:12px;color:var(--text3);">/10</div></div>
           <div class="editor-vir-bar"><div class="editor-vir-fill" id="editor-vir-bar" style="width:0%"></div></div>
-          <div class="editor-vir-tip" id="editor-vir-tip">Modifie le script pour voir le score évoluer</div>
+          <div class="editor-vir-tip" id="editor-vir-tip">Modifie le script pour voir le score</div>
         </div>
-        <div>
-          <div class="editor-vir-grade" id="editor-vir-grade">—</div>
-        </div>
+        <div><div class="editor-vir-grade" id="editor-vir-grade">-</div></div>
       </div>
       <div class="editor-ta" id="editor-ta" contenteditable="true" oninput="onEditorChange()" data-placeholder="Tape ton script ici..."></div>
-      <button class="editor-regen-btn" onclick="closeEditor();openRegen()">✦ Régénérer ce script</button>
+      <button class="editor-regen-btn" onclick="openRegenFromEditor()">✦ Regenerer ce script</button>
     </div>
     <div class="editor-footer">
+      <button class="copy-script-btn" id="copy-script-btn" onclick="copyScriptContent()">Copier le script</button>
       <button class="btn" onclick="saveEditor()"><span class="btn-txt">Sauvegarder</span><span class="btn-arr">→</span></button>
       <div style="display:flex;gap:8px;">
         <button class="sv-btn ghost" onclick="alert('Export PDF disponible en production')">PDF</button>
         <button class="sv-btn ghost" onclick="alert('Export Word disponible en production')">Word</button>
         <button class="sv-btn ghost" onclick="alert('Export TXT disponible en production')">TXT</button>
+        <button class="sv-btn danger" onclick="deleteCurrentScript()">Supprimer</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL RÉSA -->
+<!-- MODAL RESA -->
 <div class="modal-overlay" id="modal-resa" onclick="if(event.target===this)closeResa()">
   <div class="modal fillout-modal" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
-    <div class="modal-hdr"><div class="modal-title">Réserver un tournage</div><button class="modal-close" onclick="closeResa()">✕</button></div>
+    <div class="modal-hdr"><div class="modal-title">Reserver un tournage</div><button class="modal-close" onclick="closeResa()">✕</button></div>
     <div class="fillout-body">
       <div class="fl-loading" id="fl-loading"><div class="spinner"></div><div style="font-size:12px;color:var(--text3);">Chargement...</div></div>
       <div class="fillout-container" id="fl-container"></div>
@@ -783,8 +718,8 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
     <div class="modal-hdr"><div class="modal-title">Template Story</div><button class="modal-close" onclick="closeStory()">✕</button></div>
     <div class="story-preview">
       <div><div class="story-logo">septup.</div><div style="font-size:12px;color:var(--text3);margin-top:2px;">@septup_studio</div></div>
-      <div style="text-align:center;"><div style="font-size:36px;margin-bottom:10px;">🎬</div><div style="font-size:17px;font-weight:700;line-height:1.3;">Shooting day<br>avec Septup !</div></div>
-      <div><div style="font-size:13px;color:var(--text2);margin-bottom:4px;">Session du <span style="color:var(--accent);">15 mars 2025</span></div><div style="font-size:13px;color:var(--text2);">Formule <span style="color:var(--accent);">Essentiel</span></div><div style="font-size:12px;color:var(--text3);margin-top:8px;">#septup #contenu #tournage #lyon</div></div>
+      <div style="text-align:center;"><div style="font-size:36px;margin-bottom:10px;">🎬</div><div style="font-size:17px;font-weight:700;line-height:1.3;">Shooting day avec Septup !</div></div>
+      <div><div style="font-size:13px;color:var(--text2);margin-bottom:4px;">Session du <span style="color:var(--accent);" id="story-date">15 mars 2025</span></div><div style="font-size:12px;color:var(--text3);margin-top:8px;">#septup #contenu #tournage #lyon</div></div>
     </div>
     <div class="story-actions">
       <button class="story-copy" id="copy-btn" onclick="copyStory()">Copier le texte</button>
@@ -793,26 +728,31 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// ━━━ CONFIG — remplace ces valeurs par les tiennes ━━━
+<script>
+// ═══ CONFIG ═══
 var SUPABASE_URL = 'https://vruwzwzokyyzwdyfnfpp.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_5EcH8Gb_4DKFLUUSBWMrOg_rl2ZieSR';
-var AIRTABLE_TOKEN = 'TON_TOKEN_AIRTABLE'; // Personal Access Token Airtable
-var AIRTABLE_BASE = 'TON_BASE_ID'; // format appXXXXXXXX
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+var AT_TOKEN = 'patVjlgAjOvOevj5C.e6bb132a61230dda56dbf0e3782ec11074c07f71e2823feed538809bc7abd9e2';
+var AT_BASE = 'appmyjaumN08lB8mE';
 
-var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ═══ STATE ═══
+var sb = null;
 var currentUser = null;
+var clientRecord = null;
+var scriptsStore = {};
+var selectedScripts = {};
+var currentEditorId = null;
+var currentEditorText = '';
 var filloutLoaded = false;
 var isDark = true;
 var genStep = 1;
 var genData = { sujet: '', format: '', angle: '' };
-var selectedScripts = {};
 var msgTimer = null;
 var msgIdx = 0;
-var genMsgs = ['Analyse de ton profil de marque...', 'Calibration du ton...', 'Rédaction en cours...', 'Finalisation du script...'];
 var editorTimer = null;
+var genMsgs = ['Analyse de ton profil...', 'Calibration du ton...', 'Redaction en cours...', 'Finalisation...'];
 
+// ═══ NAVIGATION ═══
 function go(id) {
   document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
   var el = document.getElementById('screen-' + id);
@@ -828,7 +768,7 @@ function showTab(tab) {
 
 function toggleFiles(h) { var f = h.nextElementSibling; if (f) f.classList.toggle('open'); }
 
-function selOpt(el, key) {
+function selOpt(el) {
   el.parentNode.querySelectorAll('.ob-opt').forEach(function(o) { o.classList.remove('sel'); });
   el.classList.add('sel');
 }
@@ -859,8 +799,14 @@ function toggleTheme() {
   }
 }
 
+// ═══ MODALS ═══
 function openHub() { document.getElementById('modal-hub').classList.add('open'); }
 function closeHub() { document.getElementById('modal-hub').classList.remove('open'); }
+function openStory() { document.getElementById('modal-story').classList.add('open'); }
+function closeStory() { document.getElementById('modal-story').classList.remove('open'); }
+function openRegen() { document.getElementById('modal-regen').classList.add('open'); }
+function closeRegen() { document.getElementById('modal-regen').classList.remove('open'); }
+function closeEditor() { document.getElementById('modal-editor').classList.remove('open'); }
 
 function openResa() {
   document.getElementById('modal-resa').classList.add('open');
@@ -884,11 +830,7 @@ function openCours(vid, title, cardId) {
   document.getElementById('modal-cours').classList.add('open');
   try { localStorage.setItem('seen_' + cardId, '1'); } catch(e) {}
   if (clientRecord) {
-    createAirtable('Cours_vus', {
-      'Video_id': vid,
-      'Client': [clientRecord.id],
-      'Date_vue': new Date().toISOString()
-    });
+    atCreate('Cours_vus', { 'Video_id': vid, 'Client': [clientRecord.id], 'Date_vue': new Date().toISOString() });
   }
   var card = document.getElementById(cardId);
   var badge = document.getElementById('seen-' + cardId);
@@ -900,65 +842,322 @@ function closeCours() {
   document.getElementById('cours-iframe').src = '';
 }
 
-function openStory() { document.getElementById('modal-story').classList.add('open'); }
-function closeStory() { document.getElementById('modal-story').classList.remove('open'); }
 function copyStory() {
-  var txt = "Shooting day avec l'équipe Septup ! 🎬\nSession du 15 mars 2025 · Formule Essentiel\n#septup #contenu #tournage #lyon @septup_studio";
+  var txt = "Shooting day avec l equipe Septup ! 🎬\n#septup #contenu #tournage #lyon @septup_studio";
   try { navigator.clipboard.writeText(txt); } catch(e) {}
   var btn = document.getElementById('copy-btn');
-  btn.textContent = 'Copié !';
+  btn.textContent = 'Copie !';
   setTimeout(function() { btn.textContent = 'Copier le texte'; }, 2000);
 }
 
-function renderScript(text) {
-  var secs = { 'ACCROCHE': 'accroche', 'CORPS': 'corps', 'CONCLUSION': 'conclusion', 'CTA': 'cta' };
-  var lines = text.split('\n');
+// ═══ AIRTABLE ═══
+async function atFetch(table, filter, sort) {
+  var url = 'https://api.airtable.com/v0/' + AT_BASE + '/' + encodeURIComponent(table);
+  var params = [];
+  if (filter) params.push('filterByFormula=' + encodeURIComponent(filter));
+  if (sort) params.push(sort);
+  if (params.length) url += '?' + params.join('&');
+  var res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + AT_TOKEN } });
+  var data = await res.json();
+  return data.records || [];
+}
+
+async function atCreate(table, fields) {
+  var res = await fetch('https://api.airtable.com/v0/' + AT_BASE + '/' + encodeURIComponent(table), {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fields: fields })
+  });
+  return await res.json();
+}
+
+async function atDelete(table, recordId) {
+  await fetch('https://api.airtable.com/v0/' + AT_BASE + '/' + encodeURIComponent(table) + '/' + recordId, {
+    method: 'DELETE',
+    headers: { 'Authorization': 'Bearer ' + AT_TOKEN }
+  });
+}
+
+// ═══ DATA LOADING ═══
+async function loadClientData(email) {
+  var records = await atFetch('Client', '{Email}="' + email + '"');
+  return records.length ? records[0] : null;
+}
+
+async function loadSessions(clientId) {
+  return await atFetch('Reservation', 'FIND("' + clientId + '",ARRAYJOIN({Client}))', 'sort[0][field]=Date&sort[0][direction]=desc');
+}
+
+async function loadScripts(clientId) {
+  var records = await atFetch('Scripts', 'FIND("' + clientId + '",ARRAYJOIN({Client}))', 'sort[0][field]=Date_creation&sort[0][direction]=desc');
+  scriptsStore = {};
+  var months = ['jan.','fev.','mars','avr.','mai','juin','juil.','aout','sep.','oct.','nov.','dec.'];
+  records.forEach(function(r) {
+    var f = r.fields;
+    var d = f['Date_creation'] ? new Date(f['Date_creation']) : new Date();
+    var dateStr = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+    var statut = f['Statut'] || 'Brouillon';
+    var statusMap = { 'Valide': 'st-valid', 'Utilise': 'st-used', 'Brouillon': 'st-draft' };
+    scriptsStore[r.id] = {
+      title: f['Titre'] || 'Sans titre',
+      content: f['Contenu'] || '',
+      meta: (f['Format'] || '') + ' · ' + (f['Angle'] || '') + ' · ' + dateStr,
+      status: statusMap[statut] || 'st-draft',
+      statusLabel: statut,
+      airtableId: r.id
+    };
+  });
+  renderScriptsList();
+  var el = document.getElementById('home-nb-scripts');
+  if (el) el.textContent = records.length;
+}
+
+// ═══ RENDER ═══
+function renderAll(client, email) {
+  var f = client.fields;
+  var nom = (f['Nom_complet'] || email).split(' ')[0];
+  var pts = f['Pnts_fidelite'] || 0;
+  var palier = f['Niv_fidelite_badge'] || 'Bronze';
+  var initials = (f['Nom_complet'] || email).split(' ').map(function(w) { return w[0] || ''; }).slice(0,2).join('').toUpperCase();
+  var seuils = { 'Bronze': [0,600], 'Silver': [600,1200], 'Gold': [1200,2000] };
+  var range = seuils[palier] || [0,600];
+  var pct = Math.min(100, Math.round(((pts - range[0]) / (range[1] - range[0])) * 100));
+  var nextLbl = palier === 'Bronze' ? 'Silver a 600 pts' : palier === 'Silver' ? 'Gold a 1200 pts' : 'Palier max';
+
+  // Home
+  var el;
+  el = document.getElementById('home-name'); if (el) el.textContent = nom + ' 👋';
+  el = document.getElementById('home-pts'); if (el) el.textContent = pts;
+  el = document.getElementById('home-palier'); if (el) el.textContent = palier;
+  el = document.getElementById('home-bar'); if (el) el.style.width = pct + '%';
+  el = document.getElementById('home-bar-left'); if (el) el.textContent = palier + ' · ' + pts + ' pts';
+  el = document.getElementById('home-bar-right'); if (el) el.textContent = nextLbl;
+  el = document.getElementById('home-av'); if (el) el.textContent = initials;
+
+  // Points
+  el = document.getElementById('pts-big'); if (el) el.textContent = pts;
+  el = document.getElementById('pts-lbl'); if (el) el.textContent = 'points · Palier ' + palier;
+  el = document.getElementById('pts-bar'); if (el) el.style.width = pct + '%';
+  el = document.getElementById('pts-bar-left'); if (el) el.textContent = pts + ' pts';
+  var ptsDiff = palier === 'Bronze' ? 600 - pts : palier === 'Silver' ? 1200 - pts : 0;
+  el = document.getElementById('pts-bar-right'); if (el) el.textContent = ptsDiff > 0 ? nextLbl.replace('a ', 'dans ' + ptsDiff + ' pts - ') : 'Palier maximum';
+  ['bronze','silver','gold'].forEach(function(p) { var c = document.getElementById('pal-' + p); if (c) c.classList.remove('active'); });
+  var palierEl = document.getElementById('pal-' + palier.toLowerCase()); if (palierEl) palierEl.classList.add('active');
+
+  // Compte
+  el = document.getElementById('compte-av'); if (el) el.textContent = initials;
+  el = document.getElementById('compte-name'); if (el) el.textContent = f['Nom_complet'] || email;
+  el = document.getElementById('compte-email'); if (el) el.textContent = email;
+  el = document.getElementById('compte-palier'); if (el) el.textContent = palier;
+  el = document.getElementById('compte-palier2'); if (el) el.textContent = palier;
+  el = document.getElementById('sess-av'); if (el) el.textContent = initials;
+}
+
+function renderSessions(records) {
+  var now = new Date();
+  var months = ['jan.','fev.','mars','avr.','mai','juin','juil.','aout','sep.','oct.','nov.','dec.'];
+  var passees = records.filter(function(r) { return new Date(r.fields['Date']) < now; });
+  var avenir = records.filter(function(r) { return new Date(r.fields['Date']) >= now; });
+
+  function makeCard(r, isUp) {
+    var f = r.fields;
+    var d = new Date(f['Date']);
+    var dateStr = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+    var formule = f['Formule choisi'] || '';
+    var duree = f['Duree'] || f['Durée'] || 1;
+    var pts = formule === 'Essentielle' ? duree * 75 : duree * 60;
+    var tag = isUp ? '<div class="tag-up">A venir</div>' : '<div class="tag-done">Termine</div>';
+    return '<div class="sblock"><div class="sblock-hdr" onclick="toggleFiles(this)">'
+      + '<div><div class="sb-date">' + dateStr + '</div><div class="sb-meta">Formule ' + formule + ' · ' + duree + 'h</div></div>'
+      + '<div class="sb-r"><div class="sb-pts">+' + pts + ' pts</div>' + tag + '</div>'
+      + '</div><div class="sfiles"><div style="font-size:12px;color:var(--text3);">Fichiers disponibles prochainement</div></div></div>';
+  }
+
+  var passEl = document.getElementById('sess-passees');
+  var avenirEl = document.getElementById('sess-avenir');
+  if (passEl) passEl.innerHTML = passees.length ? passees.map(function(r) { return makeCard(r, false); }).join('') : '<div style="padding:20px 16px;font-size:13px;color:var(--text3);">Aucune session passee</div>';
+  if (avenirEl) avenirEl.innerHTML = avenir.length ? avenir.map(function(r) { return makeCard(r, true); }).join('') : '<div style="padding:20px 16px;font-size:13px;color:var(--text3);">Aucune session a venir</div>';
+
+  var el = document.getElementById('home-nb-sess'); if (el) el.textContent = records.length;
+  el = document.getElementById('home-sess-sub'); if (el) el.textContent = avenir.length + ' a venir';
+
+  if (avenir.length > 0) {
+    var nextF = avenir[0].fields;
+    var d = new Date(nextF['Date']);
+    el = document.getElementById('home-next-sess'); if (el) el.textContent = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+    el = document.getElementById('home-next-meta'); if (el) el.textContent = 'Formule ' + (nextF['Formule choisi'] || '') + ' · ' + (nextF['Duree'] || nextF['Durée'] || '') + 'h';
+  }
+}
+
+function renderScriptsList() {
+  var list = document.getElementById('scripts-list');
+  if (!list) return;
+  var keys = Object.keys(scriptsStore);
+  if (keys.length === 0) {
+    list.innerHTML = '<div style="padding:24px 16px;text-align:center;font-size:13px;color:var(--text3);">Aucun script pour l instant.<br>Genere ton premier script avec le bouton +</div>';
+    return;
+  }
   var html = '';
-  var cur = null;
-  var body = [];
-  function flush() {
-    if (body.length > 0) {
-      var cls = cur === 'CTA' ? 'section-body cta-body' : 'section-body';
-      html += '<div class="' + cls + '">' + body.join('\n') + '</div>';
-      body = [];
+  keys.forEach(function(id) {
+    var s = scriptsStore[id];
+    html += '<div class="script-card">'
+      + '<div class="script-cb" id="cb-' + id + '" onclick="toggleScriptSel(this,\'' + id + '\')"></div>'
+      + '<div class="script-info" onclick="openScriptById(\'' + id + '\')">'
+      + '<div class="script-title">' + s.title + '</div>'
+      + '<div class="script-meta">' + s.meta + '</div>'
+      + '<div class="script-status ' + s.status + '">' + s.statusLabel + '</div>'
+      + '</div>'
+      + '<div class="script-arrow" onclick="openScriptById(\'' + id + '\')">›</div>'
+      + '</div>';
+  });
+  list.innerHTML = html;
+}
+
+// ═══ SCRIPTS ═══
+function openScriptById(id) {
+  var s = scriptsStore[id];
+  if (!s) return;
+  currentEditorId = id;
+  document.getElementById('editor-title').textContent = s.title;
+  document.getElementById('editor-ta').innerHTML = renderEditorContent(s.content);
+  document.getElementById('modal-editor').classList.add('open');
+  updateEditorVirality();
+}
+
+function renderEditorContent(raw) {
+  if (!raw) return '';
+  var secs = { 'ACCROCHE': true, 'CORPS': true, 'CONCLUSION': true, 'CTA': true };
+  var lines = raw.split('\n');
+  var html = '';
+  lines.forEach(function(line) {
+    var t = line.trim();
+    if (secs[t]) {
+      html += '<span class="script-section-title">' + t + '</span>\n';
+    } else {
+      html += line + '\n';
     }
-  }
-  for (var i = 0; i < lines.length; i++) {
-    var line = lines[i].trim();
-    if (secs[line] !== undefined) {
-      flush();
-      cur = line;
-      html += '<span class="section-label ' + secs[line] + '">' + line + '</span>';
-    } else if (line !== '') {
-      body.push(line);
-    }
-  }
-  flush();
+  });
   return html;
 }
 
+function getEditorText() {
+  var el = document.getElementById('editor-ta');
+  return el ? (el.innerText || el.textContent || '') : '';
+}
+
+function copyScriptContent() {
+  var text = getEditorText();
+  try { navigator.clipboard.writeText(text); } catch(e) {}
+  var btn = document.getElementById('copy-script-btn');
+  btn.textContent = 'Copie !';
+  setTimeout(function() { btn.textContent = 'Copier le script'; }, 2000);
+}
+
+async function deleteCurrentScript() {
+  if (!currentEditorId) return;
+  if (!confirm('Supprimer ce script ? Action irreversible.')) return;
+  var s = scriptsStore[currentEditorId];
+  if (s && s.airtableId) {
+    try { await atDelete('Scripts', s.airtableId); } catch(e) {}
+  }
+  delete scriptsStore[currentEditorId];
+  selectedScripts = {};
+  document.getElementById('export-bar').style.display = 'none';
+  renderScriptsList();
+  closeEditor();
+}
+
+async function saveEditor() {
+  var title = document.getElementById('editor-title').textContent;
+  var content = getEditorText();
+  var score = document.getElementById('editor-vir-score').textContent;
+  if (clientRecord) {
+    var s = currentEditorId ? scriptsStore[currentEditorId] : null;
+    if (s && s.airtableId) {
+      // Mise a jour
+      await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Scripts/' + s.airtableId, {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: { 'Contenu': content, 'Score_viralite': parseFloat(score) || 0 } })
+      });
+    } else {
+      // Creation
+      await atCreate('Scripts', {
+        'Titre': title, 'Contenu': content,
+        'Score_viralite': parseFloat(score) || 0,
+        'Statut': 'Valide', 'Client': [clientRecord.id],
+        'Date_creation': new Date().toISOString()
+      });
+    }
+    await loadScripts(clientRecord.id);
+  }
+  alert('Script sauvegarde !');
+  closeEditor();
+}
+
+function toggleScriptSel(cb, id) {
+  if (selectedScripts[id]) { delete selectedScripts[id]; cb.classList.remove('checked'); }
+  else { selectedScripts[id] = true; cb.classList.add('checked'); }
+  var count = Object.keys(selectedScripts).length;
+  var bar = document.getElementById('export-bar');
+  if (count > 0) { bar.style.display = 'flex'; document.getElementById('export-count').textContent = count + ' selectionne' + (count > 1 ? 's' : ''); }
+  else { bar.style.display = 'none'; }
+}
+
+function exportScripts(fmt) {
+  alert(Object.keys(selectedScripts).length + ' script(s) exporte(s) en ' + fmt.toUpperCase() + '.\n(Disponible en production)');
+}
+
+// ═══ VIRALITY ═══
+function computeVirality(text) {
+  var score = 4.5;
+  var tips = [];
+  if (text.includes('ACCROCHE')) { score += 1; } else { tips.push('Ajoute une section ACCROCHE forte'); }
+  if (text.includes('CTA')) { score += 1; } else { tips.push('Ajoute un CTA clair'); }
+  if (text.includes('CORPS')) score += 0.5;
+  if (text.includes('CONCLUSION')) score += 0.5;
+  if (/\d+%|\d+ fois|\d+ jours/.test(text)) { score += 1; } else { tips.push('Ajoute des chiffres concrets'); }
+  if (/vous |votre |tu |ton |ta /i.test(text)) score += 0.5;
+  if (/→|•|✓/.test(text)) score += 0.5;
+  if (text.length > 400) score += 0.5;
+  score = Math.min(10, Math.max(1, Math.round(score * 10) / 10));
+  var grade = score >= 8.5 ? 'Excellent' : score >= 7 ? 'Bon' : score >= 5 ? 'Moyen' : 'Faible';
+  return { score: score, tip: tips.length > 0 ? tips[0] : 'Script solide !', grade: grade };
+}
+
+function onEditorChange() {
+  if (editorTimer) clearTimeout(editorTimer);
+  editorTimer = setTimeout(updateEditorVirality, 600);
+}
+
+function updateEditorVirality() {
+  var text = getEditorText();
+  var r = computeVirality(text);
+  document.getElementById('editor-vir-score').textContent = r.score.toFixed(1);
+  document.getElementById('editor-vir-bar').style.width = (r.score * 10) + '%';
+  document.getElementById('editor-vir-tip').textContent = r.tip;
+  document.getElementById('editor-vir-grade').textContent = r.grade;
+}
+
+// ═══ GENERATION ═══
 function openGen() {
-  genStep = 1;
-  genData = { sujet: '', format: '', angle: '' };
+  genStep = 1; genData = { sujet: '', format: '', angle: '' };
   document.querySelectorAll('.gen-step').forEach(function(s) { s.classList.remove('active'); });
   document.getElementById('gen-step-1').classList.add('active');
   document.getElementById('gen-footer').style.display = 'block';
   document.getElementById('gen-next-txt').textContent = 'Suivant';
   document.getElementById('modal-gen').classList.add('open');
 }
-function closeGen() {
-  document.getElementById('modal-gen').classList.remove('open');
-  if (msgTimer) clearInterval(msgTimer);
-}
+function closeGen() { document.getElementById('modal-gen').classList.remove('open'); if (msgTimer) clearInterval(msgTimer); }
 
 function nextGenStep() {
   if (genStep === 1) {
     genData.sujet = document.getElementById('gen-sujet').value;
-    if (!genData.sujet.trim()) { alert('Décris d\'abord le sujet !'); return; }
+    if (!genData.sujet.trim()) { alert('Decris d abord le sujet !'); return; }
     genStep = 2;
     document.getElementById('gen-step-1').classList.remove('active');
     document.getElementById('gen-step-2').classList.add('active');
-    document.getElementById('gen-next-txt').textContent = 'Générer ✦';
+    document.getElementById('gen-next-txt').textContent = 'Generer ✦';
   } else if (genStep === 2) {
     genStep = 3;
     document.getElementById('gen-step-2').classList.remove('active');
@@ -967,41 +1166,45 @@ function nextGenStep() {
     document.getElementById('gen-generating').style.display = 'block';
     document.getElementById('script-result').classList.remove('active');
     startGenAnim();
-    callAPI();
+    callAPI(null, null);
   }
 }
 
 function startGenAnim() {
   msgIdx = 0;
   document.getElementById('gen-anim-txt').textContent = genMsgs[0];
-  msgTimer = setInterval(function() {
-    msgIdx = (msgIdx + 1) % genMsgs.length;
-    document.getElementById('gen-anim-txt').textContent = genMsgs[msgIdx];
-  }, 1800);
+  msgTimer = setInterval(function() { msgIdx = (msgIdx + 1) % genMsgs.length; document.getElementById('gen-anim-txt').textContent = genMsgs[msgIdx]; }, 1800);
 }
 
 async function callAPI(prevScript, instruction) {
-  var fmts = { reel30: 'Reel Instagram 30 secondes (~80 mots)', reel60: 'Reel Instagram 60 secondes (~150 mots)', linkedin: 'Post LinkedIn (~200 mots)', podcast: 'Introduction de podcast (jusqu\'à 400 mots, max 1min30)' };
-  var angles = { edu: 'éducatif', story: 'storytelling', vente: 'vente directe', temo: 'témoignage' };
+  var fmts = { reel30: 'Reel 30s (~80 mots)', reel60: 'Reel 60s (~150 mots)', linkedin: 'Post LinkedIn (~200 mots)', podcast: 'Intro podcast (max 400 mots)' };
+  var angles = { edu: 'educatif', story: 'storytelling', vente: 'vente directe', temo: 'temoignage' };
   var prompt;
   if (prevScript && instruction) {
-    prompt = 'Voici un script existant :\n\n' + prevScript + '\n\nInstruction : ' + instruction + '\n\nRégénère-le en appliquant cette modification. Sois généreux sur la longueur, ne tronque pas les idées (max 1min30 = ~400 mots pour un podcast, ~150 mots pour un Reel 60s). Structure OBLIGATOIRE :\nACCROCHE\n[texte]\n\nCORPS\n[texte, développe bien]\n\nCONCLUSION\n[texte]\n\nCTA\n[texte]\n\nSois direct, percutant, sans bullshit.';
+    prompt = 'Script existant :\n\n' + prevScript + '\n\nInstruction : ' + instruction + '\n\nRegenere-le en appliquant cette modification. Structure obligatoire :\nACCROCHE\n[texte]\n\nCORPS\n[texte]\n\nCONCLUSION\n[texte]\n\nCTA\n[texte]\n\nDirect, percutant, sans bullshit.';
   } else {
-    prompt = 'Profil de marque : entreprise B2B, ton expert et inspirant, cible : dirigeants et responsables communication.\n\nCrée un script ' + (fmts[genData.format] || 'Reel 60 secondes (~150 mots)') + ' avec un angle ' + (angles[genData.angle] || 'éducatif') + ' sur : ' + genData.sujet + '.\n\nSois généreux sur le contenu, ne coupe pas les idées. Structure OBLIGATOIRE (labels en majuscules seuls sur leur ligne) :\nACCROCHE\n[texte percutant]\n\nCORPS\n[texte, développe vraiment les points]\n\nCONCLUSION\n[texte]\n\nCTA\n[appel à l\'action fort]\n\nSois direct, percutant, sans bullshit.';
+    prompt = 'Cree un script ' + (fmts[genData.format] || 'Reel 60s') + ' angle ' + (angles[genData.angle] || 'educatif') + ' sur : ' + genData.sujet + '.\n\nStructure obligatoire (labels en majuscules seuls sur leur ligne) :\nACCROCHE\n[texte percutant]\n\nCORPS\n[developpe les points]\n\nCONCLUSION\n[texte]\n\nCTA\n[action forte]\n\nDirect, percutant, sans bullshit.';
   }
   try {
-    var response = await fetch('/api/generate', {
+    var res = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
     });
-    var data = await response.json();
-    var text = data.content && data.content[0] ? data.content[0].text : 'Erreur de génération.';
+    var data = await res.json();
+    var text = data.content && data.content[0] ? data.content[0].text : 'Erreur de generation.';
     showScript(text);
   } catch(e) {
-    var fallback = 'ACCROCHE\n\n' + genData.sujet + '. Voici ce que personne ne vous dit.\n\nCORPS\n\nAprès des années dans ce domaine, j\'ai identifié 3 points clés qui changent tout :\n\n→ La plupart se trompent d\'approche dès le début. Ils optimisent la mauvaise chose.\n→ La simplicité bat toujours la complexité. Un message clair > dix messages parfaits.\n→ L\'action régulière prime sur la perfection. Le volume crée la compétence.\n\nCONCLUSION\n\nAppliquez ces principes dès aujourd\'hui. Pas demain. Aujourd\'hui.\n\nCTA\n\nSauvegardez ce post pour y revenir quand vous en aurez besoin.';
-    showScript(fallback);
+    showScript('ACCROCHE\n\n' + genData.sujet + '. Voici ce que personne ne vous dit.\n\nCORPS\n\nApres des annees dans ce domaine, 3 points changent tout :\n\n→ La plupart se trompent d approche.\n→ La simplicite bat la complexite.\n→ L action reguliere prime sur la perfection.\n\nCONCLUSION\n\nAppliquez ces principes des aujourd hui.\n\nCTA\n\nSauvegardez ce post.');
   }
+}
+
+function renderScript(text) {
+  var secs = { 'ACCROCHE': 'accroche', 'CORPS': 'corps', 'CONCLUSION': 'conclusion', 'CTA': 'cta' };
+  var lines = text.split('\n'); var html = ''; var cur = null; var body = [];
+  function flush() { if (body.length > 0) { var cls = cur === 'CTA' ? 'section-body cta-body' : 'section-body'; html += '<div class="' + cls + '">' + body.join('\n') + '</div>'; body = []; } }
+  for (var i = 0; i < lines.length; i++) { var line = lines[i].trim(); if (secs[line] !== undefined) { flush(); cur = line; html += '<span class="section-label ' + secs[line] + '">' + line + '</span>'; } else if (line !== '') { body.push(line); } }
+  flush(); return html;
 }
 
 function showScript(text) {
@@ -1011,200 +1214,153 @@ function showScript(text) {
   document.getElementById('script-rendered').innerHTML = renderScript(text);
   document.getElementById('script-result').classList.add('active');
   document.getElementById('script-result').setAttribute('data-raw', text);
-  var score = computeVirality(text);
-  document.getElementById('gen-vir-score').textContent = score.toFixed(1);
-}
-
-function computeVirality(text) {
-  var score = 4.5;
-  if (text.includes('ACCROCHE')) score += 1;
-  if (text.includes('CTA')) score += 1;
-  if (text.includes('CORPS')) score += 0.5;
-  if (text.includes('CONCLUSION')) score += 0.5;
-  if (text.match(/\d+%|\d+ fois|\d+ jours|\d+ secondes|\d+ minutes/)) score += 1;
-  if (text.toLowerCase().match(/vous |votre |tu |ton |ta /)) score += 0.5;
-  if (text.match(/→|•|✓/)) score += 0.5;
-  if (text.length > 400) score += 0.5;
-  return Math.min(10, Math.max(1, Math.round(score * 10) / 10));
-}
-
-function computeViralityDetailed(text) {
-  var score = 4.5;
-  var tips = [];
-  if (text.includes('ACCROCHE')) { score += 1; } else { tips.push('Ajoute une section ACCROCHE forte'); }
-  if (text.includes('CTA')) { score += 1; } else { tips.push('Ajoute un CTA clair en fin'); }
-  if (text.includes('CORPS')) { score += 0.5; }
-  if (text.includes('CONCLUSION')) { score += 0.5; }
-  if (text.match(/\d+%|\d+ fois|\d+ jours|\d+ secondes|\d+ minutes/)) { score += 1; } else { tips.push('Ajoute des chiffres concrets'); }
-  if (text.toLowerCase().match(/vous |votre |tu |ton |ta /)) { score += 0.5; } else { tips.push('Interpelle directement ton audience'); }
-  if (text.match(/→|•|✓/)) { score += 0.5; }
-  if (text.length > 400) { score += 0.5; }
-  score = Math.min(10, Math.max(1, Math.round(score * 10) / 10));
-  var grade = score >= 8.5 ? 'Excellent' : score >= 7 ? 'Bon' : score >= 5 ? 'Moyen' : 'Faible';
-  return { score: score, tip: tips.length > 0 ? tips[0] : 'Script solide, continue !', grade: grade };
+  var v = computeVirality(text);
+  document.getElementById('gen-vir-score').textContent = v.score.toFixed(1);
 }
 
 function validateScript() {
   var text = document.getElementById('script-result').getAttribute('data-raw') || '';
   var title = (genData.sujet || 'Script').substring(0, 45);
   var fmts = { reel30: 'Reel 30s', reel60: 'Reel 60s', linkedin: 'LinkedIn', podcast: 'Podcast' };
-  var angles = { edu: 'Éducatif', story: 'Storytelling', vente: 'Vente', temo: 'Témoignage' };
+  var angles = { edu: 'Educatif', story: 'Storytelling', vente: 'Vente', temo: 'Temoignage' };
   var now = new Date();
-  var months = ['jan.','fév.','mars','avr.','mai','juin','juil.','août','sep.','oct.','nov.','déc.'];
+  var months = ['jan.','fev.','mars','avr.','mai','juin','juil.','aout','sep.','oct.','nov.','dec.'];
   var dateStr = now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
-  var id = 'n' + Date.now();
-  var safeTitle = title.replace(/'/g, "\\'");
-  var safeText = text.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-  var card = document.createElement('div');
-  card.className = 'script-card';
-  card.innerHTML = '<div class="script-cb" id="cb-' + id + '" onclick="toggleScript(this,\'' + id + '\')"></div>'
-    + '<div class="script-info" onclick="openEditor(\'' + safeTitle + '\',\'' + safeText + '\',\'' + id + '\')">'
-    + '<div class="script-title">' + title + '</div>'
-    + '<div class="script-meta">' + (fmts[genData.format] || 'Reel') + ' · ' + (angles[genData.angle] || 'Éducatif') + ' · ' + dateStr + '</div>'
-    + '<div class="script-status st-draft">Brouillon</div></div>'
-    + '<div class="script-arrow" onclick="openEditor(\'' + safeTitle + '\',\'' + safeText + '\',\'' + id + '\')">›</div>';
-  document.getElementById('scripts-list').insertBefore(card, document.getElementById('scripts-list').firstChild);
+  var id = 'local_' + Date.now();
+  var meta = (fmts[genData.format] || 'Reel') + ' · ' + (angles[genData.angle] || 'Educatif') + ' · ' + dateStr;
+  scriptsStore[id] = { title: title, content: text, meta: meta, status: 'st-valid', statusLabel: 'Valide', airtableId: null };
+  if (clientRecord) {
+    atCreate('Scripts', {
+      'Titre': title, 'Contenu': text,
+      'Format': fmts[genData.format] || 'Reel 60s',
+      'Angle': angles[genData.angle] || 'Educatif',
+      'Score_viralite': parseFloat(document.getElementById('gen-vir-score').textContent) || 0,
+      'Statut': 'Valide', 'Client': [clientRecord.id],
+      'Date_creation': new Date().toISOString()
+    }).then(function(rec) {
+      if (rec.id && scriptsStore[id]) { scriptsStore[id].airtableId = rec.id; scriptsStore[rec.id] = scriptsStore[id]; delete scriptsStore[id]; renderScriptsList(); }
+    });
+  }
+  renderScriptsList();
+  var el = document.getElementById('home-nb-scripts');
+  if (el) el.textContent = Object.keys(scriptsStore).length;
   closeGen();
   go('scripts');
 }
 
-function openRegen() { document.getElementById('modal-regen').classList.add('open'); }
-function closeRegen() { document.getElementById('modal-regen').classList.remove('open'); }
-
+// ═══ REGEN ═══
 function setRegen(el, txt) {
   document.querySelectorAll('.regen-chip').forEach(function(c) { c.classList.remove('sel'); });
   el.classList.add('sel');
   document.getElementById('regen-instruction').value = txt;
 }
 
+function openRegenFromEditor() {
+  currentEditorText = getEditorText();
+  openRegen();
+}
+
 function doRegen() {
   var instruction = document.getElementById('regen-instruction').value;
-  if (!instruction.trim()) { alert('Décris le changement souhaité !'); return; }
-  var prevScript = document.getElementById('script-result').getAttribute('data-raw') || '';
+  if (!instruction.trim()) { alert('Decris le changement souhaite !'); return; }
+  var prevScript = currentEditorText || document.getElementById('script-result').getAttribute('data-raw') || '';
+  if (!prevScript.trim()) { alert('Aucun script a regenerer'); return; }
   closeRegen();
-  document.getElementById('script-result').classList.remove('active');
-  document.getElementById('gen-generating').style.display = 'block';
+  closeEditor();
+  if (!document.getElementById('modal-gen').classList.contains('open')) {
+    document.getElementById('modal-gen').classList.add('open');
+  }
+  genStep = 3;
+  document.querySelectorAll('.gen-step').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('gen-step-3').classList.add('active');
   document.getElementById('gen-footer').style.display = 'none';
+  document.getElementById('gen-generating').style.display = 'block';
+  document.getElementById('script-result').classList.remove('active');
   startGenAnim();
   callAPI(prevScript, instruction);
 }
 
-function renderEditorContent(raw) {
-  var sections = { 'ACCROCHE': true, 'CORPS': true, 'CONCLUSION': true, 'CTA': true };
-  var lines = raw.split('\n');
-  var html = '';
-  lines.forEach(function(line) {
-    var trimmed = line.trim();
-    if (sections[trimmed]) {
-      html += '<span class="script-section-title">' + trimmed + '</span>\n';
-    } else {
-      html += (line || '') + '\n';
-    }
-  });
-  return html;
-}
-
-function getEditorRawText() {
-  var el = document.getElementById('editor-ta');
-  return el.innerText || el.textContent || '';
-}
-
-function openEditor(title, raw, id) {
-  document.getElementById('editor-title').textContent = title;
-  var el = document.getElementById('editor-ta');
-  el.innerHTML = renderEditorContent(raw);
-  document.getElementById('modal-editor').classList.add('open');
-  updateEditorVirality();
-}
-function closeEditor() { document.getElementById('modal-editor').classList.remove('open'); }
-
-function insertTag(tag) {
-  var el = document.getElementById('editor-ta');
-  el.focus();
-  document.execCommand('insertHTML', false, '<br><span class="script-section-title">' + tag + '</span><br>');
-  updateEditorVirality();
-}
-
-function onEditorChange() {
-  if (editorTimer) clearTimeout(editorTimer);
-  editorTimer = setTimeout(updateEditorVirality, 600);
-}
-
-function updateEditorVirality() {
-  var text = getEditorRawText();
-  var result = computeViralityDetailed(text);
-  document.getElementById('editor-vir-score').textContent = result.score.toFixed(1);
-  document.getElementById('editor-vir-bar').style.width = (result.score * 10) + '%';
-  document.getElementById('editor-vir-tip').textContent = result.tip;
-  document.getElementById('editor-vir-grade').textContent = result.grade;
-}
-
-async function analyzeViralityAI() {
-  var text = getEditorRawText();
-  if (!text.trim()) return;
-  var btn = document.getElementById('vir-btn');
-  btn.textContent = '...';
-  btn.disabled = true;
-  try {
-    var prompt = 'Analyse ce script et donne une note de viralité de 1 à 10. Réponds UNIQUEMENT en JSON valide : {"score": X.X, "tip": "conseil court en une phrase max", "grade": "Excellent|Bon|Moyen|Faible"}. Script : ' + text;
-    var response = await fetch('/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 100, messages: [{ role: 'user', content: prompt }] })
-    });
-    var data = await response.json();
-    var raw = data.content && data.content[0] ? data.content[0].text : '{}';
-    var clean = raw.replace(/```json|```/g, '').trim();
-    var parsed = JSON.parse(clean);
-    document.getElementById('editor-vir-score').textContent = parseFloat(parsed.score).toFixed(1);
-    document.getElementById('editor-vir-bar').style.width = (parseFloat(parsed.score) * 10) + '%';
-    document.getElementById('editor-vir-tip').textContent = parsed.tip || '';
-    document.getElementById('editor-vir-grade').textContent = parsed.grade || '';
-  } catch(e) { updateEditorVirality(); }
-  btn.textContent = 'Analyser ✦';
-  btn.disabled = false;
-}
-
-async function saveEditor() {
-  var title = document.getElementById('editor-title').textContent;
-  var content = getEditorRawText();
-  var score = document.getElementById('editor-vir-score').textContent;
-  if (clientRecord) {
-    await createAirtable('Scripts', {
-      'Titre': title,
-      'Contenu': content,
-      'Score_viralite': parseFloat(score) || 0,
-      'Statut': 'Validé',
-      'Client': [clientRecord.id],
-      'Date_creation': new Date().toISOString()
-    });
-  }
-  alert('Script sauvegardé !');
-  closeEditor();
-}
-
-function toggleScript(cb, id) {
-  if (selectedScripts[id]) {
-    delete selectedScripts[id];
-    cb.classList.remove('checked');
+// ═══ AUTH ═══
+function initSupabase() {
+  if (window.supabase) {
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    checkSession();
   } else {
-    selectedScripts[id] = true;
-    cb.classList.add('checked');
+    setTimeout(initSupabase, 200);
   }
-  var count = Object.keys(selectedScripts).length;
-  var bar = document.getElementById('export-bar');
-  if (count > 0) {
-    bar.style.display = 'flex';
-    document.getElementById('export-count').textContent = count + ' sélectionné' + (count > 1 ? 's' : '');
+}
+
+async function checkSession() {
+  var result = await sb.auth.getSession();
+  if (result.data && result.data.session) {
+    currentUser = result.data.session.user;
+    await loadUserData(currentUser.email);
+  }
+}
+
+async function loadUserData(email) {
+  var client = await loadClientData(email);
+  if (!client) { go('ob1'); return; }
+  clientRecord = client;
+  renderAll(clientRecord, email);
+  var sessions = await loadSessions(clientRecord.id);
+  renderSessions(sessions);
+  await loadScripts(clientRecord.id);
+  go('home');
+}
+
+async function doLogin() {
+  var email = document.getElementById('login-email').value.trim();
+  var password = document.getElementById('login-password').value;
+  if (!email || !password) { alert('Email et mot de passe requis'); return; }
+  var result = await sb.auth.signInWithPassword({ email: email, password: password });
+  if (result.error) { alert('Erreur : ' + result.error.message); return; }
+  currentUser = result.data.user;
+  await loadUserData(currentUser.email);
+}
+
+async function doLoginGoogle() {
+  await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  currentUser = null; clientRecord = null; scriptsStore = {};
+  go('login');
+}
+
+async function doSignup() {
+  var email = document.getElementById('ob-email') ? document.getElementById('ob-email').value.trim() : '';
+  var password = document.getElementById('ob-password') ? document.getElementById('ob-password').value : '';
+  if (!email || !password) { alert('Email et mot de passe requis'); return; }
+  if (password.length < 8) { alert('Mot de passe trop court (min. 8 caracteres)'); return; }
+  var existing = await loadClientData(email);
+  var result = await sb.auth.signUp({ email: email, password: password });
+  if (result.error) { alert('Erreur : ' + result.error.message); return; }
+  if (existing) {
+    clientRecord = existing;
   } else {
-    bar.style.display = 'none';
+    var obType = document.querySelector('#screen-ob1 .ob-opt.sel');
+    var obCamera = document.querySelector('#screen-ob5 .ob-opt.sel');
+    await atCreate('Client', {
+      'Nom_complet': email,
+      'Email': email,
+      'Pnts_fidelite': 0,
+      'Niv_fidelite_badge': 'Bronze',
+      'Onboarding_type': obType ? obType.textContent.trim() : '',
+      'Onboarding_secteur': (document.getElementById('ob1-secteur') || {}).value || '',
+      'Onboarding_objectif': (document.getElementById('ob1-activite') || {}).value || '',
+      'Onboarding_cible': (document.getElementById('ob3-cible') || {}).value || '',
+      'Onboarding_camera': obCamera ? obCamera.textContent.trim() : ''
+    });
+    clientRecord = await loadClientData(email);
   }
+  currentUser = { email: email };
+  if (clientRecord) { renderAll(clientRecord, email); }
+  go('ob-done');
 }
 
-function exportScripts(fmt) {
-  alert(Object.keys(selectedScripts).length + ' script(s) exporté(s) en ' + fmt.toUpperCase() + '.\n(Disponible en production)');
-}
-
+// ═══ INIT ═══
 (function() {
   for (var i = 1; i <= 6; i++) {
     try {
@@ -1217,293 +1373,6 @@ function exportScripts(fmt) {
     } catch(e) {}
   }
 })();
-
-// AUTH SUPABASE
-var SUPABASE_URL = 'https://vruwzwzokyyzwdyfnfpp.supabase.co';
-var SUPABASE_KEY = 'sb_publishable_5EcH8Gb_4DKFLUUSBWMrOg_rl2ZieSR';
-var AT_TOKEN = 'patVjlgAjOvOevj5C.e6bb132a61230dda56dbf0e3782ec11074c07f71e2823feed538809bc7abd9e2';
-var AT_BASE = 'appmyjaumN08lB8mE';
-var sb = null;
-var currentUser = null;
-var clientRecord = null;
-
-function initSupabase() {
-  if (window.supabase) {
-    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    checkSession();
-  } else {
-    setTimeout(initSupabase, 200);
-  }
-}
-
-async function doLogin() {
-  var email = document.querySelector('#screen-login input[type="email"]').value;
-  var password = document.querySelector('#screen-login input[type="password"]').value;
-  if (!email || !password) { alert('Email et mot de passe requis'); return; }
-  var result = await sb.auth.signInWithPassword({ email: email, password: password });
-  if (result.error) { alert('Erreur : ' + result.error.message); return; }
-  currentUser = result.data.user;
-  var client = await loadClientData(currentUser.email);
-  if (!client) {
-    go('ob1');
-  } else {
-    clientRecord = client;
-    renderHome(clientRecord);
-    renderPoints(clientRecord);
-    renderCompte(clientRecord, currentUser.email);
-    var sessions = await loadSessions(clientRecord.id);
-    renderSessions(sessions);
-    go('home');
-  }
-}
-
-async function doLoginGoogle() {
-  await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
-}
-
-async function doLogout() {
-  await sb.auth.signOut();
-  currentUser = null;
-  go('login');
-}
-
-async function checkSession() {
-  var result = await sb.auth.getSession();
-  if (result.data && result.data.session) {
-    currentUser = result.data.session.user;
-    var client = await loadClientData(currentUser.email);
-    if (!client) {
-      go('ob1');
-    } else {
-      clientRecord = client;
-      renderHome(clientRecord);
-      renderPoints(clientRecord);
-      renderCompte(clientRecord, currentUser.email);
-      var sessions = await loadSessions(clientRecord.id);
-      renderSessions(sessions);
-      go('home');
-    }
-  }
-}
-
-async function loadAndRender(email) {
-  clientRecord = await loadClientData(email);
-  if (!clientRecord) return;
-  renderHome(clientRecord);
-  renderPoints(clientRecord);
-  renderCompte(clientRecord, email);
-  var sessions = await loadSessions(clientRecord.id);
-  renderSessions(sessions);
-}
-
-async function fetchAirtable(table, filter, sort) {
-  var url = 'https://api.airtable.com/v0/' + AT_BASE + '/' + encodeURIComponent(table);
-  var params = [];
-  if (filter) params.push('filterByFormula=' + encodeURIComponent(filter));
-  if (sort) params.push(sort);
-  if (params.length) url += '?' + params.join('&');
-  var res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + AT_TOKEN } });
-  var data = await res.json();
-  return data.records || [];
-}
-
-async function createAirtable(table, fields) {
-  var res = await fetch('https://api.airtable.com/v0/' + AT_BASE + '/' + encodeURIComponent(table), {
-    method: 'POST',
-    headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fields: fields })
-  });
-  return await res.json();
-}
-
-async function loadClientData(email) {
-  var records = await fetchAirtable('Client', '{Email}="' + email + '"');
-  if (!records.length) return null;
-  return records[0];
-}
-
-async function loadSessions(clientId) {
-  var records = await fetchAirtable('Réservation', 'FIND("' + clientId + '",ARRAYJOIN({Client}))','sort[0][field]=Date&sort[0][direction]=desc');
-  return records;
-}
-
-function renderHome(client) {
-  var f = client.fields;
-  var nom = f['Nom_complet'] || 'Client';
-  var pts = f['Pnts_fidelite'] || 0;
-  var palier = f['Niv_fidelite_badge'] || 'Bronze';
-  var prochaine = f['Prochaine session'] || '';
-
-  // Update hero card
-  var heroName = document.querySelector('#screen-home .hero-name');
-  var heroGreet = document.querySelector('#screen-home .hero-greeting');
-  if (heroGreet) heroGreet.textContent = 'Bonjour,';
-  if (heroName) heroName.textContent = nom.split(' ')[0] + ' 👋';
-
-  // Points
-  var ptsEl = document.querySelector('#screen-home .pts-big');
-  var ptsLbl = document.querySelector('#screen-home .pts-lbl');
-  if (ptsEl) ptsEl.textContent = pts;
-
-  // Palier badge
-  var palierTxt = document.querySelector('#screen-home .palier-txt');
-  if (palierTxt) palierTxt.textContent = palier;
-
-  // Progress bar
-  var seuils = { Bronze: [0, 600], Silver: [600, 1200], Gold: [1200, 2000] };
-  var range = seuils[palier] || [0, 600];
-  var pct = Math.min(100, Math.round(((pts - range[0]) / (range[1] - range[0])) * 100));
-  var barFill = document.querySelector('#screen-home .bar-fill');
-  if (barFill) barFill.style.width = pct + '%';
-  var barLabels = document.querySelectorAll('#screen-home .bar-labels span');
-  if (barLabels.length >= 2) {
-    barLabels[0].textContent = palier + ' · ' + pts + ' pts';
-    var next = palier === 'Bronze' ? 'Silver à 600 pts' : palier === 'Silver' ? 'Gold à 1200 pts' : 'Palier max';
-    barLabels[1].textContent = next;
-  }
-
-  // Nb sessions
-  var nbSess = f['Nbr_de_session'] || 0;
-  var miniVal = document.querySelector('#screen-home .mini-val');
-  if (miniVal) miniVal.textContent = nbSess;
-
-  // Prochaine session
-  if (prochaine) {
-    var d = new Date(prochaine);
-    var months = ['jan.','fév.','mars','avr.','mai','juin','juil.','août','sep.','oct.','nov.','déc.'];
-    var sessDate = document.querySelector('#screen-home .sess-date');
-    if (sessDate) sessDate.textContent = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
-  }
-}
-
-function renderSessions(records) {
-  var now = new Date();
-  var passees = records.filter(function(r) { return new Date(r.fields['Date']) < now; });
-  var avenir = records.filter(function(r) { return new Date(r.fields['Date']) >= now; });
-  var months = ['jan.','fév.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
-
-  function makeCard(r, isUpcoming) {
-    var f = r.fields;
-    var d = new Date(f['Date']);
-    var dateStr = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
-    var formule = f['Formule choisi'] || '';
-    var duree = f['Durée'] || 1;
-    var pts = formule === 'Essentielle' ? duree * 75 : duree * 60;
-    var tag = isUpcoming ? '<div class="tag-up">À venir</div>' : '<div class="tag-done">Terminé</div>';
-    return '<div class="sblock"><div class="sblock-hdr" onclick="toggleFiles(this)">'
-      + '<div><div class="sb-date">' + dateStr + '</div><div class="sb-meta">Formule ' + formule + ' · ' + duree + 'h</div></div>'
-      + '<div class="sb-r"><div class="sb-pts">+' + pts + ' pts</div>' + tag + '</div>'
-      + '</div><div class="sfiles"><div style="font-size:12px;color:var(--text3);">Fichiers disponibles prochainement</div></div></div>';
-  }
-
-  var passHtml = passees.map(function(r) { return makeCard(r, false); }).join('');
-  var avenirHtml = avenir.map(function(r) { return makeCard(r, true); }).join('');
-
-  var passEl = document.getElementById('sess-passees');
-  var avenirEl = document.getElementById('sess-avenir');
-  if (passEl) passEl.innerHTML = passHtml || '<div style="padding:20px 16px;font-size:13px;color:var(--text3);">Aucune session passée</div>';
-  if (avenirEl) avenirEl.innerHTML = avenirHtml || '<div style="padding:20px 16px;font-size:13px;color:var(--text3);">Aucune session à venir</div>';
-
-  // Update mini card
-  var miniVals = document.querySelectorAll('#screen-home .mini-val');
-  if (miniVals[0]) miniVals[0].textContent = records.length;
-  var miniSubs = document.querySelectorAll('#screen-home .mini-sub');
-  if (miniSubs[0]) miniSubs[0].textContent = avenir.length + ' à venir';
-}
-
-function renderPoints(client) {
-  var f = client.fields;
-  var pts = f['Pnts_fidelite'] || 0;
-  var palier = f['Niv_fidelite_badge'] || 'Bronze';
-
-  var ptsEl = document.querySelector('#screen-points .pts-big');
-  if (ptsEl) ptsEl.textContent = pts;
-
-  var ptsLbl = document.querySelector('#screen-points .pts-lbl');
-  var next = palier === 'Bronze' ? 'Silver dans ' + (600 - pts) + ' pts' : palier === 'Silver' ? 'Gold dans ' + (1200 - pts) + ' pts' : 'Palier maximum atteint 🏆';
-  if (ptsLbl) ptsLbl.textContent = 'points · Palier ' + palier;
-
-  var barFill = document.querySelector('#screen-points .bar-fill');
-  var seuils = { Bronze: [0, 600], Silver: [600, 1200], Gold: [1200, 2000] };
-  var range = seuils[palier] || [0, 600];
-  var pct = Math.min(100, Math.round(((pts - range[0]) / (range[1] - range[0])) * 100));
-  if (barFill) barFill.style.width = pct + '%';
-
-  var barLabels = document.querySelectorAll('#screen-points .bar-labels span');
-  if (barLabels.length >= 2) {
-    barLabels[0].textContent = pts + ' pts';
-    barLabels[1].textContent = next;
-  }
-
-  // Palier cards
-  document.querySelectorAll('#screen-points .pal-card').forEach(function(card) {
-    card.classList.remove('active');
-    var name = card.querySelector('.pal-name');
-    if (name && name.textContent.includes(palier)) card.classList.add('active');
-  });
-}
-
-function renderCompte(client, email) {
-  var f = client.fields;
-  document.querySelectorAll('#screen-compte .av-big').forEach(function(el) {
-    var initials = (f['Nom_complet'] || email).split(' ').map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();
-    el.textContent = initials;
-  });
-  var nameEl = document.querySelector('#screen-compte [style*="font-size:20px"]');
-  if (nameEl) nameEl.textContent = f['Nom_complet'] || email;
-  var emailEl = document.querySelector('#screen-compte [style*="font-size:13px"][style*="color:var(--text3)"]');
-  if (emailEl) emailEl.textContent = email;
-  var topAvs = document.querySelectorAll('.av');
-  topAvs.forEach(function(av) {
-    var initials = (f['Nom_complet'] || email).split(' ').map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();
-    av.textContent = initials;
-  });
-}
-
-async function doSignup() {
-  var emailEl = document.getElementById('ob-email');
-  var passEl = document.getElementById('ob-password');
-  var email = emailEl ? emailEl.value.trim() : '';
-  var password = passEl ? passEl.value : '';
-  if (!email || !password) { alert('Email et mot de passe requis'); return; }
-  if (password.length < 8) { alert('Mot de passe trop court (min. 8 caracteres)'); return; }
-  var existing = await loadClientData(email);
-  var result = await sb.auth.signUp({ email: email, password: password });
-  if (result.error) { alert('Erreur : ' + result.error.message); return; }
-  if (existing) {
-    clientRecord = existing;
-  } else {
-    var obType = document.querySelector('#screen-ob1 .ob-opt.sel');
-    var obSecteur = document.querySelector('#screen-ob1 .field-input');
-    var obContenu = document.querySelector('#screen-ob1 .field-ta');
-    var obFormat = document.querySelector('#screen-ob2 .ob-opt.sel');
-    var obCible = document.querySelector('#screen-ob3 .field-ta');
-    var obTon = document.querySelector('#screen-ob4 .ob-chips .ob-chip.sel');
-    var obCamera = document.querySelector('#screen-ob5 .ob-opt.sel');
-    await createAirtable('Client', {
-      'Nom_complet': email,
-      'Email': email,
-      'Pnts_fidelite': 0,
-      'Niv_fidelite_badge': 'Bronze',
-      'Onboarding_type': obType ? obType.textContent.trim() : '',
-      'Onboarding_secteur': obSecteur ? obSecteur.value : '',
-      'Onboarding_objectif': obContenu ? obContenu.value : '',
-      'Onboarding_cible': obCible ? obCible.value : '',
-      'Onboarding_ton': obTon ? obTon.textContent.trim() : '',
-      'Onboarding_camera': obCamera ? obCamera.textContent.trim() : ''
-    });
-    clientRecord = await loadClientData(email);
-  }
-  currentUser = { email: email };
-  if (clientRecord) {
-    renderHome(clientRecord);
-    renderPoints(clientRecord);
-    renderCompte(clientRecord, email);
-    var sessions = await loadSessions(clientRecord.id);
-    renderSessions(sessions);
-  }
-  go('ob-done');
-}
 
 initSupabase();
 </script>
