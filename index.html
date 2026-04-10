@@ -884,12 +884,13 @@ async function loadClientData(email) {
   return records.length ? records[0] : null;
 }
 
-async function loadSessions(clientId) {
-  return await atFetch('Réservation', 'FIND("' + clientId + '",ARRAYJOIN({Client}))', 'sort[0][field]=Date&sort[0][direction]=desc');
+async function loadSessions(email) {
+  return await atFetch('Réservation', '{Email_reservation}="' + email + '"', 'sort[0][field]=Date&sort[0][direction]=desc');
 }
 
-async function loadScripts(clientId) {
-  var records = await atFetch('Scripts', 'FIND("' + clientId + '",ARRAYJOIN({Client}))', 'sort[0][field]=Date_creation&sort[0][direction]=desc');
+async function loadScripts(clientId, email) {
+  var filter = clientId ? 'FIND("' + clientId + '",ARRAYJOIN({Client}))' : 'FALSE()';
+  var records = await atFetch('Scripts', filter, 'sort[0][field]=Date_creation&sort[0][direction]=desc');
   scriptsStore = {};
   var months = ['jan.','fev.','mars','avr.','mai','juin','juil.','aout','sep.','oct.','nov.','dec.'];
   records.forEach(function(r) {
@@ -1303,9 +1304,9 @@ async function loadUserData(email) {
   if (!client) { go('ob1'); return; }
   clientRecord = client;
   renderAll(clientRecord, email);
-  var sessions = await loadSessions(clientRecord.id);
+  var sessions = await loadSessions(email);
   renderSessions(sessions);
-  await loadScripts(clientRecord.id);
+  await loadScripts(clientRecord.id, email);
   go('home');
 }
 
@@ -1345,8 +1346,6 @@ async function doSignup() {
     await atCreate('Client', {
       'Nom_complet': email,
       'Email': email,
-      'Pnts_fidelite': 0,
-      'Niv_fidelite_badge': 'Bronze',
       'Onboarding_type': obType ? obType.textContent.trim() : '',
       'Onboarding_secteur': (document.getElementById('ob1-secteur') || {}).value || '',
       'Onboarding_objectif': (document.getElementById('ob1-activite') || {}).value || '',
