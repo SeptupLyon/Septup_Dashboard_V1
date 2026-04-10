@@ -549,7 +549,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
     <div style="padding:8px 16px 24px;text-align:center;">
       <div class="av-big" id="compte-av">JS</div>
       <div style="font-size:20px;font-weight:700;margin-bottom:4px;" id="compte-name">Jean Serafin</div>
-      <div style="font-size:13px;color:var(--text3);margin-bottom:10px;" id="compte-email">jean@studio.fr</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:10px;" id="compte-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e18b84808fa192959485888ecf8793">[email&#160;protected]</a></div>
       <div class="palier-badge"><div class="palier-dot"></div><div class="palier-txt" id="compte-palier">Bronze</div></div>
     </div>
     <div class="card-sm" style="margin-bottom:16px;">
@@ -728,7 +728,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ═══ CONFIG ═══
 var SUPABASE_URL = 'https://vruwzwzokyyzwdyfnfpp.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_5EcH8Gb_4DKFLUUSBWMrOg_rl2ZieSR';
@@ -885,7 +885,7 @@ async function loadClientData(email) {
 }
 
 async function loadSessions(clientId) {
-  return await atFetch('Reservation', 'FIND("' + clientId + '",ARRAYJOIN({Client}))', 'sort[0][field]=Date&sort[0][direction]=desc');
+  return await atFetch('Réservation', 'FIND("' + clientId + '",ARRAYJOIN({Client}))', 'sort[0][field]=Date&sort[0][direction]=desc');
 }
 
 async function loadScripts(clientId) {
@@ -897,7 +897,7 @@ async function loadScripts(clientId) {
     var d = f['Date_creation'] ? new Date(f['Date_creation']) : new Date();
     var dateStr = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
     var statut = f['Statut'] || 'Brouillon';
-    var statusMap = { 'Valide': 'st-valid', 'Utilise': 'st-used', 'Brouillon': 'st-draft' };
+    var statusMap = { 'Validé': 'st-valid', 'Utilisé': 'st-used', 'Brouillon': 'st-draft' };
     scriptsStore[r.id] = {
       title: f['Titre'] || 'Sans titre',
       content: f['Contenu'] || '',
@@ -964,7 +964,7 @@ function renderSessions(records) {
     var d = new Date(f['Date']);
     var dateStr = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
     var formule = f['Formule choisi'] || '';
-    var duree = f['Duree'] || f['Durée'] || 1;
+    var duree = f['Durée'] || f['Duree'] || 1;
     var pts = formule === 'Essentielle' ? duree * 75 : duree * 60;
     var tag = isUp ? '<div class="tag-up">A venir</div>' : '<div class="tag-done">Termine</div>';
     return '<div class="sblock"><div class="sblock-hdr" onclick="toggleFiles(this)">'
@@ -985,7 +985,7 @@ function renderSessions(records) {
     var nextF = avenir[0].fields;
     var d = new Date(nextF['Date']);
     el = document.getElementById('home-next-sess'); if (el) el.textContent = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
-    el = document.getElementById('home-next-meta'); if (el) el.textContent = 'Formule ' + (nextF['Formule choisi'] || '') + ' · ' + (nextF['Duree'] || nextF['Durée'] || '') + 'h';
+    el = document.getElementById('home-next-meta'); if (el) el.textContent = 'Formule ' + (nextF['Formule choisi'] || '') + ' · ' + (nextF['Durée'] || nextF['Duree'] || '') + 'h';
   }
 }
 
@@ -1085,7 +1085,7 @@ async function saveEditor() {
       await atCreate('Scripts', {
         'Titre': title, 'Contenu': content,
         'Score_viralite': parseFloat(score) || 0,
-        'Statut': 'Valide', 'Client': [clientRecord.id],
+        'Statut': 'Validé', 'Client': [clientRecord.id],
         'Date_creation': new Date().toISOString()
       });
     }
@@ -1233,9 +1233,9 @@ function validateScript() {
     atCreate('Scripts', {
       'Titre': title, 'Contenu': text,
       'Format': fmts[genData.format] || 'Reel 60s',
-      'Angle': angles[genData.angle] || 'Educatif',
+      'Angle': angles[genData.angle] || 'Éducatif',
       'Score_viralite': parseFloat(document.getElementById('gen-vir-score').textContent) || 0,
-      'Statut': 'Valide', 'Client': [clientRecord.id],
+      'Statut': 'Validé', 'Client': [clientRecord.id],
       'Date_creation': new Date().toISOString()
     }).then(function(rec) {
       if (rec.id && scriptsStore[id]) { scriptsStore[id].airtableId = rec.id; scriptsStore[rec.id] = scriptsStore[id]; delete scriptsStore[id]; renderScriptsList(); }
