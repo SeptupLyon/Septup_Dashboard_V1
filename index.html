@@ -1053,16 +1053,26 @@ function validateScript() {
   var text = document.getElementById('script-result').getAttribute('data-raw') || '';
   var title = (genData.sujet || 'Script').substring(0, 45);
   var fmts = { reel30: 'Reel 30s', reel60: 'Reel 60s', linkedin: 'LinkedIn', podcast: 'Podcast' };
-  var angles = { edu: 'Educatif', story: 'Storytelling', vente: 'Vente', temo: 'Temoignage' };
+  var angles = { edu: 'Éducatif', story: 'Storytelling', vente: 'Vente', temo: 'Témoignage' };
   var now = new Date();
-  var months = ['jan.','fev.','mars','avr.','mai','juin','juil.','aout','sep.','oct.','nov.','dec.'];
+  var months = ['jan.','fév.','mars','avr.','mai','juin','juil.','août','sep.','oct.','nov.','déc.'];
   var dateStr = now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
   var id = 'n' + Date.now();
-  addScriptToStore(id, title, text, (fmts[genData.format] || 'Reel') + ' · ' + (angles[genData.angle] || 'Educatif') + ' · ' + dateStr, 'st-valid', 'Valide');
+  var safeTitle = title.replace(/'/g, "\\'");
+  var safeText = text.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  var card = document.createElement('div');
+  card.className = 'script-card';
+  card.innerHTML = '<div class="script-cb" id="cb-' + id + '" onclick="toggleScript(this,\'' + id + '\')"></div>'
+    + '<div class="script-info" onclick="openEditor(\'' + safeTitle + '\',\'' + safeText + '\',\'' + id + '\')">'
+    + '<div class="script-title">' + title + '</div>'
+    + '<div class="script-meta">' + (fmts[genData.format] || 'Reel') + ' · ' + (angles[genData.angle] || 'Éducatif') + ' · ' + dateStr + '</div>'
+    + '<div class="script-status st-valid">Validé</div></div>'
+    + '<div class="script-arrow" onclick="openEditor(\'' + safeTitle + '\',\'' + safeText + '\',\'' + id + '\')">›</div>';
+  var id2 = 'n' + Date.now();
+  addScriptToStore(id2, title, text, (fmts[genData.format] || 'Reel') + ' · ' + (angles[genData.angle] || 'Éducatif') + ' · ' + dateStr, 'st-valid', 'Validé');
   closeGen();
   go('scripts');
 }
-
 
 function openRegen() { document.getElementById('modal-regen').classList.add('open'); }
 function closeRegen() { document.getElementById('modal-regen').classList.remove('open'); }
