@@ -885,7 +885,11 @@ async function loadClientData(email) {
 }
 
 async function loadSessions(email) {
-  return await atFetch('Réservation', '{Email_reservation}="' + email + '"', 'sort[0][field]=Date&sort[0][direction]=desc');
+  var filter = encodeURIComponent('{Email_reservation}="' + email + '"');
+  var url = 'https://api.airtable.com/v0/' + AT_BASE + '/R%C3%A9servation?filterByFormula=' + filter + '&sort[0][field]=Date&sort[0][direction]=desc';
+  var res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + AT_TOKEN } });
+  var data = await res.json();
+  return data.records || [];
 }
 
 async function loadScripts(clientId, email) {
@@ -955,6 +959,11 @@ function renderAll(client, email) {
 }
 
 function renderSessions(records) {
+  if (!records || !Array.isArray(records)) {
+    var p = document.getElementById('sess-passees');
+    if (p) p.innerHTML = '<div style="padding:20px 16px;font-size:13px;color:var(--red);">Erreur de chargement des sessions</div>';
+    return;
+  }
   var now = new Date();
   var months = ['jan.','fev.','mars','avr.','mai','juin','juil.','aout','sep.','oct.','nov.','dec.'];
   var passees = records.filter(function(r) { return new Date(r.fields['Date']) < now; });
@@ -978,6 +987,22 @@ function renderSessions(records) {
   var avenirEl = document.getElementById('sess-avenir');
   if (passEl) passEl.innerHTML = passees.length ? passees.map(function(r) { return makeCard(r, false); }).join('') : '<div style="padding:20px 16px;font-size:13px;color:var(--text3);">Aucune session passee</div>';
   if (avenirEl) avenirEl.innerHTML = avenir.length ? avenir.map(function(r) { return makeCard(r, true); }).join('') : '<div style="padding:20px 16px;font-size:13px;color:var(--text3);">Aucune session a venir</div>';
+
+  // Mettre à jour home
+  var el = document.getElementById('home-nb-sess'); if (el) el.textContent = records.length;
+  el = document.getElementById('home-sess-sub'); if (el) el.textContent = avenir.length + ' a venir';
+
+  // Prochaine session
+  if (avenir.length > 0) {
+    var nextF = avenir[0].fields;
+    var d = new Date(nextF['Date']);
+    var nextDateStr = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+    el = document.getElementById('home-next-sess'); if (el) el.textContent = nextDateStr;
+    el = document.getElementById('home-next-meta'); if (el) el.innerHTML = '🕐 ' + d.getHours() + 'h' + (d.getMinutes() ? d.getMinutes() : '00') + ' · Formule ' + (nextF['Formule choisi'] || '') + ' · ' + (nextF['Durée'] || '') + 'h';
+  } else {
+    el = document.getElementById('home-next-sess'); if (el) el.textContent = 'Aucune session a venir';
+    el = document.getElementById('home-next-meta'); if (el) el.textContent = '';
+  }
 
   var el = document.getElementById('home-nb-sess'); if (el) el.textContent = records.length;
   el = document.getElementById('home-sess-sub'); if (el) el.textContent = avenir.length + ' a venir';
@@ -1312,7 +1337,8 @@ async function loadUserData(email) {
   if (!client) { go('ob1'); return; }
   clientRecord = client;
   renderAll(clientRecord, email);
-  var sessions = await loadSessions(email);
+  var sessions = [];
+  try { sessions = await loadSessions(email); } catch(e) { console.error('Sessions error:', e); }
   renderSessions(sessions);
   await loadScripts(clientRecord.id, email);
   go('home');
