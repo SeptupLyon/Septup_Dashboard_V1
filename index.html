@@ -412,11 +412,12 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
       <div class="mini" onclick="go('sessions')"><div class="mini-lbl">Sessions</div><div class="mini-val" id="home-nb-sess">0</div><div class="mini-sub" id="home-sess-sub">0 a venir</div></div>
       <div class="mini" onclick="go('scripts')"><div class="mini-lbl">Scripts</div><div class="mini-val" id="home-nb-scripts">0</div><div class="mini-sub">generes</div></div>
     </div>
-    <div class="sec-lbl" style="margin-bottom:10px;">Prochaine session</div>
-    <div class="next-sess">
-      <div class="tag-up">A venir</div>
-      <div class="sess-date" id="home-next-sess">Aucune session</div>
-      <div class="sess-meta" id="home-next-meta"></div>
+    <div class="sec-lbl" style="margin-bottom:10px;">Prochaines sessions</div>
+    <div id="home-next-sessions">
+      <div class="next-sess">
+        <div class="tag-up">A venir</div>
+        <div class="sess-date">Aucune session a venir</div>
+      </div>
     </div>
     <div style="height:16px;"></div>
   </div>
@@ -553,9 +554,9 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
       <div class="palier-badge"><div class="palier-dot"></div><div class="palier-txt" id="compte-palier">Bronze</div></div>
     </div>
     <div class="card-sm" style="margin-bottom:16px;">
-      <div class="crow"><div class="crow-lbl">Modifier le profil de marque</div><div style="font-size:12px;color:var(--accent);">Editer ›</div></div>
-      <div class="crow"><div class="crow-lbl">Modifier le nom</div><div style="color:var(--text3);">›</div></div>
-      <div class="crow"><div class="crow-lbl">Modifier l email</div><div style="color:var(--text3);">›</div></div>
+      <div class="crow" onclick="openEditProfil()"><div class="crow-lbl">Modifier le profil de marque</div><div style="font-size:12px;color:var(--accent);">Editer ›</div></div>
+      <div class="crow" onclick="openEditNom()"><div class="crow-lbl">Modifier le nom</div><div style="color:var(--text3);">›</div></div>
+
       <div class="crow" style="border-bottom:none;"><div class="crow-lbl">Palier actuel</div><div style="font-size:12px;color:var(--accent);" id="compte-palier2">🥉 Bronze</div></div>
     </div>
     <button class="logout-btn" onclick="doLogout()">Se deconnecter</button>
@@ -663,7 +664,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 <div class="modal-overlay" id="modal-editor" onclick="if(event.target===this)closeEditor()">
   <div class="modal editor-modal" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
-    <div class="modal-hdr"><div class="modal-title" id="editor-title">Script</div><button class="modal-close" onclick="closeEditor()">✕</button></div>
+    <div class="modal-hdr" style="padding:14px 20px;"><div class="modal-title" id="editor-title">Script</div><button class="modal-close" style="min-width:34px;min-height:34px;flex-shrink:0;margin-left:8px;" onclick="closeEditor()">✕</button></div>
     <div class="editor-body">
       <div class="editor-vir">
         <div class="editor-vir-left">
@@ -728,7 +729,53 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><!-- MODAL EDIT PROFIL -->
+<div class="modal-overlay" id="modal-edit-profil" onclick="if(event.target===this)closeEditProfil()">
+  <div class="modal" style="max-height:90vh;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><div class="modal-title">Profil de marque</div><button class="modal-close" onclick="closeEditProfil()">✕</button></div>
+    <div style="flex:1;overflow-y:auto;padding:16px 20px;">
+      <div class="field"><label class="field-lbl">Tu representes</label>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-type-opts">
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-type')">Moi-meme (personal brand)</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-type')">Une entreprise</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-type')">Une marque</div>
+        </div>
+      </div>
+      <div class="field"><label class="field-lbl">Secteur</label><input class="field-input" id="ep-secteur" placeholder="Ex: Immobilier, Tech..."></div>
+      <div class="field"><label class="field-lbl">J aide [qui] a [quoi]</label><textarea class="field-ta" id="ep-objectif" rows="2" placeholder="J aide..."></textarea></div>
+      <div class="field"><label class="field-lbl">Cible</label><textarea class="field-ta" id="ep-cible" rows="2" placeholder="Mon audience..."></textarea></div>
+      <div class="field"><label class="field-lbl">Ton</label><input class="field-input" id="ep-ton" placeholder="Ex: Expert, Inspirant..."></div>
+      <div class="field"><label class="field-lbl">A l aise devant la camera</label>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-camera-opts">
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-camera')">Pas du tout a l aise</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-camera')">Un peu timide</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-camera')">Correct mais perfectible</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-camera')">Tres a l aise</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:12px 20px 24px;border-top:1px solid var(--border);">
+      <button class="btn" onclick="saveEditProfil()"><span class="btn-txt">Sauvegarder</span><span class="btn-arr">→</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDIT NOM -->
+<div class="modal-overlay" id="modal-edit-nom" onclick="if(event.target===this)closeEditNom()">
+  <div class="modal" style="padding-bottom:28px;" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><div class="modal-title">Modifier le nom</div><button class="modal-close" onclick="closeEditNom()">✕</button></div>
+    <div style="padding:16px 20px;">
+      <div class="field"><label class="field-lbl">Nom complet</label><input class="field-input" id="edit-nom-input" placeholder="Ton nom complet"></div>
+    </div>
+    <div style="padding:0 20px;">
+      <button class="btn" onclick="saveEditNom()"><span class="btn-txt">Sauvegarder</span><span class="btn-arr">→</span></button>
+    </div>
+  </div>
+</div>
+
+<script>
 // ═══ CONFIG ═══
 var SUPABASE_URL = 'https://vruwzwzokyyzwdyfnfpp.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_5EcH8Gb_4DKFLUUSBWMrOg_rl2ZieSR';
@@ -1013,16 +1060,27 @@ function renderSessions(records) {
     }
   }
 
-  // Prochaine session
-  if (avenir.length > 0) {
-    var nextF = avenir[0].fields;
-    var d = new Date(nextF['Date']);
-    var nextDateStr = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
-    el = document.getElementById('home-next-sess'); if (el) el.textContent = nextDateStr;
-    el = document.getElementById('home-next-meta'); if (el) el.innerHTML = '🕐 ' + d.getHours() + 'h' + (d.getMinutes() ? d.getMinutes() : '00') + ' · Formule ' + (nextF['Formule choisi'] || '') + ' · ' + (nextF['Durée'] || '') + 'h';
-  } else {
-    el = document.getElementById('home-next-sess'); if (el) el.textContent = 'Aucune session a venir';
-    el = document.getElementById('home-next-meta'); if (el) el.textContent = '';
+  // Prochaines sessions — toutes listées
+  var nextEl = document.getElementById('home-next-sessions');
+  if (nextEl) {
+    if (avenir.length === 0) {
+      nextEl.innerHTML = '<div class="next-sess"><div class="tag-done">Aucune session a venir</div><div class="sess-date" style="font-size:14px;color:var(--text3);">Reserve ta prochaine session</div></div>';
+    } else {
+      var nextHtml = '';
+      avenir.forEach(function(r) {
+        var f = r.fields;
+        var d = new Date(f['Date']);
+        var dateStr = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+        var hh = d.getHours();
+        var mm = d.getMinutes() ? d.getMinutes() : '00';
+        nextHtml += '<div class="next-sess" style="margin-bottom:10px;">'
+          + '<div class="tag-up">A venir</div>'
+          + '<div class="sess-date">' + dateStr + '</div>'
+          + '<div class="sess-meta">🕐 ' + hh + 'h' + mm + ' · Formule ' + (f['Formule choisi'] || '') + ' · ' + (f['Durée'] || f['Duree'] || '') + 'h</div>'
+          + '</div>';
+      });
+      nextEl.innerHTML = nextHtml;
+    }
   }
 
   var el = document.getElementById('home-nb-sess'); if (el) el.textContent = records.length;
@@ -1362,15 +1420,15 @@ function doRegen() {
   if (!prevScript.trim()) { alert('Aucun script a regenerer'); return; }
   closeRegen();
   closeEditor();
-  if (!document.getElementById('modal-gen').classList.contains('open')) {
-    document.getElementById('modal-gen').classList.add('open');
-  }
+  // Ouvrir la modal de génération à l'étape 3
+  document.getElementById('modal-gen').classList.add('open');
   genStep = 3;
   document.querySelectorAll('.gen-step').forEach(function(s) { s.classList.remove('active'); });
   document.getElementById('gen-step-3').classList.add('active');
   document.getElementById('gen-footer').style.display = 'none';
   document.getElementById('gen-generating').style.display = 'block';
   document.getElementById('script-result').classList.remove('active');
+  document.getElementById('gen-anim-txt').textContent = genMsgs[0];
   startGenAnim();
   callAPI(prevScript, instruction);
 }
@@ -1482,6 +1540,97 @@ async function doSignup() {
     } catch(e) {}
   }
 })();
+
+// ═══ EDIT PROFIL / NOM ═══
+function selEditOpt(el, group) {
+  el.parentNode.querySelectorAll('.ob-opt').forEach(function(o) { o.classList.remove('sel'); });
+  el.classList.add('sel');
+}
+
+function openEditProfil() {
+  if (!clientRecord) return;
+  var f = clientRecord.fields;
+  // Pré-remplir les champs
+  var secteurEl = document.getElementById('ep-secteur');
+  var objectifEl = document.getElementById('ep-objectif');
+  var cibleEl = document.getElementById('ep-cible');
+  var tonEl = document.getElementById('ep-ton');
+  if (secteurEl) secteurEl.value = f['Onboarding_secteur'] || '';
+  if (objectifEl) objectifEl.value = f['Onboarding_objectif'] || '';
+  if (cibleEl) cibleEl.value = f['Onboarding_cible'] || '';
+  if (tonEl) tonEl.value = f['Onboarding_ton'] || '';
+  // Sélectionner le type
+  var typeOpts = document.querySelectorAll('#ep-type-opts .ob-opt');
+  typeOpts.forEach(function(o) {
+    if (o.textContent.trim() === f['Onboarding_type']) o.classList.add('sel');
+    else o.classList.remove('sel');
+  });
+  // Sélectionner la caméra
+  var camOpts = document.querySelectorAll('#ep-camera-opts .ob-opt');
+  camOpts.forEach(function(o) {
+    if (o.textContent.trim() === f['Onboarding_camera']) o.classList.add('sel');
+    else o.classList.remove('sel');
+  });
+  document.getElementById('modal-edit-profil').classList.add('open');
+}
+
+function closeEditProfil() { document.getElementById('modal-edit-profil').classList.remove('open'); }
+
+async function saveEditProfil() {
+  if (!clientRecord) return;
+  var typeEl = document.querySelector('#ep-type-opts .ob-opt.sel');
+  var camEl = document.querySelector('#ep-camera-opts .ob-opt.sel');
+  var fields = {
+    'Onboarding_type': typeEl ? typeEl.textContent.trim() : '',
+    'Onboarding_secteur': document.getElementById('ep-secteur').value,
+    'Onboarding_objectif': document.getElementById('ep-objectif').value,
+    'Onboarding_cible': document.getElementById('ep-cible').value,
+    'Onboarding_ton': document.getElementById('ep-ton').value,
+    'Onboarding_camera': camEl ? camEl.textContent.trim() : ''
+  };
+  try {
+    await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Client/' + clientRecord.id, {
+      method: 'PATCH',
+      headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: fields })
+    });
+    // Mettre à jour le record local
+    Object.assign(clientRecord.fields, fields);
+    closeEditProfil();
+    alert('Profil mis a jour !');
+  } catch(e) {
+    alert('Erreur de sauvegarde');
+  }
+}
+
+function openEditNom() {
+  if (!clientRecord) return;
+  var el = document.getElementById('edit-nom-input');
+  if (el) el.value = clientRecord.fields['Nom_complet'] || '';
+  document.getElementById('modal-edit-nom').classList.add('open');
+}
+
+function closeEditNom() { document.getElementById('modal-edit-nom').classList.remove('open'); }
+
+async function saveEditNom() {
+  if (!clientRecord) return;
+  var nom = document.getElementById('edit-nom-input').value.trim();
+  if (!nom) { alert('Le nom ne peut pas etre vide'); return; }
+  try {
+    await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Client/' + clientRecord.id, {
+      method: 'PATCH',
+      headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: { 'Nom_complet': nom } })
+    });
+    clientRecord.fields['Nom_complet'] = nom;
+    // Mettre à jour l'UI
+    renderAll(clientRecord, currentUser ? currentUser.email : '');
+    closeEditNom();
+    alert('Nom mis a jour !');
+  } catch(e) {
+    alert('Erreur de sauvegarde');
+  }
+}
 
 initSupabase();
 </script>
