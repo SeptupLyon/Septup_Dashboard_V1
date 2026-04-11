@@ -679,7 +679,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
     </div>
     <div class="editor-footer">
       <button class="copy-script-btn" id="copy-script-btn" onclick="copyScriptContent()">Copier le script</button>
-      <button class="btn" onclick="saveEditor()"><span class="btn-txt">Sauvegarder</span><span class="btn-arr">→</span></button>
+      <div style="font-size:11px;color:var(--text3);text-align:center;padding:4px 0;" id="autosave-status">Les modifications sont sauvegardées automatiquement</div>
       <div style="display:flex;gap:8px;">
         <button class="sv-btn ghost" onclick="alert('Export PDF disponible en production')">PDF</button>
         <button class="sv-btn ghost" onclick="alert('Export Word disponible en production')">Word</button>
@@ -937,11 +937,8 @@ function renderAll(client, email) {
   el = document.getElementById('home-bar'); if (el) el.style.width = pct + '%';
   el = document.getElementById('home-bar-left'); if (el) el.textContent = palier + ' · ' + pts + ' pts';
   el = document.getElementById('home-bar-right'); if (el) el.textContent = nextLbl;
-  el = document.getElementById('home-av'); if (el) el.textContent = initials;
-  el = document.getElementById('sess-av'); if (el) el.textContent = initials;
-  el = document.getElementById('cours-av'); if (el) el.textContent = initials;
-  el = document.getElementById('scripts-av'); if (el) el.textContent = initials;
-  el = document.getElementById('points-av'); if (el) el.textContent = initials;
+  // Mettre à jour tous les avatars de l'app
+  document.querySelectorAll('.av').forEach(function(av) { av.textContent = initials; });
 
   // Points
   el = document.getElementById('pts-big'); if (el) el.textContent = pts;
@@ -1178,7 +1175,53 @@ function computeVirality(text) {
 
 function onEditorChange() {
   if (editorTimer) clearTimeout(editorTimer);
-  editorTimer = setTimeout(updateEditorVirality, 600);
+  editorTimer = setTimeout(function() {
+    updateEditorVirality();
+    autoSaveEditor();
+  }, 800);
+}
+
+async function autoSaveEditor() {
+  if (!clientRecord || !currentEditorId) return;
+  var content = getEditorText();
+  if (!content.trim()) return;
+  var score = document.getElementById('editor-vir-score').textContent;
+  var statusEl = document.getElementById('autosave-status');
+  
+  var s = scriptsStore[currentEditorId];
+  if (s && s.airtableId) {
+    if (statusEl) statusEl.textContent = 'Sauvegarde...';
+    try {
+      await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Scripts/' + s.airtableId, {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: { 'Contenu': content, 'Score_viralite': parseFloat(score) || 0 } })
+      });
+      s.content = content;
+      if (statusEl) statusEl.textContent = 'Sauvegardé ✓';
+    } catch(e) {
+      if (statusEl) statusEl.textContent = 'Erreur de sauvegarde';
+    }
+  } else if (s && !s.airtableId) {
+    // Créer dans Airtable si pas encore sauvegardé
+    if (statusEl) statusEl.textContent = 'Sauvegarde...';
+    try {
+      var rec = await atCreate('Scripts', {
+        'Titre': s.title, 'Contenu': content,
+        'Score_viralite': parseFloat(score) || 0,
+        'Statut': 'Validé', 'Client': [clientRecord.id],
+        'Email_client': currentUser ? currentUser.email : '',
+        'Date_creation': new Date().toISOString()
+      });
+      if (rec.id) {
+        s.airtableId = rec.id;
+        s.content = content;
+        if (statusEl) statusEl.textContent = 'Sauvegardé ✓';
+      }
+    } catch(e) {
+      if (statusEl) statusEl.textContent = 'Erreur de sauvegarde';
+    }
+  }
 }
 
 function updateEditorVirality() {
