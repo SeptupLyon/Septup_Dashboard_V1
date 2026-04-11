@@ -453,7 +453,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 
 <!-- COURS -->
 <div class="screen" id="screen-cours">
-  <div class="topbar"><div class="logo">septup.</div><div class="tr"><button class="ibtn" onclick="toggleTheme()">☀</button><div class="ibtn av" onclick="go('compte')">JS</div></div></div>
+  <div class="topbar"><div class="logo">septup.</div><div class="tr"><button class="ibtn" onclick="toggleTheme()">☀</button><div class="ibtn av" id="cours-av" onclick="go('compte')">JS</div></div></div>
   <div class="scroll">
     <div style="padding:8px 16px 16px;font-size:22px;font-weight:700;">Cours</div>
     <div class="sec-lbl" style="margin-bottom:10px;">Montage</div>
@@ -480,7 +480,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 
 <!-- SCRIPTS -->
 <div class="screen" id="screen-scripts">
-  <div class="topbar"><div class="logo">septup.</div><div class="tr"><button class="ibtn" onclick="toggleTheme()">☀</button><div class="ibtn av" onclick="go('compte')">JS</div></div></div>
+  <div class="topbar"><div class="logo">septup.</div><div class="tr"><button class="ibtn" onclick="toggleTheme()">☀</button><div class="ibtn av" id="scripts-av" onclick="go('compte')">JS</div></div></div>
   <div class="scroll">
     <div style="padding:8px 16px 16px;font-size:22px;font-weight:700;">Mes <span style="color:var(--accent);">scripts</span></div>
     <div id="export-bar" style="display:none;" class="export-bar">
@@ -505,7 +505,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 
 <!-- POINTS -->
 <div class="screen" id="screen-points">
-  <div class="topbar"><div class="logo">septup.</div><div class="tr"><button class="ibtn" onclick="toggleTheme()">☀</button><div class="ibtn av" onclick="go('compte')">JS</div></div></div>
+  <div class="topbar"><div class="logo">septup.</div><div class="tr"><button class="ibtn" onclick="toggleTheme()">☀</button><div class="ibtn av" id="points-av" onclick="go('compte')">JS</div></div></div>
   <div class="scroll">
     <div class="hero-card" style="cursor:default;margin-bottom:16px;">
       <div style="font-size:13px;color:var(--text2);margin-bottom:4px;">Solde actuel</div>
@@ -938,6 +938,10 @@ function renderAll(client, email) {
   el = document.getElementById('home-bar-left'); if (el) el.textContent = palier + ' · ' + pts + ' pts';
   el = document.getElementById('home-bar-right'); if (el) el.textContent = nextLbl;
   el = document.getElementById('home-av'); if (el) el.textContent = initials;
+  el = document.getElementById('sess-av'); if (el) el.textContent = initials;
+  el = document.getElementById('cours-av'); if (el) el.textContent = initials;
+  el = document.getElementById('scripts-av'); if (el) el.textContent = initials;
+  el = document.getElementById('points-av'); if (el) el.textContent = initials;
 
   // Points
   el = document.getElementById('pts-big'); if (el) el.textContent = pts;
@@ -991,6 +995,26 @@ function renderSessions(records) {
   // Mettre à jour home
   var el = document.getElementById('home-nb-sess'); if (el) el.textContent = records.length;
   el = document.getElementById('home-sess-sub'); if (el) el.textContent = avenir.length + ' a venir';
+
+  // Historique des points
+  var histEl = document.getElementById('pts-history');
+  if (histEl) {
+    if (passees.length === 0) {
+      histEl.innerHTML = '<div class="lrow"><div><div class="lmotif" style="color:var(--text3);">Aucune session pour le moment</div></div></div>';
+    } else {
+      var histHtml = '';
+      passees.slice(0, 5).forEach(function(r) {
+        var f = r.fields;
+        var d = new Date(f['Date']);
+        var dateStr = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+        var formule = f['Formule choisi'] || '';
+        var duree = f['Durée'] || 1;
+        var pts = formule === 'Essentielle' ? duree * 75 : duree * 60;
+        histHtml += '<div class="lrow"><div><div class="lmotif">Session ' + formule + ' ' + duree + 'h</div><div class="ldate">' + dateStr + '</div></div><div class="lpts">+' + pts + '</div></div>';
+      });
+      histEl.innerHTML = histHtml;
+    }
+  }
 
   // Prochaine session
   if (avenir.length > 0) {
