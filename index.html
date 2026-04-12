@@ -853,98 +853,29 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><!-- MODAL EDIT PROFIL -->
 <div class="modal-overlay" id="modal-edit-profil" onclick="if(event.target===this)closeEditProfil()">
-  <div class="modal" style="max-height:92vh;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
+  <div class="modal" style="max-height:90vh;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
-    <div class="modal-hdr"><div class="modal-title">Mon profil de marque</div><button class="modal-close" onclick="closeEditProfil()">✕</button></div>
+    <div class="modal-hdr"><div class="modal-title">Profil de marque</div><button class="modal-close" onclick="closeEditProfil()">✕</button></div>
     <div style="flex:1;overflow-y:auto;padding:16px 20px;">
-
-      <!-- BLOC 1 : Identite business -->
-      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Identite business</div>
-      <div class="field"><label class="field-lbl">Secteur / metier</label><input class="field-input" id="ep-secteur" placeholder="Ex: Coach business, Agence immo..."></div>
-      <div class="field"><label class="field-lbl">Offre principale</label><input class="field-input" id="ep-offre" placeholder="Ex: Formation en ligne, Logiciel..."></div>
-      <div class="field">
-        <label class="field-lbl">Prix moyen de l offre</label>
-        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-prix-opts">
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-prix')">Moins de 500 €</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-prix')">500 € – 2 000 €</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-prix')">2 000 € – 10 000 €</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-prix')">Plus de 10 000 €</div>
+      <div class="field"><label class="field-lbl">Tu representes</label>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-type-opts">
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-type')">Moi-meme (personal brand)</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-type')">Une entreprise</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-type')">Une marque</div>
         </div>
       </div>
-      <div class="field">
-        <label class="field-lbl">Niveau de maturite</label>
-        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-maturite-opts">
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-maturite')">Debutant — je lance mon activite</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-maturite')">Intermediaire — j ai deja des clients</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-maturite')">Avance — j ai une audience etablie</div>
+      <div class="field"><label class="field-lbl">Secteur</label><input class="field-input" id="ep-secteur" placeholder="Ex: Immobilier, Tech..."></div>
+      <div class="field"><label class="field-lbl">J aide [qui] a [quoi]</label><textarea class="field-ta" id="ep-objectif" rows="2" placeholder="J aide..."></textarea></div>
+      <div class="field"><label class="field-lbl">Cible</label><textarea class="field-ta" id="ep-cible" rows="2" placeholder="Mon audience..."></textarea></div>
+      <div class="field"><label class="field-lbl">Ton</label><input class="field-input" id="ep-ton" placeholder="Ex: Expert, Inspirant..."></div>
+      <div class="field"><label class="field-lbl">A l aise devant la camera</label>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-camera-opts">
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-camera')">Pas du tout a l aise</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-camera')">Un peu timide</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-camera')">Correct mais perfectible</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-camera')">Tres a l aise</div>
         </div>
       </div>
-
-      <!-- SEPARATEUR -->
-      <div style="height:1px;background:var(--border);margin:16px 0;"></div>
-
-      <!-- BLOC 2 : Cible -->
-      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Ta cible</div>
-      <div class="field"><label class="field-lbl">Mon client ideal c est</label><input class="field-input" id="ep-cible" placeholder="Ex: Directeur RH en PME, entrepreneur solo..."></div>
-      <div class="field"><label class="field-lbl">Son plus grand probleme</label><textarea class="field-ta" id="ep-douleur" rows="3" placeholder="Ce qui l empeche de dormir..."></textarea></div>
-      <div class="field"><label class="field-lbl">La transformation que tu lui apportes</label><textarea class="field-ta" id="ep-transformation" rows="3" placeholder="Avant / apres..."></textarea></div>
-
-      <!-- SEPARATEUR -->
-      <div style="height:1px;background:var(--border);margin:16px 0;"></div>
-
-      <!-- BLOC 3 : Objectif contenu -->
-      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Objectif contenu</div>
-      <div class="field">
-        <label class="field-lbl">Objectif principal</label>
-        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-objectif-opts">
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-objectif')">Notoriete — etre connu et reconnu</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-objectif')">Engagement — creer une communaute</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-objectif')">Leads — generer des prospects</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-objectif')">Vente — convertir directement</div>
-        </div>
-      </div>
-      <div class="field">
-        <label class="field-lbl">KPI prioritaire</label>
-        <div class="ob-chips" id="ep-kpi-chips">
-          <div class="ob-chip" onclick="this.classList.toggle('sel')">Vues</div>
-          <div class="ob-chip" onclick="this.classList.toggle('sel')">Abonnes</div>
-          <div class="ob-chip" onclick="this.classList.toggle('sel')">DM / messages</div>
-          <div class="ob-chip" onclick="this.classList.toggle('sel')">Clics lien</div>
-          <div class="ob-chip" onclick="this.classList.toggle('sel')">Appels decouverte</div>
-        </div>
-      </div>
-
-      <!-- SEPARATEUR -->
-      <div style="height:1px;background:var(--border);margin:16px 0;"></div>
-
-      <!-- BLOC 4 : ADN communication -->
-      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">ADN de communication</div>
-      <div class="field">
-        <label class="field-lbl">Ton prefere</label>
-        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-ton-opts">
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-ton')">Fun et accessible</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-ton')">Serieux et professionnel</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-ton')">Premium et inspire</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-ton')">Provocateur et direct</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-ton')">Inspirant et humain</div>
-        </div>
-      </div>
-      <div class="field">
-        <label class="field-lbl">Niveau d intensite</label>
-        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-intensite-opts">
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-intensite')">Calme et pose</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-intensite')">Energique</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-intensite')">Tres punchy et impactant</div>
-        </div>
-      </div>
-      <div class="field">
-        <label class="field-lbl">Maniere de parler</label>
-        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-langage-opts">
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-langage')">Simple et vulgarise</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-langage')">Expert et technique</div>
-        </div>
-      </div>
-
     </div>
     <div style="padding:12px 20px 24px;border-top:1px solid var(--border);">
       <button class="btn" onclick="saveEditProfil()"><span class="btn-txt">Sauvegarder</span><span class="btn-arr">→</span></button>
@@ -1813,66 +1744,51 @@ function selEditOpt(el, group) {
 function openEditProfil() {
   if (!clientRecord) return;
   var f = clientRecord.fields;
-
-  var set = function(id, val) { var el = document.getElementById(id); if (el) el.value = val || ''; };
-  set('ep-secteur', f['Onboarding_secteur']);
-  set('ep-offre', f['Onboarding_offre']);
-  set('ep-cible', f['Onboarding_cible']);
-  set('ep-douleur', f['Onboarding_douleur']);
-  set('ep-transformation', f['Onboarding_transformation']);
-
-  var selOpts = function(containerId, val) {
-    document.querySelectorAll('#' + containerId + ' .ob-opt').forEach(function(o) {
-      o.classList.toggle('sel', o.textContent.trim() === val);
-    });
-  };
-  selOpts('ep-prix-opts', f['Onboarding_prix']);
-  selOpts('ep-maturite-opts', f['Onboarding_maturite']);
-  selOpts('ep-objectif-opts', f['Onboarding_objectif']);
-  selOpts('ep-ton-opts', f['Onboarding_ton']);
-  selOpts('ep-intensite-opts', f['Onboarding_intensite']);
-  selOpts('ep-langage-opts', f['Onboarding_langage']);
-
-  var kpiVal = f['Onboarding_kpi'] || '';
-  document.querySelectorAll('#ep-kpi-chips .ob-chip').forEach(function(chip) {
-    chip.classList.toggle('sel', kpiVal.includes(chip.textContent.trim()));
+  // Pré-remplir les champs
+  var secteurEl = document.getElementById('ep-secteur');
+  var objectifEl = document.getElementById('ep-objectif');
+  var cibleEl = document.getElementById('ep-cible');
+  var tonEl = document.getElementById('ep-ton');
+  if (secteurEl) secteurEl.value = f['Onboarding_secteur'] || '';
+  if (objectifEl) objectifEl.value = f['Onboarding_objectif'] || '';
+  if (cibleEl) cibleEl.value = f['Onboarding_cible'] || '';
+  if (tonEl) tonEl.value = f['Onboarding_ton'] || '';
+  // Sélectionner le type
+  var typeOpts = document.querySelectorAll('#ep-type-opts .ob-opt');
+  typeOpts.forEach(function(o) {
+    if (o.textContent.trim() === f['Onboarding_type']) o.classList.add('sel');
+    else o.classList.remove('sel');
   });
-
+  // Sélectionner la caméra
+  var camOpts = document.querySelectorAll('#ep-camera-opts .ob-opt');
+  camOpts.forEach(function(o) {
+    if (o.textContent.trim() === f['Onboarding_camera']) o.classList.add('sel');
+    else o.classList.remove('sel');
+  });
   document.getElementById('modal-edit-profil').classList.add('open');
 }
+
 function closeEditProfil() { document.getElementById('modal-edit-profil').classList.remove('open'); }
 
 async function saveEditProfil() {
   if (!clientRecord) return;
-
-  var getOpt = function(containerId) {
-    var el = document.querySelector('#' + containerId + ' .ob-opt.sel');
-    return el ? el.textContent.trim() : '';
-  };
-  var kpi = Array.from(document.querySelectorAll('#ep-kpi-chips .ob-chip.sel'))
-    .map(function(c) { return c.textContent.trim(); }).join(', ');
-
+  var typeEl = document.querySelector('#ep-type-opts .ob-opt.sel');
+  var camEl = document.querySelector('#ep-camera-opts .ob-opt.sel');
   var fields = {
-    'Onboarding_secteur': (document.getElementById('ep-secteur') || {}).value || '',
-    'Onboarding_offre':   (document.getElementById('ep-offre') || {}).value || '',
-    'Onboarding_prix':    getOpt('ep-prix-opts'),
-    'Onboarding_maturite': getOpt('ep-maturite-opts'),
-    'Onboarding_cible':   (document.getElementById('ep-cible') || {}).value || '',
-    'Onboarding_douleur': (document.getElementById('ep-douleur') || {}).value || '',
-    'Onboarding_transformation': (document.getElementById('ep-transformation') || {}).value || '',
-    'Onboarding_objectif': getOpt('ep-objectif-opts'),
-    'Onboarding_kpi':     kpi,
-    'Onboarding_ton':     getOpt('ep-ton-opts'),
-    'Onboarding_intensite': getOpt('ep-intensite-opts'),
-    'Onboarding_langage': getOpt('ep-langage-opts')
+    'Onboarding_type': typeEl ? typeEl.textContent.trim() : '',
+    'Onboarding_secteur': document.getElementById('ep-secteur').value,
+    'Onboarding_objectif': document.getElementById('ep-objectif').value,
+    'Onboarding_cible': document.getElementById('ep-cible').value,
+    'Onboarding_ton': document.getElementById('ep-ton').value,
+    'Onboarding_camera': camEl ? camEl.textContent.trim() : ''
   };
-
   try {
     await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Client/' + clientRecord.id, {
       method: 'PATCH',
       headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
       body: JSON.stringify({ fields: fields })
     });
+    // Mettre à jour le record local
     Object.assign(clientRecord.fields, fields);
     closeEditProfil();
     alert('Profil mis a jour !');
@@ -1880,6 +1796,7 @@ async function saveEditProfil() {
     alert('Erreur de sauvegarde');
   }
 }
+
 function openEditNom() {
   if (!clientRecord) return;
   var el = document.getElementById('edit-nom-input');
