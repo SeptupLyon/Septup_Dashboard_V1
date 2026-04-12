@@ -116,6 +116,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .st-draft { color: var(--text3); border: 1px solid var(--border2); }
 .st-valid { color: var(--accent); border: 1px solid var(--aborder); }
 .st-used { color: var(--green); border: 1px solid rgba(74,222,128,0.3); }
+.st-tourne { color: #f5c518; border: 1px solid rgba(245,197,24,0.3); } /* Doré = tourné */
 .script-arrow { font-size: 18px; color: var(--text3); cursor: pointer; flex-shrink: 0; padding: 0 4px; }
 .export-bar { margin: 0 16px 12px; border: 1px solid var(--aborder); border-radius: 12px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; background: var(--adim); }
 .export-count { font-size: 12px; font-weight: 600; color: var(--accent); }
@@ -240,7 +241,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .editor-ta:focus { border-color: var(--accent); }
 .editor-ta .script-section-title { display: inline-block; background: var(--accent); color: #000; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 2px 10px; border-radius: 4px; margin-bottom: 4px; }
 .editor-ta:empty:before { content: attr(data-placeholder); color: var(--text3); }
-.editor-regen-btn { width: 100%; background: transparent; border: 1px solid var(--aborder); border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 600; color: var(--accent); cursor: pointer; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+/* editor-regen-btn supprimé */
 .copy-script-btn { background: var(--adim); border: 1px solid var(--aborder); border-radius: 12px; padding: 12px 16px; font-size: 13px; font-weight: 600; color: var(--accent); cursor: pointer; width: 100%; text-align: center; margin-top: 10px; }
 .editor-footer { padding: 12px 20px 24px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
 .sv-btn { flex: 1; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; }
@@ -533,6 +534,8 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
     <div class="mini-grid" style="margin-bottom:16px;">
       <div class="mini" onclick="go('sessions')"><div class="mini-lbl">Sessions</div><div class="mini-val" id="home-nb-sess">0</div><div class="mini-sub" id="home-sess-sub">0 a venir</div></div>
       <div class="mini" onclick="go('scripts')"><div class="mini-lbl">Scripts</div><div class="mini-val" id="home-nb-scripts">0</div><div class="mini-sub">generes</div></div>
+      <div class="mini" onclick="go('scripts')"><div class="mini-lbl">Videos tournees</div><div class="mini-val" id="home-nb-tourne">0</div><div class="mini-sub" style="color:#f5c518;">🎬 marquees</div></div>
+      <div class="mini" onclick="go('sessions')"><div class="mini-lbl">Heures studio</div><div class="mini-val" id="home-nb-heures">0</div><div class="mini-sub">au total</div></div>
     </div>
     <div class="sec-lbl" style="margin-bottom:10px;">Prochaines sessions</div>
     <div id="home-next-sessions">
@@ -699,7 +702,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
     <div class="modal-handle"></div>
     <div class="modal-hdr"><div class="modal-title">Que veux-tu faire ?</div><button class="modal-close" onclick="closeHub()">✕</button></div>
     <div class="hub-btn primary" onclick="closeHub();openGen()"><div><div class="hub-title">✦ Generer un script IA</div><div class="hub-sub">Script sur mesure base sur ton profil de marque</div></div><div style="font-size:20px;color:var(--accent);">→</div></div>
-    <div class="hub-btn" onclick="closeHub();openStory()"><div><div class="hub-title">Template story Instagram</div><div class="hub-sub">Partager ta session sur Instagram</div></div><div style="font-size:20px;color:var(--text3);">→</div></div>
+    <div class="hub-btn" onclick="closeHub();openGenPodcast()"><div><div class="hub-title">🎙 Intro & Outro podcast</div><div class="hub-sub">Genere une introduction et une conclusion pour ton episode</div></div><div style="font-size:20px;color:var(--text3);">→</div></div>
     <div style="height:16px;"></div>
   </div>
 </div>
@@ -798,15 +801,16 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
         <div><div class="editor-vir-grade" id="editor-vir-grade">-</div></div>
       </div>
       <div class="editor-ta" id="editor-ta" contenteditable="true" oninput="onEditorChange()" data-placeholder="Tape ton script ici..."></div>
-      <button class="editor-regen-btn" onclick="openRegenFromEditor()">✦ Regenerer ce script</button>
+      
     </div>
     <div class="editor-footer">
       <button class="copy-script-btn" id="copy-script-btn" onclick="copyScriptContent()">Copier le script</button>
       <div style="font-size:11px;color:var(--text3);text-align:center;padding:4px 0;" id="autosave-status">Les modifications sont sauvegardées automatiquement</div>
-      <div style="display:flex;gap:8px;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button class="sv-btn ghost" onclick="alert('Export PDF disponible en production')">PDF</button>
         <button class="sv-btn ghost" onclick="alert('Export Word disponible en production')">Word</button>
         <button class="sv-btn ghost" onclick="alert('Export TXT disponible en production')">TXT</button>
+        <button class="sv-btn ghost" id="btn-tourne" onclick="markAsTourne()" style="color:#f5c518;border-color:rgba(245,197,24,0.3);">🎬 Tourné</button>
         <button class="sv-btn danger" onclick="deleteCurrentScript()">Supprimer</button>
       </div>
     </div>
@@ -853,29 +857,98 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><!-- MODAL EDIT PROFIL -->
 <div class="modal-overlay" id="modal-edit-profil" onclick="if(event.target===this)closeEditProfil()">
-  <div class="modal" style="max-height:90vh;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
+  <div class="modal" style="max-height:92vh;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
-    <div class="modal-hdr"><div class="modal-title">Profil de marque</div><button class="modal-close" onclick="closeEditProfil()">✕</button></div>
+    <div class="modal-hdr"><div class="modal-title">Mon profil de marque</div><button class="modal-close" onclick="closeEditProfil()">✕</button></div>
     <div style="flex:1;overflow-y:auto;padding:16px 20px;">
-      <div class="field"><label class="field-lbl">Tu representes</label>
-        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-type-opts">
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-type')">Moi-meme (personal brand)</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-type')">Une entreprise</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-type')">Une marque</div>
+
+      <!-- BLOC 1 : Identite business -->
+      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Identite business</div>
+      <div class="field"><label class="field-lbl">Secteur / metier</label><input class="field-input" id="ep-secteur" placeholder="Ex: Coach business, Agence immo..."></div>
+      <div class="field"><label class="field-lbl">Offre principale</label><input class="field-input" id="ep-offre" placeholder="Ex: Formation en ligne, Logiciel..."></div>
+      <div class="field">
+        <label class="field-lbl">Prix moyen de l offre</label>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-prix-opts">
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-prix')">Moins de 500 €</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-prix')">500 € – 2 000 €</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-prix')">2 000 € – 10 000 €</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-prix')">Plus de 10 000 €</div>
         </div>
       </div>
-      <div class="field"><label class="field-lbl">Secteur</label><input class="field-input" id="ep-secteur" placeholder="Ex: Immobilier, Tech..."></div>
-      <div class="field"><label class="field-lbl">J aide [qui] a [quoi]</label><textarea class="field-ta" id="ep-objectif" rows="2" placeholder="J aide..."></textarea></div>
-      <div class="field"><label class="field-lbl">Cible</label><textarea class="field-ta" id="ep-cible" rows="2" placeholder="Mon audience..."></textarea></div>
-      <div class="field"><label class="field-lbl">Ton</label><input class="field-input" id="ep-ton" placeholder="Ex: Expert, Inspirant..."></div>
-      <div class="field"><label class="field-lbl">A l aise devant la camera</label>
-        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-camera-opts">
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-camera')">Pas du tout a l aise</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-camera')">Un peu timide</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-camera')">Correct mais perfectible</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-camera')">Tres a l aise</div>
+      <div class="field">
+        <label class="field-lbl">Niveau de maturite</label>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-maturite-opts">
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-maturite')">Debutant — je lance mon activite</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-maturite')">Intermediaire — j ai deja des clients</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-maturite')">Avance — j ai une audience etablie</div>
         </div>
       </div>
+
+      <!-- SEPARATEUR -->
+      <div style="height:1px;background:var(--border);margin:16px 0;"></div>
+
+      <!-- BLOC 2 : Cible -->
+      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Ta cible</div>
+      <div class="field"><label class="field-lbl">Mon client ideal c est</label><input class="field-input" id="ep-cible" placeholder="Ex: Directeur RH en PME, entrepreneur solo..."></div>
+      <div class="field"><label class="field-lbl">Son plus grand probleme</label><textarea class="field-ta" id="ep-douleur" rows="3" placeholder="Ce qui l empeche de dormir..."></textarea></div>
+      <div class="field"><label class="field-lbl">La transformation que tu lui apportes</label><textarea class="field-ta" id="ep-transformation" rows="3" placeholder="Avant / apres..."></textarea></div>
+
+      <!-- SEPARATEUR -->
+      <div style="height:1px;background:var(--border);margin:16px 0;"></div>
+
+      <!-- BLOC 3 : Objectif contenu -->
+      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Objectif contenu</div>
+      <div class="field">
+        <label class="field-lbl">Objectif principal</label>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-objectif-opts">
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-objectif')">Notoriete — etre connu et reconnu</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-objectif')">Engagement — creer une communaute</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-objectif')">Leads — generer des prospects</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-objectif')">Vente — convertir directement</div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-lbl">KPI prioritaire</label>
+        <div class="ob-chips" id="ep-kpi-chips">
+          <div class="ob-chip" onclick="this.classList.toggle('sel')">Vues</div>
+          <div class="ob-chip" onclick="this.classList.toggle('sel')">Abonnes</div>
+          <div class="ob-chip" onclick="this.classList.toggle('sel')">DM / messages</div>
+          <div class="ob-chip" onclick="this.classList.toggle('sel')">Clics lien</div>
+          <div class="ob-chip" onclick="this.classList.toggle('sel')">Appels decouverte</div>
+        </div>
+      </div>
+
+      <!-- SEPARATEUR -->
+      <div style="height:1px;background:var(--border);margin:16px 0;"></div>
+
+      <!-- BLOC 4 : ADN communication -->
+      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">ADN de communication</div>
+      <div class="field">
+        <label class="field-lbl">Ton prefere</label>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-ton-opts">
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-ton')">Fun et accessible</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-ton')">Serieux et professionnel</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-ton')">Premium et inspire</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-ton')">Provocateur et direct</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-ton')">Inspirant et humain</div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-lbl">Niveau d intensite</label>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-intensite-opts">
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-intensite')">Calme et pose</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-intensite')">Energique</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-intensite')">Tres punchy et impactant</div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-lbl">Maniere de parler</label>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-langage-opts">
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-langage')">Simple et vulgarise</div>
+          <div class="ob-opt" onclick="selEditOpt(this,'ep-langage')">Expert et technique</div>
+        </div>
+      </div>
+
     </div>
     <div style="padding:12px 20px 24px;border-top:1px solid var(--border);">
       <button class="btn" onclick="saveEditProfil()"><span class="btn-txt">Sauvegarder</span><span class="btn-arr">→</span></button>
@@ -898,6 +971,8 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 </div>
 
 <script>
+// ═══ CONFIG ═══
+
 // ═══ CONFIG ═══
 var SUPABASE_URL = 'https://vruwzwzokyyzwdyfnfpp.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_5EcH8Gb_4DKFLUUSBWMrOg_rl2ZieSR';
@@ -1071,7 +1146,7 @@ async function loadScripts(clientId, email) {
     var d = f['Date_creation'] ? new Date(f['Date_creation']) : new Date();
     var dateStr = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
     var statut = f['Statut'] || 'Brouillon';
-    var statusMap = { 'Validé': 'st-valid', 'Utilisé': 'st-used', 'Brouillon': 'st-draft' };
+    var statusMap = { 'Validé': 'st-valid', 'Utilisé': 'st-used', 'Brouillon': 'st-draft', 'Tourné': 'st-tourne' };
     scriptsStore[r.id] = {
       title: f['Titre'] || 'Sans titre',
       content: f['Contenu'] || '',
@@ -1084,6 +1159,7 @@ async function loadScripts(clientId, email) {
   renderScriptsList();
   var el = document.getElementById('home-nb-scripts');
   if (el) el.textContent = records.length;
+  updateHomeTourneCount();
 }
 
 // ═══ RENDER ═══
@@ -1161,6 +1237,7 @@ function renderSessions(records) {
   // Mettre à jour home
   var el = document.getElementById('home-nb-sess'); if (el) el.textContent = records.length;
   el = document.getElementById('home-sess-sub'); if (el) el.textContent = avenir.length + ' a venir';
+  updateHomeHeures(records);
 
   // Historique des points
   var histEl = document.getElementById('pts-history');
@@ -1426,6 +1503,23 @@ function openGen() {
 function closeGen() { document.getElementById('modal-gen').classList.remove('open'); if (msgTimer) clearInterval(msgTimer); }
 
 function nextGenStep() {
+  if (window._podcastMode) {
+    var sujet = document.getElementById('gen-sujet').value;
+    if (!sujet.trim()) { alert('Decris le sujet de ton episode !'); return; }
+    genData.sujet = sujet;
+    window._podcastMode = false;
+    document.querySelector('#modal-gen .modal-title').textContent = 'Generer un script';
+    document.getElementById('gen-sujet').placeholder = 'Ex: Pourquoi 90% des entrepreneurs ratent leur lancement...';
+    genStep = 3;
+    document.getElementById('gen-step-1').classList.remove('active');
+    document.getElementById('gen-step-3').classList.add('active');
+    document.getElementById('gen-footer').style.display = 'none';
+    document.getElementById('gen-generating').style.display = 'block';
+    document.getElementById('script-result').classList.remove('active');
+    startGenAnim();
+    callAPIPodcast(sujet);
+    return;
+  }
   if (genStep === 1) {
     genData.sujet = document.getElementById('gen-sujet').value;
     if (!genData.sujet.trim()) { alert('Decris d abord le sujet !'); return; }
@@ -1837,6 +1931,83 @@ function togglePwd(inputId, btn) {
   } else {
     input.type = 'password';   // masque à nouveau
     btn.textContent = '👁';
+  }
+}
+
+
+// ═══ MARQUER UN SCRIPT COMME TOURNÉ ═══
+async function markAsTourne() {
+  if (!currentEditorId) return;
+  var s = scriptsStore[currentEditorId];
+  if (!s) return;
+  var btn = document.getElementById('btn-tourne');
+  if (s.airtableId) {
+    try {
+      if (btn) btn.textContent = '...';
+      await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Scripts/' + s.airtableId, {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: { 'Statut': 'Tourné' } })
+      });
+      s.status = 'st-tourne';
+      s.statusLabel = 'Tourné';
+      renderScriptsList();
+      updateHomeTourneCount();
+      if (btn) btn.textContent = '✓ Tourné !';
+      setTimeout(function() { if (btn) btn.textContent = '🎬 Tourné'; }, 2000);
+    } catch(e) {
+      if (btn) btn.textContent = '🎬 Tourné';
+    }
+  }
+}
+
+function updateHomeTourneCount() {
+  var count = Object.values(scriptsStore).filter(function(s) { return s.status === 'st-tourne'; }).length;
+  var el = document.getElementById('home-nb-tourne');
+  if (el) el.textContent = count;
+}
+
+function updateHomeHeures(sessions) {
+  var total = 0;
+  (sessions || []).forEach(function(r) {
+    total += parseFloat(r.fields['Durée'] || r.fields['Duree'] || 0);
+  });
+  var el = document.getElementById('home-nb-heures');
+  if (el) el.textContent = total;
+}
+
+function openGenPodcast() {
+  genStep = 1;
+  genData = { sujet: '', format: 'podcast', angle: 'intro_outro' };
+  document.querySelectorAll('.gen-step').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('gen-step-1').classList.add('active');
+  document.getElementById('gen-footer').style.display = 'block';
+  document.getElementById('gen-next-txt').textContent = 'Generer ✦';
+  document.getElementById('gen-sujet').placeholder = 'Ex: Episode sur le recrutement des talents en startup...';
+  document.querySelector('#modal-gen .modal-title').textContent = 'Intro & Outro Podcast';
+  document.getElementById('modal-gen').classList.add('open');
+  window._podcastMode = true;
+}
+
+async function callAPIPodcast(sujet) {
+  var profil = clientRecord ? clientRecord.fields : {};
+  var parts = ["Tu es un expert en podcasting. Cree une INTRODUCTION et une CONCLUSION pour un episode de podcast sur : " + sujet + "."];
+  if (profil["Nom_complet"]) parts.push("Animateur : " + profil["Nom_complet"]);
+  if (profil["Onboarding_ton"]) parts.push("Ton : " + profil["Onboarding_ton"]);
+  if (profil["Onboarding_cible"]) parts.push("Audience : " + profil["Onboarding_cible"]);
+  parts.push("Structure OBLIGATOIRE - ACCROCHE : [Introduction engageante 30sec] CORPS : [Presentation episode] CONCLUSION : [Outro chaleureux] CTA : [Phrase finale percutante]. Direct, chaleureux, naturel a loral.");
+  var prompt = parts.join(" ");
+  try {
+    var res = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, messages: [{ role: "user", content: prompt }] })
+    });
+    var data = await res.json();
+    var text = data.content && data.content[0] ? data.content[0].text : "Erreur de generation.";
+    showScript(text);
+  } catch(e) {
+    showScript("ACCROCHE\n\nBienvenue dans cet episode sur " + sujet + ".\n\nCORPS\n\nOn va explorer ce sujet en profondeur.\n\nCONCLUSION\n\nMerci d avoir ete la.\n\nCTA\n\nOn se retrouve la semaine prochaine !");
   }
 }
 
