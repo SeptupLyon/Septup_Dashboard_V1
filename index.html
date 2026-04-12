@@ -1146,12 +1146,21 @@ async function loadScripts(clientId, email) {
     var d = f['Date_creation'] ? new Date(f['Date_creation']) : new Date();
     var dateStr = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
     var statut = f['Statut'] || 'Brouillon';
-    var statusMap = { 'Validé': 'st-valid', 'Utilisé': 'st-used', 'Brouillon': 'st-draft', 'Tourné': 'st-tourne' };
+    var statusMap = { 'Validé': 'st-valid', 'Utilisé': 'st-used', 'Brouillon': 'st-draft', 'Tourné': 'st-tourne', 'Tourne': 'st-tourne' };
+    // Fonction pour mapper le statut même avec des variantes d'encodage
+    var getStatus = function(statut) {
+      if (!statut) return 'st-draft';
+      var s = statut.toLowerCase().replace(/[éè]/g, 'e');
+      if (s === 'tourne') return 'st-tourne';
+      if (s === 'valide') return 'st-valid';
+      if (s === 'utilise') return 'st-used';
+      return statusMap[statut] || 'st-draft';
+    };
     scriptsStore[r.id] = {
       title: f['Titre'] || 'Sans titre',
       content: f['Contenu'] || '',
       meta: (f['Format'] || '') + ' · ' + (f['Angle'] || '') + ' · ' + dateStr,
-      status: statusMap[statut] || 'st-draft',
+      status: getStatus(statut),
       statusLabel: statut,
       airtableId: r.id
     };
@@ -1947,7 +1956,7 @@ async function markAsTourne() {
       await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Scripts/' + s.airtableId, {
         method: 'PATCH',
         headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields: { 'Statut': 'Tourné' } })
+        body: JSON.stringify({ fields: { 'Statut': 'Tourn\u00e9' } })
       });
       s.status = 'st-tourne';
       s.statusLabel = 'Tourné';
