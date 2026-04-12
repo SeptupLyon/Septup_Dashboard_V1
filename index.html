@@ -247,6 +247,29 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .sv-btn.primary { background: var(--accent); color: #000; border: none; }
 .sv-btn.ghost { background: transparent; border: 1px solid var(--border2); color: var(--text2); }
 .sv-btn.danger { background: transparent; border: 1px solid rgba(255,95,95,0.3); color: var(--red); }
+
+/* Champ mot de passe avec bouton voir/masquer */
+.pwd-wrap { position: relative; }
+.pwd-wrap .field-input { padding-right: 44px; } /* espace pour l'icône */
+.pwd-toggle {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  color: var(--text3); font-size: 16px; padding: 4px;
+  line-height: 1;
+}
+.pwd-toggle:active { color: var(--accent); }
+
+/* Spinner de chargement pendant le login */
+.login-spinner {
+  display: none; /* caché par défaut */
+  width: 20px; height: 20px;
+  border: 2px solid var(--border2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 8px;
+}
+.login-spinner.visible { display: block; }
 </style>
 </head>
 <body>
@@ -261,121 +284,220 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   </div>
   <div class="auth-body">
     <div class="field"><label class="field-lbl">Email</label><input class="field-input" type="email" id="login-email" placeholder="hello@studio.fr"></div>
-    <div class="field"><label class="field-lbl">Mot de passe</label><input class="field-input" type="password" id="login-password" placeholder="••••••••"></div>
+    <div class="field">
+      <label class="field-lbl">Mot de passe</label>
+      <div class="pwd-wrap">
+        <input class="field-input" type="password" id="login-password" placeholder="••••••••">
+        <button class="pwd-toggle" type="button" onclick="togglePwd('login-password', this)" tabindex="-1">👁</button>
+      </div>
+    </div>
     <div class="sp"></div>
-    <button class="btn" onclick="doLogin()"><span class="btn-txt">Se connecter</span><span class="btn-arr">→</span></button>
+    <div class="login-spinner" id="login-spinner"></div>
+    <button class="btn" id="login-btn" onclick="doLogin()"><span class="btn-txt">Se connecter</span><span class="btn-arr">→</span></button>
     <button class="btn-ghost" onclick="go('ob1')">Creer un compte</button>
     <button class="btn-ghost" style="display:flex;align-items:center;justify-content:center;gap:10px;" onclick="doLoginGoogle()"><span style="font-size:15px;font-weight:700;color:#4285F4;">G</span> Continuer avec Google</button>
     <div class="auth-link" onclick="go('forgot')">Mot de passe oublie ?</div>
   </div>
 </div>
 
-<!-- OB1 -->
+<!-- OB1 : INFOS PERSO -->
 <div class="screen" id="screen-ob1">
-  <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;"><div class="logo">septup.</div><div style="font-size:12px;color:var(--text3);">1 / 5</div></div>
+  <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;">
+    <div class="logo">septup.</div>
+    <div style="font-size:12px;color:var(--text3);">1 / 5</div>
+  </div>
   <div class="ob-wrap">
-    <div class="ob-prog"><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
-    <div class="ob-bloc">Bloc 1 - Qui tu es</div>
-    <div class="ob-q">Tu representes ?</div>
-    <div class="ob-opts">
-      <div class="ob-opt" onclick="selOpt(this)">Moi-meme (personal brand)</div>
-      <div class="ob-opt" onclick="selOpt(this)">Une entreprise</div>
-      <div class="ob-opt" onclick="selOpt(this)">Une marque</div>
+    <div class="ob-prog">
+      <div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div>
     </div>
-    <div class="field"><label class="field-lbl">Secteur</label><input class="field-input" id="ob1-secteur" placeholder="Ex: Immobilier, Tech..."></div>
-    <div class="field"><label class="field-lbl">J aide [qui] a [quoi] grace a [comment]</label><textarea class="field-ta" id="ob1-activite" rows="2" placeholder="J aide..."></textarea></div>
-    <div class="ob-nav"><div class="ob-back" onclick="go('login')">Annuler</div><button class="btn" style="width:auto;padding:13px 24px;" onclick="go('ob2')"><span class="btn-txt">Suivant</span><span class="btn-arr">→</span></button></div>
+    <div class="ob-bloc">Etape 1 — Tes informations</div>
+    <div class="ob-q">On commence par toi</div>
+    <div class="field">
+      <label class="field-lbl">Nom complet</label>
+      <input class="field-input" id="ob-nom" placeholder="Jean Dupont">
+    </div>
+    <div class="field">
+      <label class="field-lbl">Email</label>
+      <input class="field-input" type="email" id="ob-email" placeholder="hello@studio.fr">
+    </div>
+    <div class="field">
+      <label class="field-lbl">Mot de passe</label>
+      <div class="pwd-wrap">
+        <input class="field-input" type="password" id="ob-password" placeholder="Min. 8 caracteres">
+        <button class="pwd-toggle" type="button" onclick="togglePwd('ob-password', this)" tabindex="-1">👁</button>
+      </div>
+    </div>
+    <div class="ob-nav">
+      <div class="ob-back" onclick="go('login')">Annuler</div>
+      <button class="btn" style="width:auto;padding:13px 24px;" onclick="go('ob2')">
+        <span class="btn-txt">Suivant</span><span class="btn-arr">→</span>
+      </button>
+    </div>
   </div>
 </div>
 
-<!-- OB2 -->
+<!-- OB2 : IDENTITE BUSINESS -->
 <div class="screen" id="screen-ob2">
-  <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;"><div class="logo">septup.</div><div style="font-size:12px;color:var(--text3);">2 / 5</div></div>
+  <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;">
+    <div class="logo">septup.</div>
+    <div style="font-size:12px;color:var(--text3);">2 / 5</div>
+  </div>
   <div class="ob-wrap">
-    <div class="ob-prog"><div class="ob-dot done"></div><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
-    <div class="ob-bloc">Bloc 2 - Ton contenu</div>
-    <div class="ob-q">Type de contenu ?</div>
-    <div class="ob-opts">
-      <div class="ob-opt" onclick="selOpt(this)">Contenu court</div>
-      <div class="ob-opt" onclick="selOpt(this)">Podcast</div>
-      <div class="ob-opt" onclick="selOpt(this)">Les deux</div>
+    <div class="ob-prog">
+      <div class="ob-dot done"></div><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div>
     </div>
-    <div class="ob-bloc">Objectif principal</div>
-    <div class="ob-chips">
-      <div class="ob-chip" onclick="this.classList.toggle('sel')">Notoriete</div>
-      <div class="ob-chip" onclick="this.classList.toggle('sel')">Vendre</div>
-      <div class="ob-chip" onclick="this.classList.toggle('sel')">Eduquer</div>
-      <div class="ob-chip" onclick="this.classList.toggle('sel')">Inspirer</div>
+    <div class="ob-bloc">Etape 2 — Identite business</div>
+    <div class="ob-q">Ton activite</div>
+    <div class="field">
+      <label class="field-lbl">Secteur / metier</label>
+      <input class="field-input" id="ob2-activite" placeholder="Ex: Coach business, Agence immo, SaaS RH...">
     </div>
-    <div class="field"><label class="field-lbl">Frequence visee</label><input class="field-input" id="ob2-freq" placeholder="Ex: 2x par semaine"></div>
-    <div class="ob-nav"><div class="ob-back" onclick="go('ob1')">← Retour</div><button class="btn" style="width:auto;padding:13px 24px;" onclick="go('ob3')"><span class="btn-txt">Suivant</span><span class="btn-arr">→</span></button></div>
+    <div class="field">
+      <label class="field-lbl">Offre principale</label>
+      <input class="field-input" id="ob2-offre" placeholder="Ex: Formation en ligne, Logiciel de gestion...">
+    </div>
+    <div class="field">
+      <label class="field-lbl">Prix moyen de l offre</label>
+      <div class="ob-opts" id="ob2-prix-opts">
+        <div class="ob-opt" onclick="selOpt(this)">Moins de 500 €</div>
+        <div class="ob-opt" onclick="selOpt(this)">500 € – 2 000 €</div>
+        <div class="ob-opt" onclick="selOpt(this)">2 000 € – 10 000 €</div>
+        <div class="ob-opt" onclick="selOpt(this)">Plus de 10 000 €</div>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-lbl">Niveau de maturite</label>
+      <div class="ob-opts" id="ob2-maturite-opts">
+        <div class="ob-opt" onclick="selOpt(this)">Debutant — je lance mon activite</div>
+        <div class="ob-opt" onclick="selOpt(this)">Intermediaire — j ai deja des clients</div>
+        <div class="ob-opt" onclick="selOpt(this)">Avance — j ai une audience et une offre etablie</div>
+      </div>
+    </div>
+    <div class="ob-nav">
+      <div class="ob-back" onclick="go('ob1')">← Retour</div>
+      <button class="btn" style="width:auto;padding:13px 24px;" onclick="go('ob3')">
+        <span class="btn-txt">Suivant</span><span class="btn-arr">→</span>
+      </button>
+    </div>
   </div>
 </div>
 
-<!-- OB3 -->
+<!-- OB3 : CIBLE -->
 <div class="screen" id="screen-ob3">
-  <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;"><div class="logo">septup.</div><div style="font-size:12px;color:var(--text3);">3 / 5</div></div>
+  <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;">
+    <div class="logo">septup.</div>
+    <div style="font-size:12px;color:var(--text3);">3 / 5</div>
+  </div>
   <div class="ob-wrap">
-    <div class="ob-prog"><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
-    <div class="ob-bloc">Bloc 3 - Ta cible</div>
-    <div class="ob-q">Qui est ta cible ?</div>
-    <div class="ob-opts">
-      <div class="ob-opt" onclick="selOpt(this)">B2B</div>
-      <div class="ob-opt" onclick="selOpt(this)">B2C</div>
-      <div class="ob-opt" onclick="selOpt(this)">Les deux</div>
+    <div class="ob-prog">
+      <div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div>
     </div>
-    <div class="field"><label class="field-lbl">Qui regarde ton contenu ?</label><textarea class="field-ta" id="ob3-cible" rows="2" placeholder="Decris ton audience"></textarea></div>
-    <div class="field"><label class="field-lbl">Le plus grand probleme que tu resous</label><input class="field-input" id="ob3-probleme" placeholder="Ex: Manque de visibilite..."></div>
-    <div class="ob-nav"><div class="ob-back" onclick="go('ob2')">← Retour</div><button class="btn" style="width:auto;padding:13px 24px;" onclick="go('ob4')"><span class="btn-txt">Suivant</span><span class="btn-arr">→</span></button></div>
+    <div class="ob-bloc">Etape 3 — Ta cible</div>
+    <div class="ob-q">A qui tu parles ?</div>
+    <div class="field">
+      <label class="field-lbl">Mon client ideal c est</label>
+      <input class="field-input" id="ob3-cible" placeholder="Ex: Directeur RH en PME, entrepreneur solo, gerant de restaurant...">
+    </div>
+    <div class="field">
+      <label class="field-lbl">Son plus grand probleme (ce qui l empeche de dormir)</label>
+      <textarea class="field-ta" id="ob3-douleur" rows="3" placeholder="Ex: Il n arrive pas a recruter les bons profils et perd du temps a former des gens qui partent..."></textarea>
+    </div>
+    <div class="field">
+      <label class="field-lbl">La transformation que tu lui apportes</label>
+      <textarea class="field-ta" id="ob3-transformation" rows="3" placeholder="Ex: Il passe de 3 mois de recrutement a 3 semaines avec les bons candidats..."></textarea>
+    </div>
+    <div class="ob-nav">
+      <div class="ob-back" onclick="go('ob2')">← Retour</div>
+      <button class="btn" style="width:auto;padding:13px 24px;" onclick="go('ob4')">
+        <span class="btn-txt">Suivant</span><span class="btn-arr">→</span>
+      </button>
+    </div>
   </div>
 </div>
 
-<!-- OB4 -->
+<!-- OB4 : OBJECTIF CONTENU -->
 <div class="screen" id="screen-ob4">
-  <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;"><div class="logo">septup.</div><div style="font-size:12px;color:var(--text3);">4 / 5</div></div>
+  <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;">
+    <div class="logo">septup.</div>
+    <div style="font-size:12px;color:var(--text3);">4 / 5</div>
+  </div>
   <div class="ob-wrap">
-    <div class="ob-prog"><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot active"></div><div class="ob-dot"></div></div>
-    <div class="ob-bloc">Bloc 4 - Ta voix</div>
-    <div class="ob-q">Ton ton ?</div>
-    <div class="ob-chips">
-      <div class="ob-chip" onclick="this.classList.toggle('sel')">Serieux</div>
-      <div class="ob-chip" onclick="this.classList.toggle('sel')">Decale</div>
-      <div class="ob-chip" onclick="this.classList.toggle('sel')">Expert</div>
-      <div class="ob-chip" onclick="this.classList.toggle('sel')">Accessible</div>
-      <div class="ob-chip" onclick="this.classList.toggle('sel')">Inspirant</div>
+    <div class="ob-prog">
+      <div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot active"></div><div class="ob-dot"></div>
     </div>
-    <div class="field"><label class="field-lbl">Un createur dont tu aimes le style (optionnel)</label><input class="field-input" id="ob4-style" placeholder="Ex: Alex Hormozi..."></div>
-    <div class="field"><label class="field-lbl">Ce qui te differencie</label><textarea class="field-ta" id="ob4-diff" rows="2" placeholder="Ce que tu fais que personne ne fait..."></textarea></div>
-    <div class="ob-nav"><div class="ob-back" onclick="go('ob3')">← Retour</div><button class="btn" style="width:auto;padding:13px 24px;" onclick="go('ob5')"><span class="btn-txt">Suivant</span><span class="btn-arr">→</span></button></div>
+    <div class="ob-bloc">Etape 4 — Objectif contenu</div>
+    <div class="ob-q">Tu crees du contenu pour quoi ?</div>
+    <div class="field">
+      <label class="field-lbl">Objectif principal</label>
+      <div class="ob-opts" id="ob4-objectif-opts">
+        <div class="ob-opt" onclick="selOpt(this)">Notoriete — etre connu et reconnu</div>
+        <div class="ob-opt" onclick="selOpt(this)">Engagement — creer une communaute</div>
+        <div class="ob-opt" onclick="selOpt(this)">Leads — generer des prospects</div>
+        <div class="ob-opt" onclick="selOpt(this)">Vente — convertir directement</div>
+      </div>
+    </div>
+    <div class="field" style="margin-top:16px;">
+      <label class="field-lbl">KPI prioritaire</label>
+      <div class="ob-chips" id="ob4-kpi-chips">
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Vues</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Abonnes</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">DM / messages</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Clics lien</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Appels decouverte</div>
+      </div>
+    </div>
+    <div class="ob-nav">
+      <div class="ob-back" onclick="go('ob3')">← Retour</div>
+      <button class="btn" style="width:auto;padding:13px 24px;" onclick="go('ob5')">
+        <span class="btn-txt">Suivant</span><span class="btn-arr">→</span>
+      </button>
+    </div>
   </div>
 </div>
 
-<!-- OB5 -->
+<!-- OB5 : ADN COMMUNICATION -->
 <div class="screen" id="screen-ob5">
-  <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;"><div class="logo">septup.</div><div style="font-size:12px;color:var(--text3);">5 / 5</div></div>
-  <div class="ob-wrap">
-    <div class="ob-prog"><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot active"></div></div>
-    <div class="ob-bloc">Bloc 5 - A l aise devant la camera ?</div>
-    <div class="ob-q">Ton niveau a l ecran ?</div>
-    <div class="ob-opts">
-      <div class="ob-opt" onclick="selOpt(this)">Pas du tout a l aise</div>
-      <div class="ob-opt" onclick="selOpt(this)">Un peu timide</div>
-      <div class="ob-opt" onclick="selOpt(this)">Correct mais perfectible</div>
-      <div class="ob-opt" onclick="selOpt(this)">Tres a l aise</div>
-    </div>
-    <div class="field" style="margin-top:16px;"><label class="field-lbl">Email</label><input class="field-input" type="email" id="ob-email" placeholder="hello@studio.fr"></div>
-    <div class="field"><label class="field-lbl">Mot de passe</label><input class="field-input" type="password" id="ob-password" placeholder="Min. 8 caracteres"></div>
-    <div class="ob-nav"><div class="ob-back" onclick="go('ob4')">← Retour</div><button class="btn" style="width:auto;padding:13px 24px;" onclick="doSignup()"><span class="btn-txt">Terminer</span><span class="btn-arr">→</span></button></div>
+  <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;">
+    <div class="logo">septup.</div>
+    <div style="font-size:12px;color:var(--text3);">5 / 5</div>
   </div>
-</div>
-
-<!-- OB DONE -->
-<div class="screen" id="screen-ob-done">
-  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;">
-    <div style="font-size:48px;margin-bottom:16px;">✦</div>
-    <div style="font-size:26px;font-weight:700;margin-bottom:8px;">Profil cree !</div>
-    <div style="font-size:14px;color:var(--text2);margin-bottom:36px;line-height:1.7;">Ton profil de marque est pret.<br>L IA va s adapter a ton style.</div>
-    <button class="btn" style="max-width:280px;" onclick="go('home')"><span class="btn-txt">Acceder a l app</span><span class="btn-arr">→</span></button>
+  <div class="ob-wrap">
+    <div class="ob-prog">
+      <div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot active"></div>
+    </div>
+    <div class="ob-bloc">Etape 5 — ADN de communication</div>
+    <div class="ob-q">Comment tu parles ?</div>
+    <div class="field">
+      <label class="field-lbl">Ton prefere</label>
+      <div class="ob-opts" id="ob5-ton-opts">
+        <div class="ob-opt" onclick="selOpt(this)">Fun et accessible</div>
+        <div class="ob-opt" onclick="selOpt(this)">Serieux et professionnel</div>
+        <div class="ob-opt" onclick="selOpt(this)">Premium et inspire</div>
+        <div class="ob-opt" onclick="selOpt(this)">Provocateur et direct</div>
+        <div class="ob-opt" onclick="selOpt(this)">Inspirant et humain</div>
+      </div>
+    </div>
+    <div class="field" style="margin-top:8px;">
+      <label class="field-lbl">Niveau d intensite</label>
+      <div class="ob-opts" id="ob5-intensite-opts">
+        <div class="ob-opt" onclick="selOpt(this)">Calme et pose</div>
+        <div class="ob-opt" onclick="selOpt(this)">Energique</div>
+        <div class="ob-opt" onclick="selOpt(this)">Tres punchy et impactant</div>
+      </div>
+    </div>
+    <div class="field" style="margin-top:8px;">
+      <label class="field-lbl">Maniere de parler</label>
+      <div class="ob-opts" id="ob5-langage-opts">
+        <div class="ob-opt" onclick="selOpt(this)">Simple et vulgarise — tout le monde comprend</div>
+        <div class="ob-opt" onclick="selOpt(this)">Expert et technique — je m adresse a des pros</div>
+      </div>
+    </div>
+    <div class="ob-nav">
+      <div class="ob-back" onclick="go('ob4')">← Retour</div>
+      <button class="btn" style="width:auto;padding:13px 24px;" onclick="doSignup()">
+        <span class="btn-txt">Terminer</span><span class="btn-arr">→</span>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -1123,6 +1245,7 @@ function openScriptById(id) {
   var s = scriptsStore[id];
   if (!s) return;
   currentEditorId = id;
+  currentEditorText = s.content; // Stocke le texte brut pour doRegen()
   document.getElementById('editor-title').textContent = s.title;
   document.getElementById('editor-ta').innerHTML = renderEditorContent(s.content);
   document.getElementById('modal-editor').classList.add('open');
@@ -1444,10 +1567,49 @@ function initSupabase() {
 }
 
 async function checkSession() {
+  // Gérer le retour OAuth Google (token dans l'URL #access_token=...)
+  if (window.location.hash && window.location.hash.includes('access_token')) {
+    // Supabase va intercepter automatiquement le hash et créer la session
+    // On attend un court délai pour que Supabase traite le token
+    await new Promise(function(r) { setTimeout(r, 500); });
+    // Nettoie l'URL sans recharger la page
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+
   var result = await sb.auth.getSession();
   if (result.data && result.data.session) {
     currentUser = result.data.session.user;
-    await loadUserData(currentUser.email);
+    var email = currentUser.email;
+
+    // Vérifie si le client existe dans Airtable
+    var client = await loadClientData(email);
+
+    if (!client) {
+      // Nouveau client Google → créer automatiquement son profil Airtable
+      // On utilise le nom Google si disponible
+      var nom = currentUser.user_metadata && currentUser.user_metadata.full_name
+        ? currentUser.user_metadata.full_name
+        : email;
+      await atCreate('Client', {
+        'Nom_complet': nom,
+        'Email': email
+      });
+      // Recharger le profil créé
+      client = await loadClientData(email);
+    }
+
+    if (client) {
+      clientRecord = client;
+      renderAll(clientRecord, email);
+      var sessions = [];
+      try { sessions = await loadSessions(email); } catch(e) {}
+      renderSessions(sessions);
+      await loadScripts(clientRecord.id, email);
+      go('home');
+    } else {
+      // Fallback : onboarding si la création Airtable a échoué
+      go('ob1');
+    }
   }
 }
 
@@ -1473,14 +1635,24 @@ async function doLogin() {
   var email = document.getElementById('login-email').value.trim();
   var password = document.getElementById('login-password').value;
   if (!email || !password) { alert('Email et mot de passe requis'); return; }
+  // Affiche le spinner et désactive le bouton pendant la connexion
+  var spinner = document.getElementById('login-spinner');
+  var btn = document.getElementById('login-btn');
+  if (spinner) spinner.classList.add('visible');
+  if (btn) { btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none'; }
   var result = await sb.auth.signInWithPassword({ email: email, password: password });
+  // Cache le spinner et réactive le bouton
+  if (spinner) spinner.classList.remove('visible');
+  if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
   if (result.error) { alert('Erreur : ' + result.error.message); return; }
   currentUser = result.data.user;
   await loadUserData(currentUser.email);
 }
 
 async function doLoginGoogle() {
-  await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+  // redirectTo = URL de base sans paramètres pour éviter les boucles
+  var baseUrl = window.location.origin + window.location.pathname;
+  await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: baseUrl } });
 }
 
 async function doLogout() {
@@ -1499,29 +1671,51 @@ async function doLogout() {
 }
 
 async function doSignup() {
-  var email = document.getElementById('ob-email') ? document.getElementById('ob-email').value.trim() : '';
-  var password = document.getElementById('ob-password') ? document.getElementById('ob-password').value : '';
+  var nom = (document.getElementById('ob-nom') || {}).value || '';
+  var email = (document.getElementById('ob-email') || {}).value.trim();
+  var password = (document.getElementById('ob-password') || {}).value;
+
+  if (!nom) { alert('Ton nom est requis'); return; }
   if (!email || !password) { alert('Email et mot de passe requis'); return; }
   if (password.length < 8) { alert('Mot de passe trop court (min. 8 caracteres)'); return; }
+
   var existing = await loadClientData(email);
   var result = await sb.auth.signUp({ email: email, password: password });
   if (result.error) { alert('Erreur : ' + result.error.message); return; }
+
   if (existing) {
     clientRecord = existing;
   } else {
-    var obType = document.querySelector('#screen-ob1 .ob-opt.sel');
-    var obCamera = document.querySelector('#screen-ob5 .ob-opt.sel');
+    // Lire les réponses onboarding
+    var obPrix = document.querySelector('#ob2-prix-opts .ob-opt.sel');
+    var obMaturite = document.querySelector('#ob2-maturite-opts .ob-opt.sel');
+    var obObjectif = document.querySelector('#ob4-objectif-opts .ob-opt.sel');
+    var obTon = document.querySelector('#ob5-ton-opts .ob-opt.sel');
+    var obIntensite = document.querySelector('#ob5-intensite-opts .ob-opt.sel');
+    var obLangage = document.querySelector('#ob5-langage-opts .ob-opt.sel');
+    // KPI = chips multiples
+    var obKpi = Array.from(document.querySelectorAll('#ob4-kpi-chips .ob-chip.sel'))
+      .map(function(c) { return c.textContent.trim(); }).join(', ');
+
     await atCreate('Client', {
-      'Nom_complet': email,
+      'Nom_complet': nom,
       'Email': email,
-      'Onboarding_type': obType ? obType.textContent.trim() : '',
-      'Onboarding_secteur': (document.getElementById('ob1-secteur') || {}).value || '',
-      'Onboarding_objectif': (document.getElementById('ob1-activite') || {}).value || '',
+      'Onboarding_secteur': (document.getElementById('ob2-activite') || {}).value || '',
+      'Onboarding_offre': (document.getElementById('ob2-offre') || {}).value || '',
+      'Onboarding_prix': obPrix ? obPrix.textContent.trim() : '',
+      'Onboarding_maturite': obMaturite ? obMaturite.textContent.trim() : '',
       'Onboarding_cible': (document.getElementById('ob3-cible') || {}).value || '',
-      'Onboarding_camera': obCamera ? obCamera.textContent.trim() : ''
+      'Onboarding_douleur': (document.getElementById('ob3-douleur') || {}).value || '',
+      'Onboarding_transformation': (document.getElementById('ob3-transformation') || {}).value || '',
+      'Onboarding_objectif': obObjectif ? obObjectif.textContent.trim() : '',
+      'Onboarding_kpi': obKpi,
+      'Onboarding_ton': obTon ? obTon.textContent.trim() : '',
+      'Onboarding_intensite': obIntensite ? obIntensite.textContent.trim() : '',
+      'Onboarding_langage': obLangage ? obLangage.textContent.trim() : ''
     });
     clientRecord = await loadClientData(email);
   }
+
   currentUser = { email: email };
   if (clientRecord) { renderAll(clientRecord, email); }
   go('ob-done');
@@ -1629,6 +1823,20 @@ async function saveEditNom() {
     alert('Nom mis a jour !');
   } catch(e) {
     alert('Erreur de sauvegarde');
+  }
+}
+
+// ═══ VOIR / MASQUER MOT DE PASSE ═══
+// el = id de l'input, btn = le bouton œil cliqué
+function togglePwd(inputId, btn) {
+  var input = document.getElementById(inputId);
+  if (!input) return;
+  if (input.type === 'password') {
+    input.type = 'text';       // révèle le mot de passe
+    btn.textContent = '🙈';    // change l'icône
+  } else {
+    input.type = 'password';   // masque à nouveau
+    btn.textContent = '👁';
   }
 }
 
