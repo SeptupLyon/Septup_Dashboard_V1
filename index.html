@@ -2025,59 +2025,22 @@ function nextGenStep() {
 
 async function callAPIPodcast(sujet) {
   var profil = clientRecord ? clientRecord.fields : {};
-  var prompt = 'Tu es un expert en podcasting. Cree une INTRODUCTION et une CONCLUSION pour un episode de podcast sur : ' + sujet + '.'
-    + (profil['Nom_complet'] ? '
-
-Animateur : ' + profil['Nom_complet'] : '')
-    + (profil['Onboarding_ton'] ? '
-Ton : ' + profil['Onboarding_ton'] : '')
-    + (profil['Onboarding_cible'] ? '
-Audience : ' + profil['Onboarding_cible'] : '')
-    + '
-
-Structure OBLIGATOIRE :
-ACCROCHE
-[Introduction engageante de 30 secondes — accroche, contexte, ce que l auditeur va apprendre]
-
-CORPS
-[Presentation de l episode et de l invite si applicable]
-
-CONCLUSION
-[Outro chaleureux — recap, call to action abonnement, teaser prochain episode]
-
-CTA
-[Phrase finale percutante]
-
-Direct, chaleureux, naturel a l oral.';
+  var parts = ["Tu es un expert en podcasting. Cree une INTRODUCTION et une CONCLUSION pour un episode de podcast sur : " + sujet + "."];
+  if (profil["Nom_complet"]) parts.push("Animateur : " + profil["Nom_complet"]);
+  if (profil["Onboarding_ton"]) parts.push("Ton : " + profil["Onboarding_ton"]);
+  if (profil["Onboarding_cible"]) parts.push("Audience : " + profil["Onboarding_cible"]);
+  parts.push("Structure OBLIGATOIRE - ACCROCHE : [Introduction engageante 30sec] CORPS : [Presentation episode] CONCLUSION : [Outro chaleureux] CTA : [Phrase finale percutante]. Direct, chaleureux, naturel a loral.");
+  var prompt = parts.join(" ");
   try {
-    var res = await fetch('/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
+    var res = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, messages: [{ role: "user", content: prompt }] })
     });
     var data = await res.json();
-    var text = data.content && data.content[0] ? data.content[0].text : 'Erreur de generation.';
+    var text = data.content && data.content[0] ? data.content[0].text : "Erreur de generation.";
     showScript(text);
   } catch(e) {
-    showScript('ACCROCHE
-
-Bienvenue dans cet episode sur ' + sujet + '. Aujourd hui on va plonger dans un sujet qui va changer votre maniere de voir les choses.
-
-CORPS
-
-Je suis ravi de vous retrouver pour cet episode. On va passer les prochaines minutes a explorer en profondeur ce sujet avec des exemples concrets et des actions que vous pouvez appliquer des aujourd hui.
-
-CONCLUSION
-
-Merci d avoir ete la jusqu au bout. Si cet episode vous a apporte de la valeur, abonnez-vous et partagez-le a quelqu un qui en a besoin.
-
-CTA
-
-On se retrouve la semaine prochaine — et en attendant, passez a l action !');
+    showScript("ACCROCHE\n\nBienvenue dans cet episode sur " + sujet + ". Aujourd hui on plonge dans un sujet qui va changer votre approche.\n\nCORPS\n\nDans cet episode, on va explorer en profondeur avec des exemples concrets et actionnables.\n\nCONCLUSION\n\nMerci d avoir ete la. Si cet episode vous a apporte de la valeur, abonnez-vous et partagez.\n\nCTA\n\nOn se retrouve la semaine prochaine !");
   }
-}
-
-initSupabase();
-</script>
-</body>
-</html>
+}>
