@@ -1341,12 +1341,21 @@ function renderScriptsList() {
 function openScriptById(id) {
   var s = scriptsStore[id];
   if (!s) return;
+  // Fermer tout autre modal ouvert avant d'ouvrir l'éditeur
+  document.querySelectorAll('.modal-overlay.open').forEach(function(m) {
+    if (m.id !== 'modal-editor') m.classList.remove('open');
+  });
   currentEditorId = id;
-  currentEditorText = s.content; // Stocke le texte brut pour doRegen()
+  currentEditorText = s.content;
   document.getElementById('editor-title').textContent = s.title;
   document.getElementById('editor-ta').innerHTML = renderEditorContent(s.content);
   document.getElementById('modal-editor').classList.add('open');
   updateEditorVirality();
+  // Activer le bon bouton de statut (avec protection si updateStatusBtns n'existe pas)
+  if (typeof updateStatusBtns === 'function') {
+    var labelToStatut = { 'st-draft': 'Brouillon', 'st-valid': 'Validé', 'st-tourne': 'Tourné' };
+    updateStatusBtns(labelToStatut[s.status] || 'Brouillon');
+  }
 }
 
 function renderEditorContent(raw) {
@@ -1903,6 +1912,8 @@ function openEditProfil() {
   document.querySelectorAll('#ep-kpi-chips .ob-chip').forEach(function(chip) {
     chip.classList.toggle('sel', kpiVal.includes(chip.textContent.trim()));
   });
+  // Fermer l'éditeur si ouvert
+  document.getElementById('modal-editor').classList.remove('open');
   document.getElementById('modal-edit-profil').classList.add('open');
 }
 
