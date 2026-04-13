@@ -1179,6 +1179,8 @@ async function loadScripts(clientId, email) {
   renderScriptsList();
   var el = document.getElementById('home-nb-scripts');
   if (el) el.textContent = records.length;
+  // Met à jour le widget "Vidéos tournées" depuis les données réelles Airtable
+  updateHomeTourneCount();
   updateHomeTourneCount();
 }
 
@@ -1351,10 +1353,9 @@ function openScriptById(id) {
   document.getElementById('editor-ta').innerHTML = renderEditorContent(s.content);
   document.getElementById('modal-editor').classList.add('open');
   updateEditorVirality();
-  if (typeof updateStatusBtns === 'function') {
-    var labelToStatut = { 'st-draft': 'Brouillon', 'st-valid': 'Validé', 'st-tourne': 'Tourné' };
-    updateStatusBtns(labelToStatut[s.status] || 'Brouillon');
-  }
+  // Activer le bon bouton de statut
+  var labelToStatut = { 'st-draft': 'Brouillon', 'st-valid': 'Validé', 'st-tourne': 'Tourné' };
+  if (typeof updateStatusBtns === 'function') updateStatusBtns(labelToStatut[s.status] || 'Brouillon');
 }
 
 function renderEditorContent(raw) {
@@ -1418,7 +1419,7 @@ async function saveEditor() {
       await atCreate('Scripts', {
         'Titre': title, 'Contenu': content,
         'Score_viralite': parseFloat(score) || 0,
-        'Statut': 'Validé', 'Client': [clientRecord.id],
+        'Statut': 'Brouillon', 'Client': [clientRecord.id],
         'Email_client': currentUser ? currentUser.email : '',
         'Date_creation': new Date().toISOString()
       });
@@ -1495,7 +1496,7 @@ async function autoSaveEditor() {
       var rec = await atCreate('Scripts', {
         'Titre': s.title, 'Contenu': content,
         'Score_viralite': parseFloat(score) || 0,
-        'Statut': 'Validé', 'Client': [clientRecord.id],
+        'Statut': 'Brouillon', 'Client': [clientRecord.id],
         'Email_client': currentUser ? currentUser.email : '',
         'Date_creation': new Date().toISOString()
       });
@@ -1656,7 +1657,7 @@ function validateScript() {
       'Format': fmts[genData.format] || 'Reel 60s',
       'Angle': angles[genData.angle] || 'Éducatif',
       'Score_viralite': parseFloat(document.getElementById('gen-vir-score').textContent) || 0,
-      'Statut': 'Validé', 'Client': [clientRecord.id],
+      'Statut': 'Brouillon', 'Client': [clientRecord.id],
       'Email_client': currentUser ? currentUser.email : '',
       'Date_creation': new Date().toISOString()
     }).then(function(rec) {
@@ -1995,20 +1996,26 @@ function togglePwd(inputId, btn) {
 
 
 // ═══ NOUVELLES FONCTIONS V15 ═══
+// setScriptStatus : Brouillon / Validé / Tourné — sauvegarde dans Airtable
 async function setScriptStatus(newStatut) {
   if (!currentEditorId) return;
   var s = scriptsStore[currentEditorId];
   if (!s) return;
+
   var statusMap2 = {
-    'Brouillon': { css: 'st-draft', label: 'Brouillon' },
-    'Validé': { css: 'st-valid', label: 'Validé' },
-    'Tourné': { css: 'st-tourne', label: 'Tourné' }
+    'Brouillon': { css: 'st-draft',   label: 'Brouillon' },
+    'Validé':   { css: 'st-valid',   label: 'Validé' },
+    'Tourné':  { css: 'st-tourne', label: 'Tourné' }
   };
   var info = statusMap2[newStatut];
   if (!info) return;
+
+  // UI immédiate
   updateStatusBtns(newStatut);
   var statusEl = document.getElementById('autosave-status');
-  if (statusEl) statusEl.textContent = 'Mise a jour du statut...';
+  if (statusEl) statusEl.textContent = 'Mise a jour...';
+
+  // Sauvegarder dans Airtable
   if (s.airtableId) {
     try {
       await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Scripts/' + s.airtableId, {
@@ -2021,23 +2028,27 @@ async function setScriptStatus(newStatut) {
       if (statusEl) statusEl.textContent = 'Erreur de sauvegarde';
     }
   }
+
+  // Mettre à jour le store local
   s.status = info.css;
   s.statusLabel = info.label;
   renderScriptsList();
   updateHomeTourneCount();
 }
 
+// Met à jour l'apparence des boutons de statut
 function updateStatusBtns(statut) {
-  var btns = { 'Brouillon': 'sbtn-draft', 'Validé': 'sbtn-valid', 'Tourné': 'sbtn-tourne' };
+  var map = { 'Brouillon': 'sbtn-draft', 'Validé': 'sbtn-valid', 'Tourné': 'sbtn-tourne' };
   var classes = { 'Brouillon': 'active-draft', 'Validé': 'active-valid', 'Tourné': 'active-tourne' };
-  Object.keys(btns).forEach(function(s) {
-    var btn = document.getElementById(btns[s]);
+  Object.keys(map).forEach(function(s) {
+    var btn = document.getElementById(map[s]);
     if (!btn) return;
     btn.className = 'status-btn';
     if (s === statut) btn.classList.add(classes[s]);
   });
 }
 
+// Alias rétrocompat
 async function markAsTourne() { await setScriptStatus('Tourné'); }
 
 function updateHomeTourneCount() {
