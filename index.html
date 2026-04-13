@@ -1615,10 +1615,10 @@ async function saveEditor() {
     var s = currentEditorId ? scriptsStore[currentEditorId] : null;
     if (s && s.airtableId) {
       // Mise a jour
-      await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Scripts/' + s.airtableId, {
-        method: 'PATCH',
-        headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields: { 'Contenu': content, 'Score_viralite': parseFloat(score) || 0 } })
+      await fetch('/api/airtable', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ method: 'PATCH', table: 'Scripts', recordId: s.airtableId, fields: { 'Contenu': content, 'Score_viralite': parseFloat(score) || 0 } })
       });
     } else {
       // Creation
@@ -1731,10 +1731,10 @@ async function autoSaveEditor() {
   if (s && s.airtableId) {
     if (statusEl) statusEl.textContent = 'Sauvegarde...';
     try {
-      await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Scripts/' + s.airtableId, {
-        method: 'PATCH',
-        headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields: { 'Contenu': content, 'Score_viralite': parseFloat(score) || 0 } })
+      await fetch('/api/airtable', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ method: 'PATCH', table: 'Scripts', recordId: s.airtableId, fields: { 'Contenu': content, 'Score_viralite': parseFloat(score) || 0 } })
       });
       s.content = content;
       if (statusEl) statusEl.textContent = 'Sauvegardé ✓';
@@ -2353,10 +2353,10 @@ async function saveEditProfil() {
     'Onboarding_langage':        getOpt('ep-langage-opts')
   };
   try {
-    await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Client/' + clientRecord.id, {
-      method: 'PATCH',
-      headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields: fields })
+    await fetch('/api/airtable', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ method: 'PATCH', table: 'Client', recordId: clientRecord.id, fields: fields })
     });
     Object.assign(clientRecord.fields, fields);
     closeEditProfil();
@@ -2379,10 +2379,10 @@ async function saveEditNom() {
   var nom = document.getElementById('edit-nom-input').value.trim();
   if (!nom) { alert('Le nom ne peut pas etre vide'); return; }
   try {
-    await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Client/' + clientRecord.id, {
-      method: 'PATCH',
-      headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields: { 'Nom_complet': nom } })
+    await fetch('/api/airtable', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ method: 'PATCH', table: 'Client', recordId: clientRecord.id, fields: { 'Nom_complet': nom } })
     });
     clientRecord.fields['Nom_complet'] = nom;
     // Mettre à jour l'UI
