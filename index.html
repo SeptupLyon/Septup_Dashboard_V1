@@ -1811,44 +1811,195 @@ function startGenAnim() {
   msgTimer = setInterval(function() { msgIdx = (msgIdx + 1) % genMsgs.length; document.getElementById('gen-anim-txt').textContent = genMsgs[msgIdx]; }, 1800);
 }
 
-function buildSystemPrompt() {
+// ─────────────────────────────────────────────────────────────
+// HOOKS PAR ANGLE — 6 hooks adaptés par angle narratif
+// Source : 1000 Viral Hooks (PBL) — traduits et contextualisés
+// ─────────────────────────────────────────────────────────────
+var HOOKS_BY_ANGLE = {
+  edu: [
+    "Voici exactement [ce qu'il faut] pour obtenir [résultat] — sans [obstacle habituel].",
+    "Tu fais cette erreur sans t'en rendre compte. Voici comment la corriger en 30 secondes.",
+    "Tout le monde te dit de [action] mais personne ne t'explique vraiment comment. Voici le tutoriel.",
+    "Si tu es [cible] et tu veux [résultat], écoute — tu as un avantage que la plupart ignorent.",
+    "Il m'a fallu [X] ans pour comprendre ça. Tu vas l'avoir en moins d'une minute.",
+    "3 niveaux de [compétence/sujet]. La plupart des gens sont bloqués au niveau 1 sans le savoir."
+  ],
+  story: [
+    "J'ai perdu un client à [montant] à cause d'une seule erreur. Voilà ce qui s'est passé.",
+    "Il y a [X] ans j'ai décidé de [action]. Ce que j'ai appris depuis a tout changé.",
+    "Quand j'ai lancé [projet], tout le monde pensait que c'était la pire idée du monde.",
+    "Je n'avais pas de plan B. Il fallait que ça marche.",
+    "En [durée], je suis passé de [avant] à [après]. Voici exactement comment.",
+    "La vraie vérité sur [sujet] — après [X] années dans ce secteur."
+  ],
+  vente: [
+    "Stop. Si tu [problème cible], la [solution habituelle] ne va rien régler.",
+    "Et si je te disais que tu pouvais [résultat] sans [douleur principale] ?",
+    "Voici pourquoi [cible] n'arrive pas à [résultat] — et ce qu'il faut faire à la place.",
+    "Tu veux [résultat] d'ici [délai] ? Voilà le seul truc qui change vraiment la donne.",
+    "La raison pour laquelle tu n'arrives pas à [résultat], c'est que personne ne t'a expliqué [insight].",
+    "[Action simple] pendant [durée] = [résultat]. Non, je ne plaisante pas."
+  ],
+  temo: [
+    "Mon client [profil] avait [problème précis]. En [durée], on est passé à [résultat concret].",
+    "Ce n'est pas moi qui le dis — c'est [profil client] qui a vécu ça de A à Z.",
+    "Avant de travailler ensemble, [client] passait [temps/argent] sur [problème]. Maintenant : [transformation].",
+    "Résultat réel. Pas de bullshit. [Profil] a obtenu [résultat] sans [contrainte habituelle].",
+    "Juste [action] + [méthode]. C'est tout ce qu'il a fallu pour [résultat].",
+    "Tout le monde demande comment [client] a réussi [résultat]. Voici la vraie réponse."
+  ]
+};
+
+// ─────────────────────────────────────────────────────────────
+// FRAMEWORKS PAR ANGLE — structure narrative complète
+// Source : Framework Script Septup
+// ─────────────────────────────────────────────────────────────
+var FRAMEWORKS = {
+  edu: {
+    label: "Éducatif (rétention max)",
+    structure: "Hook (0-3s) → Promesse (3-5s) → Micro-value / 1 insight rapide (5-8s) → Rehook → Démo / étapes concrètes → Rehook → Résultat clair → CTA",
+    rules: [
+      "Donne 1 insight dès les 8 premières secondes — reward immédiat pour éviter la fuite.",
+      "Rehook milieu obligatoire : 'Mais le vrai problème, c'est ça.'",
+      "Termine sur le bénéfice concret, puis CTA avec une action précise."
+    ]
+  },
+  story: {
+    label: "Storytelling (version addictive)",
+    structure: "Hook → Setup en 1 phrase → Tension / problème → Rehook → Escalade → Rehook → Twist / déclic → Résolution + leçon",
+    rules: [
+      "Chaque rehook = mini cliffhanger. 'Et là, ça devient pire.' / 'Jusqu'au moment où...'",
+      "Le setup tient en UNE phrase max — pas de contexte inutile avant la tension.",
+      "Le twist doit être inattendu mais logique rétrospectivement."
+    ]
+  },
+  vente: {
+    label: "Vente (contenu qui convertit)",
+    structure: "Hook → Problème nommé → Rehook → Agitation (coût de l'inaction) → Rehook → Solution → Preuve spécifique → CTA",
+    rules: [
+      "Agitation = faire ressentir le coût de ne rien faire, pas juste nommer le problème.",
+      "La preuve doit être précise : chiffre, délai, résultat client réel — rien de vague.",
+      "CTA = une seule action, urgente, sans friction."
+    ]
+  },
+  temo: {
+    label: "Témoignage (narration vivante)",
+    structure: "Hook (résultat final d'abord) → Situation de départ → Problème concret → Rehook → Ce qui a changé → Résultat chiffré → Leçon → CTA",
+    rules: [
+      "Commence par le résultat — pas par le problème. Ça capte immédiatement.",
+      "Le témoignage a un personnage identifiable, pas juste 'un client'.",
+      "Garde une narration vivante — pas un témoignage plat ou corporate."
+    ]
+  }
+};
+
+// ─────────────────────────────────────────────────────────────
+// RÈGLES INVISIBLES — niveau expert, toujours injectées
+// ─────────────────────────────────────────────────────────────
+var INVISIBLE_RULES = [
+  "COURBE D'ATTENTION : Hook fort → légère baisse → rehook → légère baisse → rehook → fin. Sans rehooks = chute garantie.",
+  "RYTHME : Toutes les 5 à 8 secondes tu dois surprendre, promettre ou relancer. Jamais de zone plate.",
+  "BOUCLES OUVERTES : Crée de l'anticipation. 'Je t'explique ça dans 10 secondes.' / 'Le plus important arrive.'",
+  "MONTAGE PENSÉ : Chaque coupe = rehook. Zoom = tension. Silence = impact. Ce script doit anticiper le montage.",
+  "DENSITÉ MAXIMALE : Pas un mot de trop. Si une phrase peut être supprimée sans rien perdre, supprime-la.",
+  "ORAL AVANT TOUT : Chaque phrase doit sonner naturel à voix haute. Zéro jargon sauf si le profil l'indique explicitement."
+];
+
+// ─────────────────────────────────────────────────────────────
+// buildSystemPrompt — version enrichie v2
+// ─────────────────────────────────────────────────────────────
+function buildSystemPrompt(angle) {
   if (!clientRecord) return '';
   var f = clientRecord.fields;
+  var a = angle || genData.angle || 'edu';
+
+  // ── BLOC 1 : ADN Septup (fixe) ──
   var parts = [
-    "Tu es un expert en scripting video et contenu digital pour Septup Studio Lyon.",
-    "Tu generes des scripts percutants, directs, sans bullshit, adaptes a l oral."
+    "Tu es un expert en scripting vidéo et contenu digital pour Septup Studio Lyon.",
+    "Septup produit du contenu premium, sans bullshit, clé en main. Le contenu doit être authentique, différenciant, jamais générique.",
+    "INTERDITS ABSOLUS : formules creuses ('En conclusion', 'Il est important de noter', 'N'hésitez pas'), listes à puces dans le script, ton corporate ou publicitaire forcé, structure scolaire.",
+    "Ce script sera tourné en studio. Il doit sonner naturel à l'oral, être rythmé, créer une tension narrative qui retient l'attention jusqu'à la fin."
   ];
-  if (f['Nom_complet']) parts.push("Createur : " + f['Nom_complet']);
-  if (f['Onboarding_secteur']) parts.push("Secteur : " + f['Onboarding_secteur']);
-  if (f['Onboarding_offre']) parts.push("Offre : " + f['Onboarding_offre']);
-  if (f['Onboarding_prix']) parts.push("Prix : " + f['Onboarding_prix']);
-  if (f['Onboarding_maturite']) parts.push("Maturite : " + f['Onboarding_maturite']);
-  if (f['Onboarding_cible']) parts.push("Client ideal : " + f['Onboarding_cible']);
-  if (f['Onboarding_douleur']) parts.push("Probleme cible : " + f['Onboarding_douleur']);
-  if (f['Onboarding_transformation']) parts.push("Transformation : " + f['Onboarding_transformation']);
-  if (f['Onboarding_objectif']) parts.push("Objectif contenu : " + f['Onboarding_objectif']);
-  if (f['Onboarding_kpi']) parts.push("KPI : " + f['Onboarding_kpi']);
-  if (f['Onboarding_ton']) parts.push("Ton : " + f['Onboarding_ton']);
-  if (f['Onboarding_intensite']) parts.push("Intensite : " + f['Onboarding_intensite']);
-  if (f['Onboarding_langage']) parts.push("Langage : " + f['Onboarding_langage']);
-  parts.push("Adapte le vocabulaire, la complexite et le ton exactement a ce profil.");
+
+  // ── BLOC 2 : Profil créateur (dynamique Airtable) ──
+  parts.push("\n=== PROFIL DU CRÉATEUR ===");
+  if (f['Nom_complet'])               parts.push("Créateur : " + f['Nom_complet']);
+  if (f['Onboarding_secteur'])        parts.push("Secteur / Métier : " + f['Onboarding_secteur']);
+  if (f['Onboarding_offre'])          parts.push("Offre principale : " + f['Onboarding_offre']);
+  if (f['Onboarding_prix'])           parts.push("Prix moyen : " + f['Onboarding_prix']);
+  if (f['Onboarding_maturite'])       parts.push("Maturité marché : " + f['Onboarding_maturite']);
+  if (f['Onboarding_cible'])          parts.push("Client idéal : " + f['Onboarding_cible']);
+  if (f['Onboarding_douleur'])        parts.push("Problème n°1 de sa cible : " + f['Onboarding_douleur']);
+  if (f['Onboarding_transformation']) parts.push("Transformation apportée : " + f['Onboarding_transformation']);
+  if (f['Onboarding_objectif'])       parts.push("Objectif contenu : " + f['Onboarding_objectif']);
+  if (f['Onboarding_kpi'])            parts.push("KPI prioritaires : " + f['Onboarding_kpi']);
+  if (f['Onboarding_ton'])            parts.push("Ton : " + f['Onboarding_ton']);
+  if (f['Onboarding_intensite'])      parts.push("Intensité : " + f['Onboarding_intensite']);
+  if (f['Onboarding_langage'])        parts.push("Langage : " + f['Onboarding_langage']);
+  parts.push("→ Adapte TOUT — vocabulaire, complexité, rythme, exemples — exactement à ce profil. Pas d'approximation.");
+
+  // ── BLOC 3 : Framework sélectionné ──
+  var fw = FRAMEWORKS[a] || FRAMEWORKS['edu'];
+  parts.push("\n=== FRAMEWORK : " + fw.label.toUpperCase() + " ===");
+  parts.push("Structure à suivre : " + fw.structure);
+  parts.push("Règles spécifiques :");
+  fw.rules.forEach(function(r) { parts.push("• " + r); });
+
+  // ── BLOC 4 : Hooks de référence ──
+  var hooks = HOOKS_BY_ANGLE[a] || HOOKS_BY_ANGLE['edu'];
+  parts.push("\n=== HOOKS DE RÉFÉRENCE ===");
+  parts.push("Ces patterns ont prouvé leur efficacité en 2024-2025. Utilise leur logique et leur énergie, adapte-les au sujet et au secteur du créateur — ne les copie pas mot pour mot :");
+  hooks.forEach(function(h, i) { parts.push((i+1) + ". " + h); });
+
+  // ── BLOC 5 : Règles invisibles ──
+  parts.push("\n=== RÈGLES INVISIBLES (niveau expert) ===");
+  INVISIBLE_RULES.forEach(function(r) { parts.push(r); });
+
   return parts.join("\n");
 }
 
 async function callAPI(prevScript, instruction) {
-  var fmts = { reel30: 'Reel 30s (~80 mots)', reel60: 'Reel 60s (~150 mots)', linkedin: 'Post LinkedIn (~200 mots)', podcast: 'Intro podcast (max 400 mots)' };
-  var angles = { edu: 'educatif', story: 'storytelling', vente: 'vente directe', temo: 'temoignage' };
+  var fmts = {
+    reel30:  'Reel 30s (60 à 90 mots max — chaque mot compte)',
+    reel60:  'Reel 60s (120 à 160 mots — rythme soutenu)',
+    linkedin:'Post LinkedIn (180 à 250 mots — accroche forte, aération visuelle)',
+    podcast: 'Intro + Outro podcast (max 400 mots — chaleureux, naturel, fluide)'
+  };
+  var anglesLabel = {
+    edu:   'éducatif',
+    story: 'storytelling',
+    vente: 'vente directe',
+    temo:  'témoignage client'
+  };
+  var currentAngle = genData.angle || 'edu';
+  var fw = FRAMEWORKS[currentAngle] || FRAMEWORKS['edu'];
   var prompt;
+
   if (prevScript && instruction) {
-    prompt = 'Script existant :\n\n' + prevScript + '\n\nInstruction : ' + instruction + '\n\nRegenere-le en appliquant cette modification. Structure obligatoire :\nACCROCHE\n[texte]\n\nCORPS\n[texte]\n\nCONCLUSION\n[texte]\n\nCTA\n[texte]\n\nDirect, percutant, sans bullshit.';
+    // ── Mode régénération ──
+    prompt = 'Script existant :\n\n' + prevScript
+      + '\n\nInstruction de modification : ' + instruction
+      + '\n\nApplique cette modification en gardant la structure ACCROCHE / CORPS / CONCLUSION / CTA.'
+      + '\nConserve l\'angle ' + (anglesLabel[currentAngle] || 'éducatif') + ' et le framework : ' + fw.structure
+      + '\n\nRègle absolue : direct, percutant, oral. Les labels de section en MAJUSCULES seuls sur leur ligne.';
   } else {
-    prompt = 'Cree un script ' + (fmts[genData.format] || 'Reel 60s') + ' angle ' + (angles[genData.angle] || 'educatif') + ' sur : ' + genData.sujet + '.\n\nStructure obligatoire (labels en majuscules seuls sur leur ligne) :\nACCROCHE\n[texte percutant]\n\nCORPS\n[developpe les points]\n\nCONCLUSION\n[texte]\n\nCTA\n[action forte]\n\nDirect, percutant, sans bullshit.';
+    // ── Mode génération initiale ──
+    prompt = 'Génère un script ' + (fmts[genData.format] || fmts['reel60'])
+      + ', angle ' + (anglesLabel[currentAngle] || 'éducatif')
+      + ' sur le sujet suivant : ' + genData.sujet
+      + '\n\nRESPECTE impérativement le framework injecté dans le system prompt : ' + fw.structure
+      + '\n\nSTRUCTURE DE SORTIE OBLIGATOIRE (labels seuls sur leur ligne, en majuscules) :'
+      + '\nACCROCHE\n[Hook percutant — adapté au profil créateur et au framework]'
+      + '\n\nCORPS\n[Développement structuré selon le framework — rehooks inclus]'
+      + '\n\nCONCLUSION\n[Résolution claire, bénéfice concret]'
+      + '\n\nCTA\n[Action unique, directe, sans friction]'
+      + '\n\nExigences : oral naturel, pas de bullshit, pas de formules creuses, densité maximale.';
   }
   try {
     var res = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: buildSystemPrompt(), messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1200, system: buildSystemPrompt(currentAngle), messages: [{ role: 'user', content: prompt }] })
     });
     var data = await res.json();
     var text = data.content && data.content[0] ? data.content[0].text : 'Erreur de generation.';
@@ -2336,7 +2487,7 @@ async function callAPIPodcast(sujet) {
     var res = await fetch("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system: buildSystemPrompt(), messages: [{ role: "user", content: prompt }] })
+      body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1200, system: buildSystemPrompt('story'), messages: [{ role: "user", content: prompt }] })
     });
     var data = await res.json();
     showScript(data.content && data.content[0] ? data.content[0].text : "Erreur de generation.");
