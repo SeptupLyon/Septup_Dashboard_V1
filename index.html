@@ -1171,9 +1171,15 @@ var editorTimer = null;
 var genMsgs = ['Analyse de ton profil...', 'Calibration du ton...', 'Redaction en cours...', 'Finalisation...'];
 
 // ═══ NAVIGATION ═══
+// Mémorise la page active avant d'ouvrir le compte
+var _pageAvantCompte = 'home';
+
 function go(id) {
   if (id === 'compte') {
-    // Ouvre compte PAR-DESSUS la page active — sans toucher aux autres
+    // Mémoriser quelle page est active en ce moment
+    var active = document.querySelector('.screen.active:not(#screen-compte)');
+    _pageAvantCompte = active ? active.id.replace('screen-', '') : 'home';
+    // Ouvrir compte PAR-DESSUS sans toucher aux autres
     var compte = document.getElementById('screen-compte');
     if (compte) { compte.classList.add('active'); compte.scrollTop = 0; }
     return;
@@ -1186,10 +1192,18 @@ function go(id) {
   if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
 }
 
-// Ferme la page compte sans toucher aux autres pages
+// Ferme le compte et revient sur la page d'où on venait
 function closeCompte() {
   var compte = document.getElementById('screen-compte');
   if (compte) compte.classList.remove('active');
+  // Remettre la page qui était active avant — sans écran noir
+  var previous = document.getElementById('screen-' + _pageAvantCompte);
+  if (previous && !previous.classList.contains('active')) {
+    document.querySelectorAll('.screen').forEach(function(s) {
+      if (s.id !== 'screen-compte') s.classList.remove('active');
+    });
+    previous.classList.add('active');
+  }
 }
 
 function showTab(tab) {
