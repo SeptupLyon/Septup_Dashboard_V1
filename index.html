@@ -271,8 +271,8 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 
 /* Badges de statut (dans la liste des scripts) ← modifier les couleurs ici */
 .script-status { font-size: 10px; margin-top: 6px; display: inline-block; padding: 2px 8px; border-radius: 20px; }
-.st-draft  { color: var(--text3);   border: 1px solid var(--border2); }
-.st-valid  { color: var(--accent);  border: 1px solid var(--aborder); }
+.st-draft  { color: #FF550D;   border: 1px solid #ff560d58; background-color: #ff560d18;}
+.st-valid  { color: var(--accent);  border: 1px solid ; }
 .st-used   { color: var(--green);   border: 1px solid rgba(74,222,128,0.3); }
 .st-tourne { color: var(--tourne);  border: 1px solid var(--tourne-border); }
 
@@ -371,7 +371,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 /* Boutons de statut dans l'éditeur ← modifier les couleurs ici */
 .status-btns { display: flex; gap: 8px; margin-bottom: 4px; }
 .status-btn { flex: 1; padding: 11px 8px; border-radius: var(--radius-md); font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid var(--border2); background: transparent; color: var(--text2); text-align: center; }
-.status-btn.active-draft  { border-color: var(--border2);          color: var(--text3);   background: var(--bg3); }
+.status-btn.active-draft  { border :1px solid #ff560d65 ;          color: #FF550D;   background: #ff560d19; }
 .status-btn.active-valid  { border-color: var(--aborder);          color: var(--accent);  background: var(--adim); }
 .status-btn.active-tourne { border-color: var(--tourne-border);    color: var(--tourne);  background: var(--tourne-bg); }
 
