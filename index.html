@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -82,7 +83,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 
 /* Bouton icône rond */
 .ibtn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; color: var(--text2); background: transparent; }
-#export-btn-supp { color: red; background-color: rgba(255, 0, 0, 0.236); border: 1px solid rgba(255, 0, 0, 0.731); }
+
 /* Avatar (initiales client) */
 .av { border-color: var(--aborder); color: var(--accent); font-size: 11px; font-weight: 700; }
 
@@ -248,10 +249,10 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 
 /* Badges de statut (dans la liste des scripts) ← modifier les couleurs ici */
 .script-status { font-size: 10px; margin-top: 6px; display: inline-block; padding: 2px 8px; border-radius: 20px; }
-.st-draft  { border : 1px solid #ff560d75;          color: #FF550D ;   background:#ff560d21; }
-.st-valid  { color: var(--accent);  border: 1px solid var(--aborder); background-color: #7fd9f713 }
-.st-used   { color: var(--green);   border: 1px solid rgba(74, 222, 128, 0.408); }
-.st-tourne { color: var(--tourne);  border: 1px solid var(--tourne-border); background: #00ff3322; }
+.st-draft  { color: var(--text3);   border: 1px solid var(--border2); }
+.st-valid  { color: var(--accent);  border: 1px solid var(--aborder); }
+.st-used   { color: var(--green);   border: 1px solid rgba(74,222,128,0.3); }
+.st-tourne { color: var(--tourne);  border: 1px solid var(--tourne-border); }
 
 /* ── 6. MODALS ───────────────────────────────────────────── */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
@@ -348,7 +349,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 /* Boutons de statut dans l'éditeur ← modifier les couleurs ici */
 .status-btns { display: flex; gap: 8px; margin-bottom: 4px; }
 .status-btn { flex: 1; padding: 11px 8px; border-radius: var(--radius-md); font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid var(--border2); background: transparent; color: var(--text2); text-align: center; }
-.status-btn.active-draft  { border-color: #ff560d75;          color: #FF550D ;   background:#ff560d21; }
+.status-btn.active-draft  { border-color: var(--border2);          color: var(--text3);   background: var(--bg3); }
 .status-btn.active-valid  { border-color: var(--aborder);          color: var(--accent);  background: var(--adim); }
 .status-btn.active-tourne { border-color: var(--tourne-border);    color: var(--tourne);  background: var(--tourne-bg); }
 
@@ -733,9 +734,8 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
       <div class="export-count" id="export-count">0 selectionne</div>
       <div class="export-btns">
         <button class="export-btn" onclick="exportScripts('pdf')">PDF</button>
-        <button class="export-btn" onclick="exportScripts('word')">Word</button>
         <button class="export-btn" onclick="exportScripts('txt')">TXT</button>
-        <button id="export-btn-supp" class="export-btn" onclick="exportScripts('txt')">Supprimer</button>
+        <button class="export-btn" style="background:var(--red);color:#fff;" onclick="deleteSelectedScripts()">🗑 Supprimer</button>
       </div>
     </div>
     <div id="scripts-list"><div style="padding:24px 16px;text-align:center;font-size:13px;color:var(--text3);">Chargement...</div></div>
@@ -1554,6 +1554,52 @@ function toggleScriptSel(cb, id) {
 
 function exportScripts(fmt) {
   alert(Object.keys(selectedScripts).length + ' script(s) exporte(s) en ' + fmt.toUpperCase() + '.\n(Disponible en production)');
+}
+
+// Supprimer tous les scripts sélectionnés (dans le store local + Airtable)
+async function deleteSelectedScripts() {
+  var ids = Object.keys(selectedScripts);
+  if (ids.length === 0) return;
+
+  var msg = ids.length === 1
+    ? 'Supprimer ce script ? Action irreversible.'
+    : 'Supprimer ces ' + ids.length + ' scripts ? Action irreversible.';
+  if (!confirm(msg)) return;
+
+  // Désactiver le bouton pendant la suppression
+  var btn = document.querySelector('.export-btns button:last-child');
+  if (btn) { btn.textContent = '...'; btn.style.pointerEvents = 'none'; }
+
+  var errors = 0;
+  for (var i = 0; i < ids.length; i++) {
+    var id = ids[i];
+    var s = scriptsStore[id];
+    // Supprimer dans Airtable si le script a un ID Airtable
+    if (s && s.airtableId) {
+      try {
+        await atDelete('Scripts', s.airtableId);
+      } catch(e) {
+        errors++;
+        console.error('Erreur suppression Airtable:', id, e);
+      }
+    }
+    // Supprimer du store local dans tous les cas
+    delete scriptsStore[id];
+  }
+
+  // Réinitialiser la sélection
+  selectedScripts = {};
+  document.getElementById('export-bar').style.display = 'none';
+
+  // Rafraîchir la liste et les compteurs
+  renderScriptsList();
+  updateHomeTourneCount();
+  var el = document.getElementById('home-nb-scripts');
+  if (el) el.textContent = Object.keys(scriptsStore).length;
+
+  if (errors > 0) {
+    alert(errors + ' erreur(s) lors de la suppression Airtable. Les scripts ont ete retires de la liste.');
+  }
 }
 
 // ═══ VIRALITY ═══
