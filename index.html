@@ -72,28 +72,27 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .app { max-width: 420px; margin: 0 auto; min-height: 100vh; background: var(--bg); }
 
 /* Pages — une seule visible à la fois via JS */
-.screen {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+.screen { display: none; flex-direction: column; min-height: 100vh; }
+.screen.active { display: flex; }
+
+/* Transition droite → gauche uniquement pour la page Compte */
+#screen-compte {
+  display: none;                     /* caché par défaut comme les autres */
   position: fixed;
   inset: 0;
   max-width: 420px;
   margin: 0 auto;
   background: var(--bg);
-  transform: translateX(100%);        /* cachée à droite par défaut */
+  transform: translateX(100%);       /* prêt à glisser depuis la droite */
   transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
   pointer-events: none;
   overflow-y: auto;
+  z-index: 50;
 }
-.screen.active {
-  transform: translateX(0);           /* visible au centre */
+#screen-compte.active {
+  display: flex;                     /* visible seulement quand actif */
+  transform: translateX(0);          /* glisse vers le centre */
   pointer-events: all;
-  z-index: 1;
-}
-.screen.slide-back {
-  transform: translateX(-30%);        /* part légèrement à gauche */
-  pointer-events: none;
 }
 
 /* Barre du haut */
@@ -1142,27 +1141,33 @@ var editorTimer = null;
 var genMsgs = ['Analyse de ton profil...', 'Calibration du ton...', 'Redaction en cours...', 'Finalisation...'];
 
 // ═══ NAVIGATION ═══
-var _prevScreen = null;
-
 function go(id) {
-  var next = document.getElementById('screen-' + id);
-  if (!next) return;
+  var compte = document.getElementById('screen-compte');
 
-  var current = document.querySelector('.screen.active');
-
-  if (current && current !== next) {
-    // L'écran actuel part à gauche
-    current.classList.remove('active');
-    current.classList.add('slide-back');
-    setTimeout(function() {
-      current.classList.remove('slide-back');
-    }, 350);
+  if (id === 'compte') {
+    // Ouvrir compte : glisse depuis la droite
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    compte.classList.add('active');
+    compte.scrollTop = 0;
+    return;
   }
 
-  // Le nouvel écran arrive de la droite
-  next.classList.add('active');
-  next.scrollTop = 0;
-  _prevScreen = current ? current.id.replace('screen-', '') : null;
+  // Fermer compte si on revient en arrière : repart vers la droite
+  if (compte && compte.classList.contains('active')) {
+    compte.classList.remove('active');
+    // Petit délai pour laisser la transition se terminer avant d'afficher la nouvelle page
+    setTimeout(function() {
+      document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+      var el = document.getElementById('screen-' + id);
+      if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
+    }, 280);
+    return;
+  }
+
+  // Navigation normale entre les autres pages
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  var el = document.getElementById('screen-' + id);
+  if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
 }
 
 function showTab(tab) {
