@@ -116,15 +116,15 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .st-draft { color: var(--text3); border: 1px solid var(--border2); }
 .st-valid { color: var(--accent); border: 1px solid var(--aborder); }
 .st-used { color: var(--green); border: 1px solid rgba(74,222,128,0.3); }
-.st-tourne { color: #f5c518; border: 1px solid rgba(245,197,24,0.3); }
+.st-tourne { color: #00FF31; border: 1px solid rgba(22, 101, 25, 1); }
 .st-draft { color: var(--text3); border: 1px solid var(--border2); }
 .st-valid { color: var(--accent); border: 1px solid var(--aborder); }
 .status-btns { display: flex; gap: 8px; margin-bottom: 4px; }
 .status-btn { flex: 1; padding: 11px 8px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid var(--border2); background: transparent; color: var(--text2); text-align: center; }
 .status-btn.active-draft { border-color: var(--border2); color: var(--text3); background: var(--bg3); }
 .status-btn.active-valid { border-color: var(--aborder); color: var(--accent); background: var(--adim); }
-.status-btn.active-tourne { border-color: rgba(245,197,24,0.4); color: #f5c518; background: rgba(245,197,24,0.08); }
-.st-tourne { color: #f5c518; border: 1px solid rgba(245,197,24,0.3); } /* Doré = tourné */
+.status-btn.active-tourne { border-color: rgba(22, 101, 25, 1); color: #00FF31; background: rgba(22,101,24,0.18); }
+.st-tourne { color: #00FF31; border: 1px solid rgba(22, 101, 25, 1); } /* Doré = tourné */
 .script-arrow { font-size: 18px; color: var(--text3); cursor: pointer; flex-shrink: 0; padding: 0 4px; }
 .export-bar { margin: 0 16px 12px; border: 1px solid var(--aborder); border-radius: 12px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; background: var(--adim); }
 .export-count { font-size: 12px; font-weight: 600; color: var(--accent); }
@@ -542,7 +542,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
     <div class="mini-grid" style="margin-bottom:16px;">
       <div class="mini" onclick="go('sessions')"><div class="mini-lbl">Sessions</div><div class="mini-val" id="home-nb-sess">0</div><div class="mini-sub" id="home-sess-sub">0 a venir</div></div>
       <div class="mini" onclick="go('scripts')"><div class="mini-lbl">Scripts</div><div class="mini-val" id="home-nb-scripts">0</div><div class="mini-sub">generes</div></div>
-      <div class="mini" onclick="go('scripts')"><div class="mini-lbl">Videos tournees</div><div class="mini-val" id="home-nb-tourne">0</div><div class="mini-sub" style="color:#f5c518;">🎬 marquees</div></div>
+      <div class="mini" onclick="go('scripts')"><div class="mini-lbl">Videos tournees</div><div class="mini-val" id="home-nb-tourne">0</div><div class="mini-sub" style="color:#00FF31;">🎬 marquees</div></div>
       <div class="mini" onclick="go('sessions')"><div class="mini-lbl">Heures studio</div><div class="mini-val" id="home-nb-heures">0</div><div class="mini-sub">au total</div></div>
     </div>
     <div class="sec-lbl" style="margin-bottom:10px;">Prochaines sessions</div>
