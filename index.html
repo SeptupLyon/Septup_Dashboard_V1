@@ -75,26 +75,6 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .screen { display: none; flex-direction: column; min-height: 100vh; }
 .screen.active { display: flex; }
 
-/* Transition droite → gauche uniquement pour la page Compte */
-#screen-compte {
-  display: none;                     /* caché par défaut comme les autres */
-  position: fixed;
-  inset: 0;
-  max-width: 420px;
-  margin: 0 auto;
-  background: var(--bg);
-  transform: translateX(100%);       /* prêt à glisser depuis la droite */
-  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-  pointer-events: none;
-  overflow-y: auto;
-  z-index: 50;
-}
-#screen-compte.active {
-  display: flex;                     /* visible seulement quand actif */
-  transform: translateX(0);          /* glisse vers le centre */
-  pointer-events: all;
-}
-
 /* Barre du haut */
 .topbar { display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 8px; }
 .logo { font-size: 17px; font-weight: 700; color: var(--accent); }
@@ -274,9 +254,32 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .st-tourne { color: var(--tourne);  border: 1px solid var(--tourne-border); }
 
 /* ── 6. MODALS ───────────────────────────────────────────── */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
-.modal-overlay.open { display: flex; }
-.modal { background: var(--bg2); border-radius: 24px 24px 0 0; width: 100%; max-width: 420px; display: flex; flex-direction: column; border: 1px solid var(--border2); border-bottom: none; }
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0);        /* transparent au départ */
+  z-index: 200;
+  display: flex;                     /* toujours flex */
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;              /* non cliquable quand fermé */
+  transition: background 0.3s ease;
+}
+.modal-overlay.open {
+  background: rgba(0,0,0,0.85);     /* fond sombre à l'ouverture */
+  pointer-events: all;
+}
+.modal {
+  background: var(--bg2);
+  border-radius: 24px 24px 0 0;
+  width: 100%; max-width: 420px;
+  display: flex; flex-direction: column;
+  border: 1px solid var(--border2); border-bottom: none;
+  transform: translateY(100%);       /* caché en bas au départ */
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.modal-overlay.open .modal {
+  transform: translateY(0);          /* remonte à sa position */
+}
 .modal-handle { width: 36px; height: 4px; background: var(--bg3); border-radius: 2px; margin: 10px auto 0; flex-shrink: 0; }
 .modal-hdr { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .modal-title { font-size: 15px; font-weight: 700; color: var(--accent); }
@@ -1142,29 +1145,6 @@ var genMsgs = ['Analyse de ton profil...', 'Calibration du ton...', 'Redaction e
 
 // ═══ NAVIGATION ═══
 function go(id) {
-  var compte = document.getElementById('screen-compte');
-
-  if (id === 'compte') {
-    // Ouvrir compte : glisse depuis la droite
-    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-    compte.classList.add('active');
-    compte.scrollTop = 0;
-    return;
-  }
-
-  // Fermer compte si on revient en arrière : repart vers la droite
-  if (compte && compte.classList.contains('active')) {
-    compte.classList.remove('active');
-    // Petit délai pour laisser la transition se terminer avant d'afficher la nouvelle page
-    setTimeout(function() {
-      document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-      var el = document.getElementById('screen-' + id);
-      if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
-    }, 280);
-    return;
-  }
-
-  // Navigation normale entre les autres pages
   document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
   var el = document.getElementById('screen-' + id);
   if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
