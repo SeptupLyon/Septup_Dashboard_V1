@@ -1147,7 +1147,6 @@ async function loadScripts(clientId, email) {
     var dateStr = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
     var statut = f['Statut'] || 'Brouillon';
     var statusMap = { 'Validé': 'st-valid', 'Utilisé': 'st-used', 'Brouillon': 'st-draft', 'Tourné': 'st-tourne', 'Tourne': 'st-tourne' };
-    // Fonction pour mapper le statut même avec des variantes d'encodage
     var getStatus = function(statut) {
       if (!statut) return 'st-draft';
       var s = statut.toLowerCase().replace(/[éè]/g, 'e');
@@ -1554,6 +1553,30 @@ function startGenAnim() {
   msgTimer = setInterval(function() { msgIdx = (msgIdx + 1) % genMsgs.length; document.getElementById('gen-anim-txt').textContent = genMsgs[msgIdx]; }, 1800);
 }
 
+function buildSystemPrompt() {
+  if (!clientRecord) return '';
+  var f = clientRecord.fields;
+  var parts = [
+    "Tu es un expert en scripting video et contenu digital pour Septup Studio Lyon.",
+    "Tu generes des scripts percutants, directs, sans bullshit, adaptes a l oral."
+  ];
+  if (f['Nom_complet']) parts.push("Createur : " + f['Nom_complet']);
+  if (f['Onboarding_secteur']) parts.push("Secteur : " + f['Onboarding_secteur']);
+  if (f['Onboarding_offre']) parts.push("Offre : " + f['Onboarding_offre']);
+  if (f['Onboarding_prix']) parts.push("Prix : " + f['Onboarding_prix']);
+  if (f['Onboarding_maturite']) parts.push("Maturite : " + f['Onboarding_maturite']);
+  if (f['Onboarding_cible']) parts.push("Client ideal : " + f['Onboarding_cible']);
+  if (f['Onboarding_douleur']) parts.push("Probleme cible : " + f['Onboarding_douleur']);
+  if (f['Onboarding_transformation']) parts.push("Transformation : " + f['Onboarding_transformation']);
+  if (f['Onboarding_objectif']) parts.push("Objectif contenu : " + f['Onboarding_objectif']);
+  if (f['Onboarding_kpi']) parts.push("KPI : " + f['Onboarding_kpi']);
+  if (f['Onboarding_ton']) parts.push("Ton : " + f['Onboarding_ton']);
+  if (f['Onboarding_intensite']) parts.push("Intensite : " + f['Onboarding_intensite']);
+  if (f['Onboarding_langage']) parts.push("Langage : " + f['Onboarding_langage']);
+  parts.push("Adapte le vocabulaire, la complexite et le ton exactement a ce profil.");
+  return parts.join("\n");
+}
+
 async function callAPI(prevScript, instruction) {
   var fmts = { reel30: 'Reel 30s (~80 mots)', reel60: 'Reel 60s (~150 mots)', linkedin: 'Post LinkedIn (~200 mots)', podcast: 'Intro podcast (max 400 mots)' };
   var angles = { edu: 'educatif', story: 'storytelling', vente: 'vente directe', temo: 'temoignage' };
@@ -1567,7 +1590,7 @@ async function callAPI(prevScript, instruction) {
     var res = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: buildSystemPrompt(), messages: [{ role: 'user', content: prompt }] })
     });
     var data = await res.json();
     var text = data.content && data.content[0] ? data.content[0].text : 'Erreur de generation.';
@@ -1847,26 +1870,26 @@ function selEditOpt(el, group) {
 function openEditProfil() {
   if (!clientRecord) return;
   var f = clientRecord.fields;
-  // Pré-remplir les champs
-  var secteurEl = document.getElementById('ep-secteur');
-  var objectifEl = document.getElementById('ep-objectif');
-  var cibleEl = document.getElementById('ep-cible');
-  var tonEl = document.getElementById('ep-ton');
-  if (secteurEl) secteurEl.value = f['Onboarding_secteur'] || '';
-  if (objectifEl) objectifEl.value = f['Onboarding_objectif'] || '';
-  if (cibleEl) cibleEl.value = f['Onboarding_cible'] || '';
-  if (tonEl) tonEl.value = f['Onboarding_ton'] || '';
-  // Sélectionner le type
-  var typeOpts = document.querySelectorAll('#ep-type-opts .ob-opt');
-  typeOpts.forEach(function(o) {
-    if (o.textContent.trim() === f['Onboarding_type']) o.classList.add('sel');
-    else o.classList.remove('sel');
-  });
-  // Sélectionner la caméra
-  var camOpts = document.querySelectorAll('#ep-camera-opts .ob-opt');
-  camOpts.forEach(function(o) {
-    if (o.textContent.trim() === f['Onboarding_camera']) o.classList.add('sel');
-    else o.classList.remove('sel');
+  var set = function(id, val) { var el = document.getElementById(id); if (el) el.value = val || ''; };
+  var selOpts = function(cid, val) {
+    document.querySelectorAll('#' + cid + ' .ob-opt').forEach(function(o) {
+      o.classList.toggle('sel', o.textContent.trim() === (val || ''));
+    });
+  };
+  set('ep-secteur', f['Onboarding_secteur']);
+  set('ep-offre', f['Onboarding_offre']);
+  set('ep-cible', f['Onboarding_cible']);
+  set('ep-douleur', f['Onboarding_douleur']);
+  set('ep-transformation', f['Onboarding_transformation']);
+  selOpts('ep-prix-opts', f['Onboarding_prix']);
+  selOpts('ep-maturite-opts', f['Onboarding_maturite']);
+  selOpts('ep-objectif-opts', f['Onboarding_objectif']);
+  selOpts('ep-ton-opts', f['Onboarding_ton']);
+  selOpts('ep-intensite-opts', f['Onboarding_intensite']);
+  selOpts('ep-langage-opts', f['Onboarding_langage']);
+  var kpiVal = f['Onboarding_kpi'] || '';
+  document.querySelectorAll('#ep-kpi-chips .ob-chip').forEach(function(chip) {
+    chip.classList.toggle('sel', kpiVal.includes(chip.textContent.trim()));
   });
   document.getElementById('modal-edit-profil').classList.add('open');
 }
@@ -1875,15 +1898,25 @@ function closeEditProfil() { document.getElementById('modal-edit-profil').classL
 
 async function saveEditProfil() {
   if (!clientRecord) return;
-  var typeEl = document.querySelector('#ep-type-opts .ob-opt.sel');
-  var camEl = document.querySelector('#ep-camera-opts .ob-opt.sel');
+  var getOpt = function(cid) {
+    var el = document.querySelector('#' + cid + ' .ob-opt.sel');
+    return el ? el.textContent.trim() : '';
+  };
+  var kpi = Array.from(document.querySelectorAll('#ep-kpi-chips .ob-chip.sel'))
+    .map(function(c) { return c.textContent.trim(); }).join(', ');
   var fields = {
-    'Onboarding_type': typeEl ? typeEl.textContent.trim() : '',
-    'Onboarding_secteur': document.getElementById('ep-secteur').value,
-    'Onboarding_objectif': document.getElementById('ep-objectif').value,
-    'Onboarding_cible': document.getElementById('ep-cible').value,
-    'Onboarding_ton': document.getElementById('ep-ton').value,
-    'Onboarding_camera': camEl ? camEl.textContent.trim() : ''
+    'Onboarding_secteur':        (document.getElementById('ep-secteur') || {}).value || '',
+    'Onboarding_offre':          (document.getElementById('ep-offre') || {}).value || '',
+    'Onboarding_prix':           getOpt('ep-prix-opts'),
+    'Onboarding_maturite':       getOpt('ep-maturite-opts'),
+    'Onboarding_cible':          (document.getElementById('ep-cible') || {}).value || '',
+    'Onboarding_douleur':        (document.getElementById('ep-douleur') || {}).value || '',
+    'Onboarding_transformation': (document.getElementById('ep-transformation') || {}).value || '',
+    'Onboarding_objectif':       getOpt('ep-objectif-opts'),
+    'Onboarding_kpi':            kpi,
+    'Onboarding_ton':            getOpt('ep-ton-opts'),
+    'Onboarding_intensite':      getOpt('ep-intensite-opts'),
+    'Onboarding_langage':        getOpt('ep-langage-opts')
   };
   try {
     await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Client/' + clientRecord.id, {
@@ -1891,7 +1924,6 @@ async function saveEditProfil() {
       headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
       body: JSON.stringify({ fields: fields })
     });
-    // Mettre à jour le record local
     Object.assign(clientRecord.fields, fields);
     closeEditProfil();
     alert('Profil mis a jour !');
@@ -1899,7 +1931,6 @@ async function saveEditProfil() {
     alert('Erreur de sauvegarde');
   }
 }
-
 function openEditNom() {
   if (!clientRecord) return;
   var el = document.getElementById('edit-nom-input');
@@ -1944,29 +1975,27 @@ function togglePwd(inputId, btn) {
 }
 
 
-// ═══ MARQUER UN SCRIPT COMME TOURNÉ ═══
+// ═══ NOUVELLES FONCTIONS V15 ═══
 async function markAsTourne() {
   if (!currentEditorId) return;
   var s = scriptsStore[currentEditorId];
-  if (!s) return;
+  if (!s || !s.airtableId) return;
   var btn = document.getElementById('btn-tourne');
-  if (s.airtableId) {
-    try {
-      if (btn) btn.textContent = '...';
-      await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Scripts/' + s.airtableId, {
-        method: 'PATCH',
-        headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields: { 'Statut': 'Tourn\u00e9' } })
-      });
-      s.status = 'st-tourne';
-      s.statusLabel = 'Tourné';
-      renderScriptsList();
-      updateHomeTourneCount();
-      if (btn) btn.textContent = '✓ Tourné !';
-      setTimeout(function() { if (btn) btn.textContent = '🎬 Tourné'; }, 2000);
-    } catch(e) {
-      if (btn) btn.textContent = '🎬 Tourné';
-    }
+  try {
+    if (btn) btn.textContent = '...';
+    await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Scripts/' + s.airtableId, {
+      method: 'PATCH',
+      headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: { 'Statut': 'Tourné' } })
+    });
+    s.status = 'st-tourne';
+    s.statusLabel = 'Tourné';
+    renderScriptsList();
+    updateHomeTourneCount();
+    if (btn) btn.textContent = '✓ Tourné !';
+    setTimeout(function() { if (btn) btn.textContent = '🎬 Tourné'; }, 2000);
+  } catch(e) {
+    if (btn) btn.textContent = '🎬 Tourné';
   }
 }
 
@@ -1978,9 +2007,7 @@ function updateHomeTourneCount() {
 
 function updateHomeHeures(sessions) {
   var total = 0;
-  (sessions || []).forEach(function(r) {
-    total += parseFloat(r.fields['Durée'] || r.fields['Duree'] || 0);
-  });
+  (sessions || []).forEach(function(r) { total += parseFloat(r.fields['Durée'] || r.fields['Duree'] || 0); });
   var el = document.getElementById('home-nb-heures');
   if (el) el.textContent = total;
 }
@@ -2004,23 +2031,31 @@ async function callAPIPodcast(sujet) {
   if (profil["Nom_complet"]) parts.push("Animateur : " + profil["Nom_complet"]);
   if (profil["Onboarding_ton"]) parts.push("Ton : " + profil["Onboarding_ton"]);
   if (profil["Onboarding_cible"]) parts.push("Audience : " + profil["Onboarding_cible"]);
-  parts.push("Structure OBLIGATOIRE - ACCROCHE : [Introduction engageante 30sec] CORPS : [Presentation episode] CONCLUSION : [Outro chaleureux] CTA : [Phrase finale percutante]. Direct, chaleureux, naturel a loral.");
+  parts.push("Structure OBLIGATOIRE - ACCROCHE [Introduction engageante 30sec] CORPS [Presentation episode] CONCLUSION [Outro chaleureux] CTA [Phrase finale]. Direct, chaleureux, naturel a loral.");
   var prompt = parts.join(" ");
   try {
     var res = await fetch("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, messages: [{ role: "user", content: prompt }] })
+      body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system: buildSystemPrompt(), messages: [{ role: "user", content: prompt }] })
     });
     var data = await res.json();
-    var text = data.content && data.content[0] ? data.content[0].text : "Erreur de generation.";
-    showScript(text);
+    showScript(data.content && data.content[0] ? data.content[0].text : "Erreur de generation.");
   } catch(e) {
-    showScript("ACCROCHE\n\nBienvenue dans cet episode sur " + sujet + ".\n\nCORPS\n\nOn va explorer ce sujet en profondeur.\n\nCONCLUSION\n\nMerci d avoir ete la.\n\nCTA\n\nOn se retrouve la semaine prochaine !");
+    showScript("ACCROCHE\n\nBienvenue dans cet episode sur " + sujet + ".\n\nCORPS\n\nOn explore ce sujet en profondeur.\n\nCONCLUSION\n\nMerci d avoir ete la.\n\nCTA\n\nOn se retrouve la semaine prochaine !");
   }
 }
 
+// ═══ VOIR / MASQUER MOT DE PASSE ═══
+function togglePwd(inputId, btn) {
+  var input = document.getElementById(inputId);
+  if (!input) return;
+  if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+  else { input.type = 'password'; btn.textContent = '👁'; }
+}
+
 initSupabase();
+
 </script>
 </body>
 </html>
