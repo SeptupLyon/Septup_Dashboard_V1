@@ -72,8 +72,29 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .app { max-width: 420px; margin: 0 auto; min-height: 100vh; background: var(--bg); }
 
 /* Pages — une seule visible à la fois via JS */
-.screen { display: none; flex-direction: column; min-height: 100vh; }
-.screen.active { display: flex; }
+.screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: fixed;
+  inset: 0;
+  max-width: 420px;
+  margin: 0 auto;
+  background: var(--bg);
+  transform: translateX(100%);        /* cachée à droite par défaut */
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  pointer-events: none;
+  overflow-y: auto;
+}
+.screen.active {
+  transform: translateX(0);           /* visible au centre */
+  pointer-events: all;
+  z-index: 1;
+}
+.screen.slide-back {
+  transform: translateX(-30%);        /* part légèrement à gauche */
+  pointer-events: none;
+}
 
 /* Barre du haut */
 .topbar { display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 8px; }
@@ -254,32 +275,9 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .st-tourne { color: var(--tourne);  border: 1px solid var(--tourne-border); }
 
 /* ── 6. MODALS ───────────────────────────────────────────── */
-.modal-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0);        /* transparent au départ */
-  z-index: 200;
-  display: flex;                     /* toujours flex */
-  align-items: flex-end;
-  justify-content: center;
-  pointer-events: none;              /* non cliquable quand fermé */
-  transition: background 0.3s ease;
-}
-.modal-overlay.open {
-  background: rgba(0,0,0,0.85);     /* fond sombre à l'ouverture */
-  pointer-events: all;
-}
-.modal {
-  background: var(--bg2);
-  border-radius: 24px 24px 0 0;
-  width: 100%; max-width: 420px;
-  display: flex; flex-direction: column;
-  border: 1px solid var(--border2); border-bottom: none;
-  transform: translateY(100%);       /* caché en bas au départ */
-  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-}
-.modal-overlay.open .modal {
-  transform: translateY(0);          /* remonte à sa position */
-}
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--bg2); border-radius: 24px 24px 0 0; width: 100%; max-width: 420px; display: flex; flex-direction: column; border: 1px solid var(--border2); border-bottom: none; }
 .modal-handle { width: 36px; height: 4px; background: var(--bg3); border-radius: 2px; margin: 10px auto 0; flex-shrink: 0; }
 .modal-hdr { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .modal-title { font-size: 15px; font-weight: 700; color: var(--accent); }
@@ -1144,10 +1142,27 @@ var editorTimer = null;
 var genMsgs = ['Analyse de ton profil...', 'Calibration du ton...', 'Redaction en cours...', 'Finalisation...'];
 
 // ═══ NAVIGATION ═══
+var _prevScreen = null;
+
 function go(id) {
-  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-  var el = document.getElementById('screen-' + id);
-  if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
+  var next = document.getElementById('screen-' + id);
+  if (!next) return;
+
+  var current = document.querySelector('.screen.active');
+
+  if (current && current !== next) {
+    // L'écran actuel part à gauche
+    current.classList.remove('active');
+    current.classList.add('slide-back');
+    setTimeout(function() {
+      current.classList.remove('slide-back');
+    }, 350);
+  }
+
+  // Le nouvel écran arrive de la droite
+  next.classList.add('active');
+  next.scrollTop = 0;
+  _prevScreen = current ? current.id.replace('screen-', '') : null;
 }
 
 function showTab(tab) {
