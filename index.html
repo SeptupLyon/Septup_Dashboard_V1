@@ -840,7 +840,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 
 <!-- COMPTE -->
 <div class="screen" id="screen-compte">
-  <div class="topbar"><button onclick="go('home')" style="background:none;border:none;font-size:13px;color:var(--text2);cursor:pointer;">← Retour</button><button class="ibtn" onclick="toggleTheme()">☀</button></div>
+  <div class="topbar"><button onclick="closeCompte()" style="background:none;border:none;font-size:13px;color:var(--text2);cursor:pointer;">← Retour</button><button class="ibtn" onclick="toggleTheme()">☀</button></div>
   <div class="scroll">
     <div style="padding:8px 16px 24px;text-align:center;">
       <div class="av-big" id="compte-av">JS</div>
@@ -1172,28 +1172,24 @@ var genMsgs = ['Analyse de ton profil...', 'Calibration du ton...', 'Redaction e
 
 // ═══ NAVIGATION ═══
 function go(id) {
-  var compte = document.getElementById('screen-compte');
-
   if (id === 'compte') {
     // Ouvre compte PAR-DESSUS la page active — sans toucher aux autres
-    compte.classList.add('active');
-    compte.scrollTop = 0;
+    var compte = document.getElementById('screen-compte');
+    if (compte) { compte.classList.add('active'); compte.scrollTop = 0; }
     return;
   }
+  // Navigation normale entre pages
+  document.querySelectorAll('.screen').forEach(function(s) {
+    if (s.id !== 'screen-compte') s.classList.remove('active');
+  });
+  var el = document.getElementById('screen-' + id);
+  if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
+}
 
-  // Retour depuis compte : retire juste .active sur compte
-  // La page d'en-dessous est déjà active → pas d'écran noir
+// Ferme la page compte sans toucher aux autres pages
+function closeCompte() {
+  var compte = document.getElementById('screen-compte');
   if (compte) compte.classList.remove('active');
-
-  // Navigation normale uniquement si on vient PAS du compte
-  // (si on vient du compte, la page d'en-dessous est déjà la bonne)
-  if (id !== null) {
-    document.querySelectorAll('.screen').forEach(function(s) {
-      if (s.id !== 'screen-compte') s.classList.remove('active');
-    });
-    var el = document.getElementById('screen-' + id);
-    if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
-  }
 }
 
 function showTab(tab) {
