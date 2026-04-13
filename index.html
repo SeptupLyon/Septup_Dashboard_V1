@@ -1175,29 +1175,25 @@ function go(id) {
   var compte = document.getElementById('screen-compte');
 
   if (id === 'compte') {
-    // Ouvrir compte : glisse depuis la droite
-    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    // Ouvre compte PAR-DESSUS la page active — sans toucher aux autres
     compte.classList.add('active');
     compte.scrollTop = 0;
     return;
   }
 
-  // Fermer compte si on revient en arrière : repart vers la droite
-  if (compte && compte.classList.contains('active')) {
-    compte.classList.remove('active');
-    // Petit délai pour laisser la transition se terminer avant d'afficher la nouvelle page
-    setTimeout(function() {
-      document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-      var el = document.getElementById('screen-' + id);
-      if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
-    }, 280);
-    return;
-  }
+  // Retour depuis compte : retire juste .active sur compte
+  // La page d'en-dessous est déjà active → pas d'écran noir
+  if (compte) compte.classList.remove('active');
 
-  // Navigation normale entre les autres pages
-  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-  var el = document.getElementById('screen-' + id);
-  if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
+  // Navigation normale uniquement si on vient PAS du compte
+  // (si on vient du compte, la page d'en-dessous est déjà la bonne)
+  if (id !== null) {
+    document.querySelectorAll('.screen').forEach(function(s) {
+      if (s.id !== 'screen-compte') s.classList.remove('active');
+    });
+    var el = document.getElementById('screen-' + id);
+    if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
+  }
 }
 
 function showTab(tab) {
