@@ -78,24 +78,28 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 /* Transition droite → gauche uniquement pour la page Compte */
 #screen-compte {
   display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   position: fixed;
   inset: 0;
   max-width: 420px;
   margin: 0 auto;
   background: var(--bg);
-  transform: translateX(100%);       /* cachée à droite par défaut */
-  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-  pointer-events: none;
   overflow-y: auto;
-  z-index: 50;
+  z-index: 100;
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+              visibility 0s linear 0.35s;
+  pointer-events: none;
 }
 #screen-compte.active {
   display: flex;
-  transform: translateX(0);          /* glisse vers le centre */
+  transform: translateX(0);
+  visibility: visible;
   pointer-events: all;
-}
-#screen-compte.slide-back {
-  transform: translateX(100%);       /* repart à droite au retour */
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+              visibility 0s linear 0s;
 }
 
 /* Barre du haut */
@@ -271,15 +275,38 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 
 /* Badges de statut (dans la liste des scripts) ← modifier les couleurs ici */
 .script-status { font-size: 10px; margin-top: 6px; display: inline-block; padding: 2px 8px; border-radius: 20px; }
-.st-draft  { color: #FF550D;   border: 1px solid #ff560d58; background-color: #ff560d18;}
+.st-draft  { color: #FF550D; border: 1px solid #ff560d58; background-color: #ff560d18; }
 .st-valid  { color: var(--accent);  border: 1px solid ; }
 .st-used   { color: var(--green);   border: 1px solid rgba(74,222,128,0.3); }
 .st-tourne { color: var(--tourne);  border: 1px solid var(--tourne-border); }
 
 /* ── 6. MODALS ───────────────────────────────────────────── */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
-.modal-overlay.open { display: flex; }
-.modal { background: var(--bg2); border-radius: 24px 24px 0 0; width: 100%; max-width: 420px; display: flex; flex-direction: column; border: 1px solid var(--border2); border-bottom: none; }
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+  transition: background 0.3s ease;
+}
+.modal-overlay.open {
+  background: rgba(0,0,0,0.85);
+  pointer-events: all;
+}
+.modal {
+  background: var(--bg2);
+  border-radius: 24px 24px 0 0;
+  width: 100%; max-width: 420px;
+  display: flex; flex-direction: column;
+  border: 1px solid var(--border2); border-bottom: none;
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.modal-overlay.open .modal {
+  transform: translateY(0);
+}
 .modal-handle { width: 36px; height: 4px; background: var(--bg3); border-radius: 2px; margin: 10px auto 0; flex-shrink: 0; }
 .modal-hdr { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .modal-title { font-size: 15px; font-weight: 700; color: var(--accent); }
@@ -2033,7 +2060,6 @@ async function doSignup() {
   var existing = await loadClientData(email);
   var result = await sb.auth.signUp({ email: email, password: password });
   if (result.error) {
-    // Si l'utilisateur existe déjà dans Supabase → rediriger vers le login
     if (result.error.message.toLowerCase().includes('already') || result.error.message.toLowerCase().includes('registered')) {
       alert('Un compte existe déjà avec cet email. Tu vas être redirigé vers la connexion.');
       document.getElementById('login-email').value = email;
