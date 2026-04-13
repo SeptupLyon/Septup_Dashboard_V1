@@ -116,6 +116,16 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .st-draft { color: var(--text3); border: 1px solid var(--border2); }
 .st-valid { color: var(--accent); border: 1px solid var(--aborder); }
 .st-used { color: var(--green); border: 1px solid rgba(74,222,128,0.3); }
+.st-tourne { color: #f5c518; border: 1px solid rgba(245,197,24,0.3); }
+.st-draft { color: var(--text3); border: 1px solid var(--border2); }
+.st-valid { color: var(--accent); border: 1px solid var(--aborder); }
+
+/* Boutons de statut dans l editeur */
+.status-btns { display: flex; gap: 8px; margin-bottom: 4px; }
+.status-btn { flex: 1; padding: 11px 8px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid var(--border2); background: transparent; color: var(--text2); text-align: center; transition: all 0.15s; }
+.status-btn.active-draft { border-color: var(--border2); color: var(--text3); background: var(--bg3); }
+.status-btn.active-valid { border-color: var(--aborder); color: var(--accent); background: var(--adim); }
+.status-btn.active-tourne { border-color: rgba(245,197,24,0.4); color: #f5c518; background: rgba(245,197,24,0.08); }
 .st-tourne { color: #f5c518; border: 1px solid rgba(245,197,24,0.3); } /* Doré = tourné */
 .script-arrow { font-size: 18px; color: var(--text3); cursor: pointer; flex-shrink: 0; padding: 0 4px; }
 .export-bar { margin: 0 16px 12px; border: 1px solid var(--aborder); border-radius: 12px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; background: var(--adim); }
@@ -804,17 +814,19 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
       
     </div>
     <div class="editor-footer">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;">Statut</div>
+      <div class="status-btns">
+        <button class="status-btn" id="sbtn-draft" onclick="setScriptStatus('Brouillon')">📝 Brouillon</button>
+        <button class="status-btn" id="sbtn-valid" onclick="setScriptStatus('Validé')">✓ Validé</button>
+        <button class="status-btn" id="sbtn-tourne" onclick="setScriptStatus('Tourné')">🎬 Tourné</button>
+      </div>
       <button class="copy-script-btn" id="copy-script-btn" onclick="copyScriptContent()">Copier le script</button>
       <div style="font-size:11px;color:var(--text3);text-align:center;padding:4px 0;" id="autosave-status">Les modifications sont sauvegardées automatiquement</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <div style="display:flex;gap:8px;">
         <button class="sv-btn ghost" onclick="alert('Export PDF disponible en production')">PDF</button>
-        <button class="sv-btn ghost" onclick="alert('Export Word disponible en production')">Word</button>
         <button class="sv-btn ghost" onclick="alert('Export TXT disponible en production')">TXT</button>
-        <button class="sv-btn ghost" id="btn-tourne" onclick="markAsTourne()" style="color:#f5c518;border-color:rgba(245,197,24,0.3);">🎬 Tourné</button>
         <button class="sv-btn danger" onclick="deleteCurrentScript()">Supprimer</button>
-      </div>
-    </div>
-  </div>
+      </div></div>
 </div>
 
 <!-- MODAL RESA -->
@@ -1629,7 +1641,7 @@ function validateScript() {
   var dateStr = now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
   var id = 'local_' + Date.now();
   var meta = (fmts[genData.format] || 'Reel') + ' · ' + (angles[genData.angle] || 'Educatif') + ' · ' + dateStr;
-  scriptsStore[id] = { title: title, content: text, meta: meta, status: 'st-valid', statusLabel: 'Valide', airtableId: null };
+  scriptsStore[id] = { title: title, content: text, meta: meta, status: 'st-draft', statusLabel: 'Brouillon', airtableId: null };
   if (clientRecord) {
     atCreate('Scripts', {
       'Titre': title, 'Contenu': text,
@@ -1976,28 +1988,69 @@ function togglePwd(inputId, btn) {
 
 
 // ═══ NOUVELLES FONCTIONS V15 ═══
-async function markAsTourne() {
+// setScriptStatus : change le statut d'un script (Brouillon / Validé / Tourné)
+async function setScriptStatus(newStatut) {
   if (!currentEditorId) return;
   var s = scriptsStore[currentEditorId];
-  if (!s || !s.airtableId) return;
-  var btn = document.getElementById('btn-tourne');
-  try {
-    if (btn) btn.textContent = '...';
-    await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Scripts/' + s.airtableId, {
-      method: 'PATCH',
-      headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields: { 'Statut': 'Tourné' } })
-    });
-    s.status = 'st-tourne';
-    s.statusLabel = 'Tourné';
-    renderScriptsList();
-    updateHomeTourneCount();
-    if (btn) btn.textContent = '✓ Tourné !';
-    setTimeout(function() { if (btn) btn.textContent = '🎬 Tourné'; }, 2000);
-  } catch(e) {
-    if (btn) btn.textContent = '🎬 Tourné';
+  if (!s) return;
+
+  // Map statut → classe CSS et label
+  var statusMap2 = {
+    'Brouillon': { css: 'st-draft', label: 'Brouillon' },
+    'Validé':   { css: 'st-valid', label: 'Validé' },
+    'Tourné':  { css: 'st-tourne', label: 'Tourné' }
+  };
+  var info = statusMap2[newStatut];
+  if (!info) return;
+
+  // Mettre à jour l'UI des boutons immédiatement
+  updateStatusBtns(newStatut);
+  var statusEl = document.getElementById('autosave-status');
+  if (statusEl) statusEl.textContent = 'Mise a jour du statut...';
+
+  // Sauvegarder dans Airtable
+  if (s.airtableId) {
+    try {
+      await fetch('https://api.airtable.com/v0/' + AT_BASE + '/Scripts/' + s.airtableId, {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: { 'Statut': newStatut } })
+      });
+      if (statusEl) statusEl.textContent = 'Statut mis a jour ✓';
+    } catch(e) {
+      if (statusEl) statusEl.textContent = 'Erreur de sauvegarde';
+    }
   }
+
+  // Mettre à jour le store local
+  s.status = info.css;
+  s.statusLabel = info.label;
+  renderScriptsList();
+  updateHomeTourneCount();
 }
+
+// Met à jour l'apparence des boutons de statut selon le statut actif
+function updateStatusBtns(statut) {
+  var btns = {
+    'Brouillon': document.getElementById('sbtn-draft'),
+    'Validé':   document.getElementById('sbtn-valid'),
+    'Tourné':  document.getElementById('sbtn-tourne')
+  };
+  var classes = {
+    'Brouillon': 'active-draft',
+    'Validé':   'active-valid',
+    'Tourné':  'active-tourne'
+  };
+  Object.keys(btns).forEach(function(s) {
+    var btn = btns[s];
+    if (!btn) return;
+    btn.className = 'status-btn';
+    if (s === statut) btn.classList.add(classes[s]);
+  });
+}
+
+// Alias pour compatibilité
+async function markAsTourne() { await setScriptStatus('Tourné'); }
 
 function updateHomeTourneCount() {
   var count = Object.values(scriptsStore).filter(function(s) { return s.status === 'st-tourne'; }).length;
