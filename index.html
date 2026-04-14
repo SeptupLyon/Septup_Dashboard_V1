@@ -1909,71 +1909,119 @@ var STYLE_OBJECTIVE_PRIORITY = {
 };
 
 // ─────────────────────────────────────────────────────────────
-// HOOKS PAR STYLE — 5 hooks par style narratif
+// HOOKS PAR STYLE — source : 1,000 Viral Hooks (PBL)
+// Ces hooks sont des TEMPLATES universels — valables quelle
+// que soit la niche. Claude doit remplir les [variables] avec
+// le profil du createur et le sujet donne.
 // ─────────────────────────────────────────────────────────────
 var HOOKS_BY_ANGLE = {
   edu: [
-    "Voici exactement [ce qu il faut] pour obtenir [resultat] — sans [obstacle habituel].",
-    "Tu fais cette erreur sans t en rendre compte. Voici comment la corriger en 30 secondes.",
-    "Il m a fallu [X] ans pour comprendre ca. Tu vas l avoir en moins d une minute.",
-    "3 niveaux de [competence]. La plupart des gens sont bloques au niveau 1 sans le savoir.",
-    "La vraie raison pour laquelle [action commune] ne fonctionne pas — et ce qu il faut faire a la place."
+    "Voici exactement combien de [element] il vous faut pour [resultat].",
+    "Il m a fallu [X] ans pour apprendre ca — je vais vous l expliquer en moins d une minute.",
+    "Je vais vous apprendre comment [resultat] avec [methode surprenante].",
+    "Si je me reveillais demain avec [probleme] et que je voulais [resultat] d ici [delai], voici exactement ce que je ferais.",
+    "Tout le monde vous dit de [action] mais personne ne vous explique vraiment comment. Voici le tutoriel etape par etape.",
+    "En 60 secondes je vais vous apprendre plus sur [sujet] que tout ce que vous avez appris jusqu ici.",
+    "3 niveaux de [sujet]. La plupart des gens sont bloques au niveau 1 sans le savoir.",
+    "La vraie raison pour laquelle vous n arrivez pas a [resultat], c est que...",
+    "Ne faites pas [action] avant d apprendre a faire ceci.",
+    "Si vous etes [cible] et que vous voulez [resultat] via [approche], ecoutez bien cette video."
   ],
   story: [
-    "J ai perdu un client a [montant] a cause d une seule erreur. Voila ce qui s est passe.",
-    "Il y a [X] ans j ai decide de [action]. Ce que j ai appris depuis a tout change.",
-    "Je n avais pas de plan B. Il fallait que ca marche.",
-    "En [duree], je suis passe de [avant] a [apres]. Voici exactement comment.",
-    "La vraie verite sur [sujet] — apres [X] annees dans ce secteur."
+    "Voici comment mon [evenement/resultat] a change ma vie.",
+    "Il y a [X] ans j ai pris une decision. Ce que j ai appris depuis a tout change.",
+    "J ai [vecu quelque chose de difficile] a [age] — mais c est ce qui s est passe apres qui a vraiment tout change.",
+    "Il y a [X] mois, j ai demarre [projet/activite]. Et ca s est avere etre [resultat inattendu].",
+    "Un jour vous allez vous faire [quitter/lacher] — pas par [personne attendue] — mais par [element surprenant].",
+    "C est probablement la chose la plus difficile que j aie jamais faite.",
+    "J ai commence [activite] quand j avais [age] avec [peu de ressources]. Voici ce que ca m a appris.",
+    "Ca m a pris [X] ans pour comprendre ca. Et le jour ou j ai compris, tout a change.",
+    "Je ne savais pas si ca allait marcher. Mais j ai quand meme essaye. Voici ce qui s est passe.",
+    "La verite sur [sujet] — apres [X] annees a le vivre de l interieur."
   ],
   direct: [
-    "La verite que personne ne veut entendre sur [sujet].",
-    "[Affirmation directe]. Point. Pas d excuse. Pas de nuance.",
-    "Tu perds [temps/argent] chaque semaine a cause de [probleme]. Voici comment arreter.",
-    "Je vais etre direct : [verite brutale]. Si ca te choque, c est que tu en avais besoin.",
-    "[Resultat] ou stagnation. Il n y a pas d entre-deux."
+    "Arretez de [action courante]. Ca ne va rien regler.",
+    "Voici la verite que personne ne veut vous dire sur [sujet].",
+    "Vous n avez pas [defaut], vous n etes pas [adjectif negatif] — vous avez juste besoin de [solution].",
+    "Ce que [industrie/experts] ne veulent pas que vous sachiez sur [sujet].",
+    "Si vous faites [action], voici ce que vous devez savoir immediatement.",
+    "Ne touchez pas a [element] tant que vous n avez pas vu ca.",
+    "Ce que j aurais voulu savoir a [age] plutot qu a [age plus tard].",
+    "Les [X] choses qui abiment votre [element] sans que vous vous en rendiez compte.",
+    "Pourquoi ca m a pris [X] ans pour realiser que vous pouvez [resultat] en [duree courte].",
+    "[Action] pendant [duree] et vous obtenez [resultat]. Ce n est pas une opinion."
   ],
   autorite: [
-    "Apres [X] ans dans [secteur], voici le seul indicateur qui compte vraiment.",
-    "La plupart des experts se trompent sur [sujet]. Voici pourquoi.",
-    "Ce que [X] ans d experience m ont appris que les formations ne diront jamais.",
-    "La vraie raison pour laquelle [probleme courant] ne se resout pas avec [solution classique].",
-    "J ai analyse [X] cas. La conclusion est toujours la meme."
+    "En [X] ans dans [domaine], voici ce que j aurais aime que quelqu un me dise des le depart.",
+    "Depuis [X] ans je [action], voici comment je suis passe de [avant] a [apres].",
+    "Je ne crois pas en [idee recue courante]. Je crois en [votre conviction].",
+    "En tant que [titre] depuis [duree], on me demande souvent [question]. Voici ma vraie reponse.",
+    "Apres [X] ans a [action], j ai fait passer mon [element] de [avant] a [apres].",
+    "J ai analyse [X] cas de [sujet]. La conclusion est toujours la meme.",
+    "Les [X] choses les plus importantes que j enseignerai a mes enfants en tant que [titre].",
+    "30 secondes de conseils sur [domaine] — ce que je dirais a mon meilleur ami s il repartait de zero.",
+    "Cela fait [X] ans que [action]. Voici ce que la plupart des gens ignorent encore.",
+    "Voici la difference entre [niveau 1], [niveau 2] et [niveau 3] en [sujet]."
   ],
   vente: [
-    "Stop. Si tu [probleme cible], la [solution habituelle] ne va rien regler.",
-    "Et si je te disais que tu pouvais [resultat] sans [douleur principale] ?",
-    "Tu veux [resultat] d ici [delai] ? Voila le seul truc qui change vraiment la donne.",
-    "La raison pour laquelle tu n arrives pas a [resultat] : personne ne t a explique [insight].",
-    "[Action simple] pendant [duree] = [resultat]. Non, je ne plaisante pas."
+    "Saviez-vous que vous pouviez [resultat] sans [contrainte principale] ?",
+    "Si vous etes [cible] et que vous [probleme], et que vous voulez [resultat], voici un plan simple en [X] etapes.",
+    "Voici [X] facons d obtenir [resultat] sans [obstacle]. Pour reference, j ai personnellement [mon resultat].",
+    "Si vous voulez [resultat] d ici [delai] sans [douleur], ecoutez bien.",
+    "La plupart des [cible] font [erreur commune] — et ca leur coute [consequence concrete].",
+    "Ce que les meilleurs [cible] font differemment — et que personne ne vous explique vraiment.",
+    "Si vous avez [probleme], [probleme], et [probleme], vous faites peut-etre [action] de travers.",
+    "Vous pouvez avoir [resultat ideal] en simplifiant radicalement votre approche.",
+    "Qu est-ce qui se passe quand vous arretez [action commune] pendant [duree] ?",
+    "[Action] + [action] + [action] = [resultat]. J en suis la preuve."
   ],
   temo: [
-    "Mon client [profil] avait [probleme precis]. En [duree], on est passe a [resultat concret].",
-    "Ce n est pas moi qui le dis — c est [profil client] qui a vecu ca de A a Z.",
-    "Avant de travailler ensemble, [client] passait [temps] sur [probleme]. Maintenant : [transformation].",
-    "Resultat reel. Pas de bullshit. [Profil] a obtenu [resultat] sans [contrainte habituelle].",
-    "Tout le monde demande comment [client] a reussi [resultat]. Voici la vraie reponse."
+    "[Profil] avait [probleme precis]. En [duree], on est passe a [resultat concret]. Voici exactement comment.",
+    "Il y a [X] mois, [personne] m a dit [situation difficile]. Aujourd hui : [transformation].",
+    "Je suis [metrique modeste] mais je suis devenu l un des meilleurs [titre] dans [domaine]. Voici comment.",
+    "En grandissant, [personne] me reprenait quand je [action]. Ils avaient peut-etre tort.",
+    "Ce n est pas moi qui le dis — c est [profil] qui a vecu ca de A a Z.",
+    "Avant, [personne] [situation difficile]. Maintenant : [transformation nette].",
+    "Il y a [X] ans j ai achete [element] a [age] avec [peu de moyens] et un emploi a temps plein.",
+    "Voici comment j ai obtenu [resultat] malgre [contrainte ou handicap].",
+    "Tout le monde me demandait comment [personne/moi] avait reussi [resultat]. Voici la vraie reponse.",
+    "Ce projet aurait du echouer. Il n a pas echoue. Voici pourquoi."
   ],
   avis: [
-    "[Affirmation provocatrice]. Je le dis et je l assume.",
-    "Arretez de [croyance commune]. C est contre-productif et voici pourquoi.",
-    "Opinion impopulaire : [position tranchee]. Et je vais vous expliquer pourquoi j ai raison.",
-    "Tout le monde applaudit [chose populaire]. Moi je trouve ca mediocre. Voici pourquoi.",
-    "Non, [croyance repandue] n est pas une bonne idee. Voici la verite."
+    "Beaucoup de gens me demandent ce qui est mieux : [option 1] ou [option 2] pour [resultat]. J ai obtenu [resultat] avec l un des deux — et ca ne fait pas debat.",
+    "Pas cher vs. Cher : [sujet]. Les resultats vont vous surprendre.",
+    "Je ne crois pas en [idee repandue]. Et voici pourquoi.",
+    "La tendance [X] est l une des pires choses que je vois dans [domaine]. Voici pourquoi.",
+    "[Element A] et [element B] sont exactement pareils. Sauf que l un [resultat A] et l autre [resultat B]. Regardons pourquoi.",
+    "Vous avez [option 1] et [option 2]. Qu est-ce que vous choisissez ? Et voici ce que je repondrais.",
+    "Tout le monde conseille [action]. Mais si vous etes [cible], c est la pire chose a faire.",
+    "On vous a menti sur [sujet]. Voici la verite.",
+    "[Chose populaire] ne signifie pas [qualite supposee] — ca signifie juste [realite].",
+    "Voici pourquoi [action courante] vous donne [mauvais resultat] — et comment l eviter."
   ],
   cas: [
-    "[Profil client] avait [probleme]. En [duree], [resultat chiffre]. Voici exactement comment.",
-    "Cas reel : [situation de depart] vers [resultat final]. Decomposition complete.",
-    "Ce projet aurait du echouer. Il n a pas echoue. Voici pourquoi.",
-    "De [point A] a [point B] en [duree]. Chaque etape documentee.",
-    "Le cas qui m a le plus appris sur [sujet]. Partage complet."
+    "Comment j ai fait passer [element] de [avant] a [apres] en [duree]. Chaque etape documentee.",
+    "Est-il vraiment possible de [action A] tout en [action B] en [X] jours ? J ai essaye. Voici ce qui s est passe.",
+    "Jour [X] de ma transformation de [etat avant] a [etat apres].",
+    "Voici comment j ai obtenu [resultat] de facon [approche] — et ce que ca m a vraiment appris.",
+    "Il y a [X] mois nous avons demarre [projet]. Resultat : [bilan reel, avec chiffres].",
+    "J ai essaye [methode] pendant [duree]. Voici l honnete bilan.",
+    "De [point de depart] a [resultat] en [duree]. Voici les vraies etapes — sans raccourcis.",
+    "Ce cas aurait du echouer. Il n a pas echoue. Voici les vraies raisons.",
+    "J ai documente [X] semaines de [action]. Voici ce que les donnees disent vraiment.",
+    "Voici les [X] choses que je ne referais pas si je recommencais [projet/parcours] depuis zero."
   ],
   hybride: [
-    "La plupart des gens font [action] dans le mauvais sens. Voici pourquoi — et comment corriger ca.",
-    "[Insight contre-intuitif]. Ca m a pris [duree] pour le comprendre.",
-    "Voici ce que [X] ans d experience m ont appris sur [sujet] — en moins de 60 secondes.",
-    "On m a dit que c etait impossible. J ai quand meme essaye. Voici ce qui s est passe.",
-    "Personne ne te dit ca sur [sujet]. Pourtant ca change tout."
+    "C est exactement le meme [element] — mais le premier [resultat A] et le second [resultat B]. Voici pourquoi.",
+    "Tout le monde vous dit de [action] — mais vous pensez qu il est trop tard. Voici ce que vous devez vraiment savoir.",
+    "[Sujet] pour les debutants. Ce que personne ne vous dit vraiment.",
+    "Les choses qui freinent votre [progression] sans que vous vous en rendiez compte.",
+    "Si vous avez [X] minutes par jour, voici exactement comment [resultat concret].",
+    "Ce [element] m a change la vie — et ce n est pas ce que vous croyez.",
+    "Voici ce que [X] annees de [experience] m ont appris — en moins de 60 secondes.",
+    "La reponse courte : [resultat direct]. La reponse longue : voici pourquoi c est plus complexe que ca.",
+    "J aurais voulu voir cette video a [age]. Voici ce qu elle m aurait appris.",
+    "On m a dit que c etait impossible. J ai quand meme essaye. Le resultat va vous surprendre."
   ]
 };
 
@@ -1985,90 +2033,99 @@ var FRAMEWORKS = {
     label: 'Educatif',
     sections: ['HOOK', 'PROMESSE', 'MICRO-VALUE', 'REHOOK 1', 'DEMO', 'REHOOK 2', 'RESULTAT', 'CTA'],
     structure: 'HOOK → PROMESSE → MICRO-VALUE → REHOOK 1 → DEMO → REHOOK 2 → RESULTAT → CTA',
+    logique: "Donner de la valeur TRES TOT pour eviter la fuite — reward immediat des les premieres secondes.",
     rules: [
-      "Donne 1 insight des les 8 premieres secondes — reward immediat pour eviter la fuite.",
-      "Rehook milieu obligatoire : 'Mais le vrai probleme, c est ca.'",
-      "Termine sur le benefice concret, puis CTA avec une action precise."
+      "Micro-value des les 5 premieres secondes : un insight concret, une info utile, un chiffre surprenant — le viewer doit deja avoir appris quelque chose avant le rehook.",
+      "REHOOK 1 : 'Mais le vrai truc que personne ne dit, c est ca.' ou 'Et ca, la plupart des gens le ratent completement.' — oblige a rester.",
+      "REHOOK 2 : accelere la tension avant la resolution. Demo = cas concret ou etape actionnable. Resultat = benefice chiffre ou transformationnel. CTA = une seule action precise."
     ]
   },
   story: {
     label: 'Storytelling',
     sections: ['HOOK', 'SETUP', 'TENSION', 'REHOOK 1', 'ESCALADE', 'REHOOK 2', 'TWIST', 'RESOLUTION'],
     structure: 'HOOK → SETUP → TENSION → REHOOK 1 → ESCALADE → REHOOK 2 → TWIST → RESOLUTION',
+    logique: "Chaque rehook = mini cliffhanger. Le viewer ne peut pas partir sans connaitre la suite.",
     rules: [
-      "Chaque rehook = mini cliffhanger. 'Et la, ca devient pire.' / 'Jusqu au moment ou...'",
-      "Le setup tient en UNE phrase max — pas de contexte inutile avant la tension.",
-      "Le twist doit etre inattendu mais logique retrospectivement."
+      "REHOOK 1 (apres tension) : EXACTEMENT 'Et la, ca devient pire.' ou equivalent direct — pas une transition douce, un vrai choc narratif.",
+      "REHOOK 2 (apres escalade) : EXACTEMENT 'Jusqu au moment ou...' — suspense maximum avant le twist. Pause mentale obligatoire.",
+      "Setup = UNE phrase max, contexte minimum. Twist = inattendu mais logique retrospectivement. Resolution = lecon ou resultat clair, jamais vague."
     ]
   },
   direct: {
     label: 'Direct / Cash',
     sections: ['HOOK', 'VERITE', 'REHOOK 1', 'EXPLICATION', 'REHOOK 2', 'SOLUTION', 'CTA'],
     structure: 'HOOK → VERITE → REHOOK 1 → EXPLICATION → REHOOK 2 → SOLUTION → CTA',
+    logique: "Une verite tranchante toutes les 10 secondes. Pas de nuance, pas de politesse. Chaque phrase se tient seule.",
     rules: [
-      "Chaque phrase doit pouvoir tenir seule. Pas de redondance.",
-      "La verite directe doit choquer ou surprendre — sinon ce n est pas assez direct.",
-      "Pas de politesse, pas de peut-etre, pas de conditionnel. Tranchant."
+      "Verite = statement choc, assertion forte, jamais une question ouverte — 'La plupart des [cible] font cette erreur.' / '[Croyance commune] ? C est faux.'",
+      "REHOOK 1 : enfoncer le clou — 'Et le pire dans tout ca...' / 'Ce que les gens ne voient pas encore...' Phrase courte, impact maximal.",
+      "Pas de conditionnel, pas de peut-etre, pas de 'on pourrait dire'. Solution = directe et actionnable. CTA = tranchant, une seule action."
     ]
   },
   autorite: {
     label: 'Autorite',
     sections: ['HOOK', 'CONSTAT', 'REHOOK', 'DECRYPTAGE', 'PREUVE', 'SYNTHESE', 'CTA'],
     structure: 'HOOK → CONSTAT → REHOOK → DECRYPTAGE → PREUVE → SYNTHESE → CTA',
+    logique: "Positionner le createur comme la reference incontournable de son domaine. Chaque section doit exsuder une expertise que personne d autre ne possede.",
     rules: [
-      "Le constat doit etre contre-intuitif ou meconnu — pas une evidence.",
-      "Le decryptage est la valeur unique de l expert : ce que les autres ne voient pas.",
-      "CTA soft : invitation, pas injonction."
+      "Constat = observation contre-intuitive ou contre-courante — pas une evidence que tout le monde connait. 'Ce que [l industrie] ne veut pas que tu saches.'",
+      "REHOOK : 'Et c est la que ca devient interessant.' — promesse que le decryptage va tout changer.",
+      "Decryptage = la vraie valeur unique du createur, ce que 95% ne voient pas. Preuve = donnee precise, cas reel, experience vecue. CTA = invitation douce, pas injonction."
     ]
   },
   vente: {
     label: 'Vente',
     sections: ['HOOK', 'PROBLEME', 'REHOOK 1', 'AGITATION', 'REHOOK 2', 'SOLUTION', 'PREUVE', 'CTA'],
     structure: 'HOOK → PROBLEME → REHOOK 1 → AGITATION → REHOOK 2 → SOLUTION → PREUVE → CTA',
+    logique: "Alternance douleur / espoir = maintien d attention. Le viewer doit sentir la douleur avant de vouloir la solution.",
     rules: [
-      "Agitation = faire ressentir le cout de ne rien faire, pas juste nommer le probleme.",
-      "La preuve doit etre precise : chiffre, delai, resultat client reel — rien de vague.",
-      "CTA = une seule action, urgente, sans friction."
+      "REHOOK 1 (apres probleme) : intensifier — 'Et le pire dans tout ca...' / 'Ce que la plupart font alors ? L erreur fatale.' Pas d espoir encore.",
+      "REHOOK 2 (apres agitation) : pivot espoir — EXACTEMENT 'Mais bonne nouvelle.' Deux mots. Pause. Puis la solution arrive comme un soulagement.",
+      "Agitation = cout de l inaction, pas juste nommer le probleme. Preuve = chiffre precis + delai reel + resultat client — rien de vague. CTA = urgence reelle, une seule action."
     ]
   },
   temo: {
     label: 'Temoignage',
     sections: ['HOOK', 'AVANT', 'REHOOK 1', 'EXPERIENCE', 'REHOOK 2', 'RESULTAT', 'VALIDATION'],
     structure: 'HOOK → AVANT → REHOOK 1 → EXPERIENCE → REHOOK 2 → RESULTAT → VALIDATION',
+    logique: "Narration vivante et specifique — pas un temoignage plat et corporate. Le personnage doit etre identifiable.",
     rules: [
-      "Commence par le resultat — pas par le probleme. Ca capte immediatement.",
-      "Le temoignage a un personnage identifiable, pas juste un client.",
-      "Garde une narration vivante — pas un temoignage plat ou corporate."
+      "Commence par un hint du resultat ou une question sur le resultat — pas par la presentation du probleme. Le viewer doit vouloir savoir comment on est arrive la.",
+      "REHOOK 1 : suspense narratif — 'Ce qu il a fait ensuite, personne n y avait pense.' / 'Et la, tout bascule.' Personnage clairement identifiable, situation precise.",
+      "REHOOK 2 : 'Et c est la que tout a change.' Resultat = CONCRET avec chiffres si possible (pas 'ca a bien marche'). Validation = recommandation directe et sincere, pas corporate."
     ]
   },
   avis: {
     label: 'Avis tranche',
     sections: ['HOOK', 'POSITION', 'REHOOK 1', 'JUSTIFICATION', 'REHOOK 2', 'EXEMPLE', 'CONCLUSION', 'CTA'],
     structure: 'HOOK → POSITION → REHOOK 1 → JUSTIFICATION → REHOOK 2 → EXEMPLE → CONCLUSION → CTA',
+    logique: "Provoquer une reaction, pas juste informer. La position doit diviser — ceux qui sont d accord et ceux qui ne le sont pas.",
     rules: [
-      "La position doit etre tranchee, pas nuancee — le debat commence ici.",
-      "La justification est factuelle, pas emotionnelle.",
-      "CTA = provoquer une reaction : commentaire, partage, prise de position."
+      "Position = statement tranche, pas nuance. 'Je pense que [croyance commune] est une erreur.' / '[Pratique populaire] detruit [resultat]. Voila pourquoi.'",
+      "REHOOK 1 : anticiper l objection — 'Je sais ce que tu te dis la...' puis la retourner. REHOOK 2 : exemple concret qui ecrase le doute.",
+      "Justification = factuelle et specifique, pas emotionnelle. CTA = provoquer une reaction : commentaire, desaccord bienvenu, partage."
     ]
   },
   cas: {
     label: 'Etude de cas',
     sections: ['HOOK', 'CONTEXTE', 'PROBLEME', 'REHOOK', 'ACTION', 'RESULTAT', 'LECON', 'CTA'],
     structure: 'HOOK → CONTEXTE → PROBLEME → REHOOK → ACTION → RESULTAT → LECON → CTA',
+    logique: "Raconter un cas reel avec des details specifiques — le viewer doit pouvoir s identifier et voir comment reproduire le resultat.",
     rules: [
-      "Le contexte tient en 2 phrases max — juste assez pour que l audience s identifie.",
-      "Le resultat doit etre chiffre et specifique.",
-      "La lecon est la raison pour laquelle tu racontes ce cas — rends-la claire."
+      "Contexte = 1-2 phrases max, juste assez pour que l audience s identifie. Pas de biographie, pas d introduction.",
+      "REHOOK (apres probleme) : 'Et c est la que tout a bascule.' / 'Ce qu on a fait ensuite a tout change.' Tension narrative maintenue.",
+      "Action = etapes reelles et specifiques — pas des generalites. Resultat = chiffre, date, delai precis. Lecon = extractible, actionnable par le viewer."
     ]
   },
   hybride: {
     label: 'Hybride',
     sections: ['HOOK', 'INSIGHT', 'REHOOK 1', 'STORY', 'REHOOK 2', 'LECON', 'CTA'],
     structure: 'HOOK → INSIGHT → REHOOK 1 → STORY → REHOOK 2 → LECON → CTA',
+    logique: "Melange educatif + storytelling + persuasion. Le meilleur format pour 2026 — cree une connexion ET delivre de la valeur.",
     rules: [
-      "L insight doit surprendre et apporter une valeur immediate.",
-      "La story illustre l insight — elle ne le remplace pas.",
-      "La lecon est actionnable, pas philosophique."
+      "Insight = observation contre-intuitive et immediate — la valeur qui justifie de rester. Pas un recap, une vraie revelation courte.",
+      "REHOOK 1 : 'Et voila ou ca devient vraiment interessant.' Story = UNE mini anecdote concrete : client reel / perso / cas public — une scene precise, pas un resume.",
+      "REHOOK 2 : EXACTEMENT 'Et c est la que tout se joue.' Pause. Puis la lecon. Lecon = conseil concret et actionnable, extractible en 1 phrase. Pas philosophique."
     ]
   }
 };
@@ -2177,12 +2234,12 @@ function selStyle(el, key) {
 }
 
 var INVISIBLE_RULES = [
-  "COURBE D'ATTENTION : Hook fort → légère baisse → rehook → légère baisse → rehook → fin. Sans rehooks = chute garantie.",
-  "RYTHME : Toutes les 5 à 8 secondes tu dois surprendre, promettre ou relancer. Jamais de zone plate.",
-  "BOUCLES OUVERTES : Crée de l'anticipation. 'Je t'explique ça dans 10 secondes.' / 'Le plus important arrive.'",
-  "MONTAGE PENSÉ : Chaque coupe = rehook. Zoom = tension. Silence = impact. Ce script doit anticiper le montage.",
-  "DENSITÉ MAXIMALE : Pas un mot de trop. Si une phrase peut être supprimée sans rien perdre, supprime-la.",
-  "ORAL AVANT TOUT : Chaque phrase doit sonner naturel à voix haute. Zéro jargon sauf si le profil l'indique explicitement."
+  "COURBE D'ATTENTION : Une video = une courbe. Pic (hook) → baisse → remontee (rehook) → baisse → remontee → fin forte. Sans rehooks = chute garantie. Visualise la courbe en ecrivant.",
+  "RYTHME 5-8 SECONDES : Toutes les 5 a 8 secondes, tu dois SURPRENDRE, PROMETTRE ou RELANCER. Jamais de zone plate. Si une phrase n'apporte pas de tension ou de valeur, elle n'existe pas.",
+  "BOUCLES OUVERTES : Plante des promesses en cours de route. 'Je t'explique ca a la fin.' / 'Le plus important arrive.' / 'Retiens bien ca.' Le cerveau reste accroche pour la resolution.",
+  "MONTAGE PENSE : Chaque coupe = nouveau rehook. Chaque pause = impact. Ce script est ecrit pour etre tourne — anticipe les zooms, les silences, les gestes.",
+  "DENSITE MAXIMALE : Pas un mot de trop. Chaque phrase justifie sa presence. Si elle peut etre coupee sans rien perdre, elle est coupee.",
+  "ORAL AVANT TOUT : Lis a voix haute. Si ca sonne ecrit, recris. Contractions naturelles, phrases courtes, rythme oral. Zero jargon sauf si le profil l'exige explicitement."
 ];
 
 // ─────────────────────────────────────────────────────────────
@@ -2221,18 +2278,54 @@ function buildSystemPrompt(styleKey) {
   // Couche 2 : Framework
   parts.push("\n=== FRAMEWORK : " + fw.label.toUpperCase() + " ===");
   parts.push("Structure : " + fw.structure);
-  parts.push("Regles :");
+  if (fw.logique) parts.push("Logique : " + fw.logique);
+  parts.push("Regles d execution :");
   fw.rules.forEach(function(r) { parts.push("• " + r); });
 
   // Couche 3 : Hooks de reference
   var hooks = HOOKS_BY_ANGLE[sk] || HOOKS_BY_ANGLE['hybride'];
   parts.push("\n=== HOOKS DE REFERENCE ===");
-  parts.push("Inspire-toi de leur logique et energie — adapte au sujet et secteur du createur :");
+  parts.push("Ces hooks sont des TEMPLATES universels issus de contenus viraux reels. Ils fonctionnent quelle que soit la niche : food, sport, business, artisanat, art, sante, etc.");
+  parts.push("Ta mission : prendre la STRUCTURE et l ENERGIE de ces templates, puis remplir les [variables] avec le profil du createur et le sujet donne. Ne copie jamais un hook mot pour mot.");
+  parts.push("Choisis le template qui correspond le mieux au sujet, au ton du createur et a l objectif. Un seul hook — le meilleur.");
   hooks.forEach(function(h, i) { parts.push((i + 1) + ". " + h); });
 
   // Couche 4 : Regles invisibles
   parts.push("\n=== REGLES INVISIBLES (niveau expert) ===");
   INVISIBLE_RULES.forEach(function(r) { parts.push(r); });
+
+  // Couche 5 : Naturalite et personnalisation absolue
+  var nom = f['Nom_complet'] || 'ce createur';
+  parts.push("\n=== NATURALITE ET PERSONNALISATION ABSOLUE ===");
+  parts.push("Ce script doit sonner comme si " + nom + " le disait EN VRAI, naturellement, face camera. Pas un texte ecrit. Une vraie voix.");
+  parts.push("TEST : si une personne qui connait " + nom + " lit ce script a l aveugle, elle doit reconnaitre SA facon de parler. Si ce n est pas le cas, le script a rate.");
+  parts.push("FORMULES ABSOLUMENT INTERDITES : 'Il est important de noter', 'En conclusion', 'Ainsi donc', 'N hesitez pas a', 'Je suis ravi de partager', 'Dans cet univers', 'N oubliez pas', 'A titre d exemple', toute formule qui sonne ecrit et jamais parle.");
+  parts.push("OBLIGATION ORALITE : phrases courtes, contractions naturelles (c est / t as / on a / c etait), pauses narratives (— ou ...), relances directes ('Tu vois ?', 'Vraiment.', 'Serieusement.').");
+  if (f['Onboarding_ton']) {
+    parts.push("SON TON EST : " + f['Onboarding_ton'] + ". Chaque phrase doit refleter ce ton precisement. Pas une version watered-down ou generique — le ton plein, franc, assume.");
+  }
+  if (f['Onboarding_intensite']) {
+    parts.push("SON INTENSITE EST : " + f['Onboarding_intensite'] + ". Adapte en consequence : longueur des phrases, cadence, niveau d energie. Calme = phrases plus longues, respirees. Punchy = phrases ultra-courtes, staccato.");
+  }
+  if (f['Onboarding_langage']) {
+    parts.push("SON LANGAGE EST : " + f['Onboarding_langage'] + ". Si simple/vulgarise : fuis le jargon, utilise des analogies concretes. Si expert/technique : vocabulaire precis du domaine, references sectorielles assumes.");
+  }
+  if (f['Onboarding_secteur']) {
+    parts.push("SON SECTEUR : " + f['Onboarding_secteur'] + ". Utilise les references que son audience reconnait, les termes specifiques de ce domaine, les problemes REELS de ce marche. Aucune genericite.");
+  }
+  if (f['Onboarding_offre']) {
+    parts.push("SON OFFRE : " + f['Onboarding_offre'] + ". Si le sujet s y prete, ancre le script dans la realite de cette offre — les resultats concrets qu elle produit, les transformations qu elle genere.");
+  }
+  if (f['Onboarding_cible']) {
+    parts.push("SA CIBLE : " + f['Onboarding_cible'] + ". Ecris comme si tu t adressais directement a CETTE personne specifique — ses peurs, ses desires, son vocabulaire, ses objections.");
+  }
+  if (f['Onboarding_douleur']) {
+    parts.push("DOULEUR N1 DE SA CIBLE : " + f['Onboarding_douleur'] + ". Si pertinent, cette douleur doit etre mentionnee ou sous-entendue — le viewer doit se sentir compris.");
+  }
+  if (f['Onboarding_transformation']) {
+    parts.push("TRANSFORMATION APPORTEE : " + f['Onboarding_transformation'] + ". C est l horizon vers lequel le contenu pointe — implicitement ou explicitement.");
+  }
+  parts.push("INTERDICTION ABSOLUTE D IA : zero phrase qui sonne generee par une IA. Zero structure previsible. Zero conclusion bateau. Ce script doit etre IMPOSSIBLE a attribuer a quelqu un d autre que " + nom + ".");
 
   return parts.join("\n");
 }
@@ -2285,11 +2378,13 @@ async function callAPI(prevScript, instruction) {
       prompt += sec + '\n[contenu de la section]\n\n';
     });
     prompt += '\n=== CONTRAINTES ABSOLUES ===\n'
-      + '• Oral naturel, pas de bullshit, pas de formules creuses\n'
-      + '• Chaque section est directement utilisable — pas de texte entre crochets dans le rendu final\n'
-      + '• Respecte la longueur imposee par le format\n'
-      + '• Les rehooks doivent creer une vraie tension narrative\n'
-      + '• Le CTA est unique, direct, sans friction';
+      + '• ORAL NATUREL : chaque phrase doit sonner comme si le createur la disait face camera, pas comme un texte ecrit\n'
+      + '• ZERO FORMULES IA : interdit de commencer par "Bien sur", "Absolument", "En conclusion", "Il est important de noter"\n'
+      + '• Chaque section est directement utilisable — aucun texte entre crochets, aucune indication de mise en scene\n'
+      + '• Respecte la longueur imposee par le format — ni trop court ni trop long\n'
+      + '• Les rehooks utilisent les formules exactes du framework (ex: "Et la, ca devient pire." / "Mais bonne nouvelle." / "Et c est la que tout se joue.")\n'
+      + '• PERSONNALISATION : le vocabulaire, le ton et les exemples sont ceux du profil createur — pas generiques\n'
+      + '• CTA unique, direct, sans friction — une seule action claire';
   }
 
   try {
