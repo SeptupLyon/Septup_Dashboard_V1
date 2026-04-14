@@ -1498,8 +1498,6 @@ function validateScript() {
   if (clientRecord) {
     atCreate('Scripts', {
       'Titre': title, 'Contenu': text,
-      'Format': formatLabels[genData.format] || 'Script',
-      'Angle': styleLabel,
       'Score_viralite': parseFloat(document.getElementById('gen-vir-score').textContent) || 0,
       'Statut': 'Brouillon', 'Client': [clientRecord.id],
       'Email_client': currentUser ? currentUser.email : '',
