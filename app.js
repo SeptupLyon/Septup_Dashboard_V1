@@ -180,7 +180,6 @@ async function atCreate(table, fields) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ method: 'POST', table: table, fields: fields })
   });
-  console.log('[atCreate]', table, '| status:', res.status);
   var rec = await res.json();
   if (rec.error) console.error('[atCreate]', table, rec.error);
   return rec;
@@ -600,6 +599,7 @@ async function autoSaveEditor() {
     }
   } else if (s && !s.airtableId) {
     // Créer dans Airtable si pas encore sauvegardé
+    if (!clientRecord) return;
     if (statusEl) statusEl.textContent = 'Sauvegarde...';
     try {
       var rec = await atCreate('Scripts', {
@@ -1509,7 +1509,6 @@ function validateScript() {
       'Email_client': currentUser ? currentUser.email : '',
       'Date_creation': new Date().toISOString()
     }).then(function(rec) {
-      console.log('[validateScript] atCreate response:', rec);
       if (rec.id && scriptsStore[id]) { scriptsStore[id].airtableId = rec.id; scriptsStore[rec.id] = scriptsStore[id]; delete scriptsStore[id]; if (currentEditorId === id) currentEditorId = rec.id; renderScriptsList(); }
     }).catch(function(err) { console.error('[validateScript] atCreate error:', err); });
   }
@@ -1860,8 +1859,6 @@ async function setScriptStatus(newStatut) {
   if (!currentEditorId) return;
   var s = scriptsStore[currentEditorId];
   if (!s) return;
-  console.log('[setScriptStatus]', newStatut, '| airtableId:', s.airtableId);
-
   var statusMap2 = {
     'Brouillon': { css: 'st-draft',   label: 'Brouillon' },
     'Validé':   { css: 'st-valid',   label: 'Validé' },
