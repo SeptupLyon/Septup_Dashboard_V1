@@ -427,6 +427,16 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .style-card-desc { font-size: 12px; color: var(--text2); line-height: 1.4; }
 .style-card-reason { font-size: 11px; color: var(--accent); margin-top: 5px; font-weight: 500; display: none; }
 .style-card.sel .style-card-reason { display: block; }
+/* Options hook */
+.hook-option { border: 1px solid var(--border2); border-radius: var(--radius-md); padding: 14px 16px; cursor: pointer; margin-bottom: 10px; transition: border-color 0.15s, background 0.15s; line-height: 1.6; font-size: 14px; }
+.hook-option:hover { border-color: rgba(127,218,247,0.35); }
+.hook-option.sel { border-color: var(--accent); background: var(--adim); }
+.hook-option-num { font-size: 10px; font-weight: 700; color: var(--text3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.08em; }
+.hook-option.sel .hook-option-num { color: var(--accent); }
+/* Marqueurs à vérifier */
+.verify-marker { background: rgba(255,195,30,0.12); border-bottom: 1.5px solid rgba(255,195,30,0.5); color: #ffc81e; padding: 0 2px; border-radius: 2px; }
+.verify-banner { background: rgba(255,195,30,0.07); border: 1px solid rgba(255,195,30,0.28); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 12px; font-size: 12px; color: rgba(255,195,30,0.9); line-height: 1.5; display: none; gap: 8px; }
+.verify-banner.visible { display: flex; }
 .gen-footer { padding: 12px 20px 20px; border-top: 1px solid var(--border); flex-shrink: 0; }
 .generating { text-align: center; padding: 50px 20px; }
 .gen-spinner { width: 32px; height: 32px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.9s linear infinite; margin: 0 auto 16px; }
@@ -936,6 +946,19 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
         <div class="gen-sub">Ex : ton plus premium, accroche plus brutale, audience B2B...</div>
         <textarea class="gen-ta" id="gen-precision" placeholder="Ex: Je veux une accroche tres forte, je parle a des dirigeants..."></textarea>
       </div>
+      <!-- ETAPE 6H : Choix du hook (3 options) -->
+      <div class="gen-step" id="gen-step-6h">
+        <div class="generating" id="gen-hooks-generating">
+          <div class="gen-spinner"></div>
+          <div class="gen-anim-txt" id="gen-hooks-anim">Generation des hooks sur mesure...</div>
+        </div>
+        <div id="gen-hooks-result" style="display:none">
+          <div class="gen-q" style="margin-bottom:4px">Choisis ton hook</div>
+          <div class="gen-sub" style="margin-bottom:16px">3 options sur mesure — prends celle qui sonne le plus comme toi.</div>
+          <div id="gen-hooks-list"></div>
+          <button class="btn" id="btn-continue-hook" onclick="continueWithHook()" style="display:none;width:100%;margin-top:8px"><span class="btn-txt">Generer le script complet</span><span class="btn-arr">✦</span></button>
+        </div>
+      </div>
       <!-- ETAPE 6 : Generation + Resultat -->
       <div class="gen-step" id="gen-step-6">
         <div class="generating" id="gen-generating">
@@ -947,6 +970,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
             <div class="gen-q">Ton script</div>
             <div style="text-align:right;"><div style="font-size:10px;color:var(--text3);margin-bottom:2px;">Viralite</div><div style="font-size:24px;font-weight:700;color:var(--accent);line-height:1;" id="gen-vir-score">-</div><div style="font-size:10px;color:var(--text3);">/10</div></div>
           </div>
+          <div class="verify-banner" id="verify-banner">⚠️ <span>Certains chiffres ou resultats ont ete generes automatiquement — verifie les elements surlignés en jaune avant de publier.</span></div>
           <div class="script-rendered" id="script-rendered"></div>
           <div class="result-actions">
             <button class="btn" onclick="validateScript()"><span class="btn-txt">Valider et sauvegarder</span><span class="btn-arr">→</span></button>
@@ -1803,7 +1827,7 @@ function updateEditorVirality() {
 // ═══ GENERATION ═══
 function openGen() {
   genStep = 1;
-  genData = { sujet: '', objectif: '', format: '', style: '', precision: '' };
+  genData = { sujet: '', objectif: '', format: '', style: '', selectedHook: '', precision: '' };
   document.querySelectorAll('.gen-step').forEach(function(s) { s.classList.remove('active'); });
   document.getElementById('gen-step-1').classList.add('active');
   document.getElementById('gen-footer').style.display = 'block';
@@ -1860,13 +1884,14 @@ function nextGenStep() {
     if (precEl) precEl.value = '';
   } else if (genStep === 5) {
     genData.precision = (document.getElementById('gen-precision').value || '').trim();
-    genStep = 6;
-    goToGenStep(6);
+    genStep = '6h';
+    document.querySelectorAll('.gen-step').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById('gen-step-6h').classList.add('active');
     document.getElementById('gen-footer').style.display = 'none';
-    document.getElementById('gen-generating').style.display = 'block';
-    document.getElementById('script-result').classList.remove('active');
-    startGenAnim();
-    callAPI(null, null);
+    document.getElementById('gen-hooks-generating').style.display = 'block';
+    document.getElementById('gen-hooks-result').style.display = 'none';
+    document.getElementById('btn-continue-hook').style.display = 'none';
+    generateHooksOnly();
   }
 }
 
@@ -1874,6 +1899,94 @@ function startGenAnim() {
   msgIdx = 0;
   document.getElementById('gen-anim-txt').textContent = genMsgs[0];
   msgTimer = setInterval(function() { msgIdx = (msgIdx + 1) % genMsgs.length; document.getElementById('gen-anim-txt').textContent = genMsgs[msgIdx]; }, 1800);
+}
+
+// ─────────────────────────────────────────────────────────────
+// GÉNÉRATION DES 3 HOOKS + SÉLECTION
+// ─────────────────────────────────────────────────────────────
+async function generateHooksOnly() {
+  var sk = genData.style || 'hybride';
+  var formatLabels = { video30: 'Video courte 30s', video60: 'Video courte 60s', linkedin: 'Post LinkedIn', ads: 'Script publicitaire' };
+  var objectifLabels = { vues: 'Maximiser les vues', engagement: 'Creer de l engagement', leads: 'Generer des prospects', vente: 'Vendre une offre', autorite: 'Renforcer l image d expert' };
+  var styleLabel = STYLE_LIBRARY[sk] ? STYLE_LIBRARY[sk].label : sk;
+
+  var prompt = 'Genere EXACTEMENT 3 options de hook differentes pour ce contenu.\n\n'
+    + 'Sujet : ' + genData.sujet + '\n'
+    + 'Format : ' + (formatLabels[genData.format] || genData.format) + '\n'
+    + 'Style narratif : ' + styleLabel + '\n'
+    + 'Objectif : ' + (objectifLabels[genData.objectif] || genData.objectif) + '\n';
+  if (genData.precision) prompt += 'Precision : ' + genData.precision + '\n';
+  prompt += '\nREGLES ABSOLUES :\n'
+    + '• Les 3 hooks sont TOTALEMENT DIFFERENTS — structure, angle et energie distincts. Pas 3 variantes du meme.\n'
+    + '• LANGAGE 100% PARLE : t as / c est / y a / franchement / du coup. Zero francais ecrit.\n'
+    + '• 1 a 3 phrases max par hook. Court, percutant, direct.\n'
+    + '• Aucune numerotation dans le texte du hook lui-meme.\n'
+    + '• Parfaitement adapte au profil du createur — vocabulaire, ton, secteur.\n\n'
+    + 'FORMAT DE REPONSE STRICT (respecte exactement ces separateurs) :\n'
+    + '###HOOK1###\n[texte du hook 1]\n###HOOK2###\n[texte du hook 2]\n###HOOK3###\n[texte du hook 3]';
+
+  try {
+    var res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 500, system: buildSystemPrompt(sk), messages: [{ role: 'user', content: prompt }] })
+    });
+    if (!res.ok) throw new Error('err');
+    var data = await res.json();
+    var text = data.content && data.content[0] ? data.content[0].text : '';
+    if (!text) throw new Error('empty');
+    showHookOptions(text);
+  } catch (e) {
+    // Fallback : continuer sans hook présélectionné
+    document.getElementById('gen-hooks-generating').style.display = 'none';
+    var fallback = '<div style="color:var(--text2);font-size:13px;padding:8px 0">Impossible de generer les hooks. Tu peux continuer sans en selectionner un.</div>';
+    document.getElementById('gen-hooks-list').innerHTML = fallback;
+    document.getElementById('gen-hooks-result').style.display = 'block';
+    document.getElementById('btn-continue-hook').style.display = 'block';
+    genData.selectedHook = '';
+  }
+}
+
+function showHookOptions(rawText) {
+  // Parse ###HOOK1### ... ###HOOK2### ... ###HOOK3###
+  var hooks = [];
+  var parts = rawText.split(/###HOOK\d+###/);
+  parts.forEach(function(p) { var t = p.trim(); if (t && t.length > 5) hooks.push(t); });
+  // Fallback si le parsing echoue
+  if (hooks.length < 2) {
+    hooks = rawText.split(/\n\n+/).map(function(h) { return h.trim(); }).filter(function(h) { return h.length > 10; }).slice(0, 3);
+  }
+  document.getElementById('gen-hooks-generating').style.display = 'none';
+  var html = '';
+  hooks.forEach(function(h, i) {
+    html += '<div class="hook-option" id="hook-opt-' + i + '" onclick="selectHookOption(this, ' + i + ')">'
+      + '<div class="hook-option-num">Option ' + (i + 1) + '</div>'
+      + '<div>' + escapeHtml(h.trim()) + '</div>'
+      + '</div>';
+  });
+  document.getElementById('gen-hooks-list').innerHTML = html;
+  document.getElementById('gen-hooks-result').style.display = 'block';
+}
+
+function selectHookOption(el, idx) {
+  document.querySelectorAll('.hook-option').forEach(function(c) { c.classList.remove('sel'); });
+  el.classList.add('sel');
+  var txtEl = el.querySelectorAll('div');
+  genData.selectedHook = txtEl.length > 1 ? txtEl[txtEl.length - 1].textContent.trim() : el.textContent.trim();
+  document.getElementById('btn-continue-hook').style.display = 'block';
+}
+
+function continueWithHook() {
+  document.querySelectorAll('.gen-step').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('gen-step-6').classList.add('active');
+  document.getElementById('gen-footer').style.display = 'none';
+  document.getElementById('gen-generating').style.display = 'block';
+  document.getElementById('script-result').classList.remove('active');
+  var banner = document.getElementById('verify-banner');
+  if (banner) banner.classList.remove('visible');
+  genStep = 6;
+  startGenAnim();
+  callAPI(null, null);
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -2254,8 +2367,26 @@ function buildSystemPrompt(styleKey) {
   var parts = [
     "Tu es un expert en scripting video et contenu digital pour Septup Studio Lyon.",
     "Septup produit du contenu premium, sans bullshit, cle en main. Le contenu doit etre authentique, differentiant, jamais generique.",
-    "INTERDITS ABSOLUS : formules creuses (En conclusion, Il est important de noter, N hesitez pas), listes a puces dans le script, ton corporate ou publicitaire force, structure scolaire.",
-    "Ce script sera tourne en studio. Il doit sonner naturel a l oral, etre rythme, creer une tension narrative qui retient l attention jusqu a la fin."
+    "",
+    "=== LANGAGE PARLE — REGLE FONDAMENTALE ET NON NEGOCIABLE ===",
+    "Ce script est PARLE face camera. Il ne sera pas lu. La difference est absolue.",
+    "EXEMPLES CONCRETS de ce qui est INTERDIT vs OBLIGATOIRE :",
+    "INTERDIT : 'Il est essentiel de comprendre que...' → OBLIGATOIRE : 'Ecoute. Y a un truc que...'",
+    "INTERDIT : 'Voici les principales etapes a suivre.' → OBLIGATOIRE : 'Trois etapes. Trois.'",
+    "INTERDIT : 'En conclusion, je vous encourage a...' → OBLIGATOIRE : 'Alors voila. T as tout. Maintenant t as plus d excuse.'",
+    "INTERDIT : 'Cette approche permet d obtenir des resultats significatifs.' → OBLIGATOIRE : 'Et les resultats ? Franchement, c est dingue.'",
+    "INTERDIT : 'N hesitez pas a nous contacter.' → OBLIGATOIRE : 'T en veux ? Le lien est en bas.'",
+    "INTERDIT : 'Il convient de noter que...' → OBLIGATOIRE : 'Et la — attention.'",
+    "INTERDIT : 'Ainsi, il apparait que...' → OBLIGATOIRE : 'Du coup.'",
+    "REGLES D ORALITE OBLIGATOIRES : contractions naturelles (c est / t as / y a / j ai / on a / c etait / t imagines), phrases courtes de 3-8 mots pour l impact, interjections naturelles (Ecoute. / Franchement. / Serieusement. / Du coup. / Honnêtement.), pauses marquees avec — ou ..., repetitions expressives ('C est dur. Vraiment dur.'), questions orales ('T as deja vecu ca ?' / 'Tu vois ce que je veux dire ?' / 'Logique, non ?').",
+    "TEST : lis chaque phrase a voix haute. Si ca sonne bizarre ou comme un article de blog → tout recasser et repartir en mode oral.",
+    "",
+    "=== VERIFICATION DES FAITS — OBLIGATOIRE ===",
+    "Tout chiffre, statistique, pourcentage, delai ou resultat precis QUI N EST PAS explicitement mentionne dans le profil du createur DOIT etre marque ainsi : [?]la donnee en question[/?].",
+    "Exemples : [?]73% des clients[/?] ou [?]resultats en 30 jours[/?] ou [?]50 000 abonnes[/?].",
+    "Ne jamais inventer des donnees chiffrees sans les marquer — le createur les personnalisera.",
+    "Par contre : les informations du profil (secteur, offre, cible, ton, transformation) sont considerees comme verifiees et utilisables directement.",
+    ""
   ];
 
   // Couche 1 : Profil de marque
@@ -2296,11 +2427,9 @@ function buildSystemPrompt(styleKey) {
 
   // Couche 5 : Naturalite et personnalisation absolue
   var nom = f['Nom_complet'] || 'ce createur';
-  parts.push("\n=== NATURALITE ET PERSONNALISATION ABSOLUE ===");
-  parts.push("Ce script doit sonner comme si " + nom + " le disait EN VRAI, naturellement, face camera. Pas un texte ecrit. Une vraie voix.");
-  parts.push("TEST : si une personne qui connait " + nom + " lit ce script a l aveugle, elle doit reconnaitre SA facon de parler. Si ce n est pas le cas, le script a rate.");
-  parts.push("FORMULES ABSOLUMENT INTERDITES : 'Il est important de noter', 'En conclusion', 'Ainsi donc', 'N hesitez pas a', 'Je suis ravi de partager', 'Dans cet univers', 'N oubliez pas', 'A titre d exemple', toute formule qui sonne ecrit et jamais parle.");
-  parts.push("OBLIGATION ORALITE : phrases courtes, contractions naturelles (c est / t as / on a / c etait), pauses narratives (— ou ...), relances directes ('Tu vois ?', 'Vraiment.', 'Serieusement.').");
+  parts.push("\n=== VOIX ET PERSONNALISATION ===");
+  parts.push("Ce script doit sonner comme si " + nom + " le disait EN VRAI, spontanement, face camera. Pas un texte ecrit. Une vraie voix humaine.");
+  parts.push("TEST DE RECONNAISSANCE : si une personne qui connait " + nom + " lit ce script a l aveugle, elle doit reconnaitre SA facon de parler. Pas une version generique. SA voix.");
   if (f['Onboarding_ton']) {
     parts.push("SON TON EST : " + f['Onboarding_ton'] + ". Chaque phrase doit refleter ce ton precisement. Pas une version watered-down ou generique — le ton plein, franc, assume.");
   }
@@ -2370,6 +2499,12 @@ async function callAPI(prevScript, instruction) {
     if (genData.precision) {
       prompt += 'Precision : ' + genData.precision + '\n';
     }
+    // Hook sélectionné par le créateur
+    if (genData.selectedHook) {
+      prompt += '\n=== HOOK CHOISI PAR LE CREATEUR ===\n'
+        + 'Utilise EXACTEMENT ce hook pour ouvrir le script (mot pour mot, ne modifie rien) :\n'
+        + genData.selectedHook + '\n';
+    }
     prompt += '\n=== FRAMEWORK A APPLIQUER ===\n'
       + fw.structure + '\n'
       + 'Chaque label de section seul sur sa ligne en MAJUSCULES.\n';
@@ -2378,13 +2513,15 @@ async function callAPI(prevScript, instruction) {
       prompt += sec + '\n[contenu de la section]\n\n';
     });
     prompt += '\n=== CONTRAINTES ABSOLUES ===\n'
-      + '• ORAL NATUREL : chaque phrase doit sonner comme si le createur la disait face camera, pas comme un texte ecrit\n'
-      + '• ZERO FORMULES IA : interdit de commencer par "Bien sur", "Absolument", "En conclusion", "Il est important de noter"\n'
-      + '• Chaque section est directement utilisable — aucun texte entre crochets, aucune indication de mise en scene\n'
+      + '• LANGAGE 100% PARLE : t as / c est / y a / j ai / on a / c etait — jamais de francais ecrit formel\n'
+      + '• ZERO FORMULES IA : interdit "Bien sur", "Absolument", "En conclusion", "Il est important de noter", "Voici les principales"\n'
+      + '• Phrases courtes (3-8 mots pour l impact), pauses narratives avec — ou ..., repetitions expressives\n'
+      + '• Chaque section directement utilisable — zero texte entre crochets dans le rendu final\n'
       + '• Respecte la longueur imposee par le format — ni trop court ni trop long\n'
-      + '• Les rehooks utilisent les formules exactes du framework (ex: "Et la, ca devient pire." / "Mais bonne nouvelle." / "Et c est la que tout se joue.")\n'
-      + '• PERSONNALISATION : le vocabulaire, le ton et les exemples sont ceux du profil createur — pas generiques\n'
-      + '• CTA unique, direct, sans friction — une seule action claire';
+      + '• Les rehooks = formules exactes du framework ("Et la, ca devient pire." / "Mais bonne nouvelle." / "Et c est la que tout se joue.")\n'
+      + '• PERSONNALISATION : vocabulaire, ton et exemples du profil createur — zero genericite\n'
+      + '• CTA unique, direct, sans friction — une seule action claire\n'
+      + '• VERIFICATION FAITS : tout chiffre ou resultat invente (absent du profil) doit etre marque [?]la donnee[/?]';
   }
 
   try {
@@ -2408,6 +2545,11 @@ function isSectionLabel(line) {
   return /^[A-Z0-9\u00C0-\u00D6\u00D8-\u00DE /\-]+$/.test(t);
 }
 
+function markVerify(line) {
+  // Highlight [?]...[/?] markers as warnings (called AFTER escapeHtml)
+  return line.replace(/\[\?](.*?)\[\/\?]/g, '<span class="verify-marker" title="A verifier et adapter">⚠ $1</span>');
+}
+
 function renderScript(text) {
   if (!text) return '';
   var lines = text.split('\n');
@@ -2429,7 +2571,7 @@ function renderScript(text) {
       var isAccent = (t === 'HOOK' || t === 'ACCROCHE' || t === 'CTA' || t.indexOf('CTA') === 0);
       html += '<span class="section-label' + (isAccent ? ' hook' : '') + '">' + escapeHtml(t) + '</span>';
     } else if (t) {
-      body.push(escapeHtml(lines[i]));
+      body.push(markVerify(escapeHtml(lines[i])));
     }
   }
   flush(); return html;
@@ -2442,6 +2584,10 @@ function showScript(text) {
   document.getElementById('script-rendered').innerHTML = renderScript(text);
   document.getElementById('script-result').classList.add('active');
   document.getElementById('script-result').setAttribute('data-raw', text);
+  // Bannière de vérification si des marqueurs [?]...[/?] sont présents
+  var verifyCount = (text.match(/\[\?]/g) || []).length;
+  var banner = document.getElementById('verify-banner');
+  if (banner) { verifyCount > 0 ? banner.classList.add('visible') : banner.classList.remove('visible'); }
   var v = computeVirality(text);
   document.getElementById('gen-vir-score').textContent = v.score.toFixed(1);
 }
