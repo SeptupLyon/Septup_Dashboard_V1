@@ -170,6 +170,7 @@ async function atFetch(table, filter, sort) {
     body: JSON.stringify({ method: 'GET', table: table, params: params.join('&') })
   });
   var data = await res.json();
+  if (data.error) console.error('[atFetch]', table, data.error);
   return data.records || [];
 }
 
@@ -180,15 +181,18 @@ async function atCreate(table, fields) {
     body: JSON.stringify({ method: 'POST', table: table, fields: fields })
   });
   console.log('[atCreate]', table, '| status:', res.status);
-  return await res.json();
+  var rec = await res.json();
+  if (rec.error) console.error('[atCreate]', table, rec.error);
+  return rec;
 }
 
 async function atDelete(table, recordId) {
-  await fetch('/api/airtable', {
+  var res = await fetch('/api/airtable', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ method: 'DELETE', table: table, recordId: recordId })
   });
+  if (!res.ok) console.error('[atDelete]', table, recordId, '| status:', res.status);
 }
 
 // ═══ DATA LOADING ═══
@@ -591,6 +595,7 @@ async function autoSaveEditor() {
       s.content = content;
       if (statusEl) statusEl.textContent = 'Sauvegardé ✓';
     } catch(e) {
+      console.error('[autosave PATCH]', e);
       if (statusEl) statusEl.textContent = 'Erreur de sauvegarde';
     }
   } else if (s && !s.airtableId) {
@@ -610,6 +615,7 @@ async function autoSaveEditor() {
         if (statusEl) statusEl.textContent = 'Sauvegardé ✓';
       }
     } catch(e) {
+      console.error('[autosave CREATE]', e);
       if (statusEl) statusEl.textContent = 'Erreur de sauvegarde';
     }
   }
@@ -1799,6 +1805,7 @@ async function saveEditProfil() {
     closeEditProfil();
     alert('Profil mis a jour !');
   } catch(e) {
+    console.error('[saveEditProfil]', e);
     alert('Erreur de sauvegarde');
   }
 }
@@ -1827,6 +1834,7 @@ async function saveEditNom() {
     closeEditNom();
     alert('Nom mis a jour !');
   } catch(e) {
+    console.error('[saveEditNom]', e);
     alert('Erreur de sauvegarde');
   }
 }
@@ -1877,6 +1885,7 @@ async function setScriptStatus(newStatut) {
       });
       if (statusEl) statusEl.textContent = 'Statut mis a jour ✓';
     } catch(e) {
+      console.error('[setScriptStatus]', newStatut, e);
       if (statusEl) statusEl.textContent = 'Erreur de sauvegarde';
     }
   }
