@@ -1506,7 +1506,7 @@ function validateScript() {
       'Date_creation': new Date().toISOString()
     }).then(function(rec) {
       console.log('[validateScript] atCreate response:', rec);
-      if (rec.id && scriptsStore[id]) { scriptsStore[id].airtableId = rec.id; scriptsStore[rec.id] = scriptsStore[id]; delete scriptsStore[id]; renderScriptsList(); }
+      if (rec.id && scriptsStore[id]) { scriptsStore[id].airtableId = rec.id; scriptsStore[rec.id] = scriptsStore[id]; delete scriptsStore[id]; if (currentEditorId === id) currentEditorId = rec.id; renderScriptsList(); }
     }).catch(function(err) { console.error('[validateScript] atCreate error:', err); });
   }
   renderScriptsList();
