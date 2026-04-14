@@ -22,6 +22,7 @@ export default async function handler(req, res) {
       if (params) url += '?' + params;
       const r = await fetch(url, fetchOptions);
       const data = await r.json();
+      if (!r.ok) console.error('[airtable] GET', table, r.status, JSON.stringify(data));
       return res.json(data);
     }
 
@@ -31,6 +32,7 @@ export default async function handler(req, res) {
       fetchOptions.body = JSON.stringify({ fields });
       const r = await fetch(url, fetchOptions);
       const data = await r.json();
+      if (!r.ok) console.error('[airtable] POST', table, r.status, JSON.stringify(data));
       return res.json(data);
     }
 
@@ -41,6 +43,7 @@ export default async function handler(req, res) {
       fetchOptions.body = JSON.stringify({ fields });
       const r = await fetch(url, fetchOptions);
       const data = await r.json();
+      if (!r.ok) console.error('[airtable] PATCH', table, recordId, r.status, JSON.stringify(data));
       return res.json(data);
     }
 
@@ -49,6 +52,7 @@ export default async function handler(req, res) {
       fetchOptions.method = 'DELETE';
       const r = await fetch(url, fetchOptions);
       const data = await r.json();
+      if (!r.ok) console.error('[airtable] DELETE', table, recordId, r.status, JSON.stringify(data));
       return res.json(data);
     }
 
