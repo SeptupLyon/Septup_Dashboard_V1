@@ -179,6 +179,7 @@ async function atCreate(table, fields) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ method: 'POST', table: table, fields: fields })
   });
+  console.log('[atCreate]', table, '| status:', res.status);
   return await res.json();
 }
 
@@ -1504,8 +1505,9 @@ function validateScript() {
       'Email_client': currentUser ? currentUser.email : '',
       'Date_creation': new Date().toISOString()
     }).then(function(rec) {
+      console.log('[validateScript] atCreate response:', rec);
       if (rec.id && scriptsStore[id]) { scriptsStore[id].airtableId = rec.id; scriptsStore[rec.id] = scriptsStore[id]; delete scriptsStore[id]; renderScriptsList(); }
-    }).catch(function() {});
+    }).catch(function(err) { console.error('[validateScript] atCreate error:', err); });
   }
   renderScriptsList();
   var el = document.getElementById('home-nb-scripts');
@@ -1852,6 +1854,7 @@ async function setScriptStatus(newStatut) {
   if (!currentEditorId) return;
   var s = scriptsStore[currentEditorId];
   if (!s) return;
+  console.log('[setScriptStatus]', newStatut, '| airtableId:', s.airtableId);
 
   var statusMap2 = {
     'Brouillon': { css: 'st-draft',   label: 'Brouillon' },
