@@ -1552,10 +1552,12 @@ function initSupabase() {
         window.history.replaceState({}, document.title, window.location.pathname);
         currentUser = session.user;
         var email = currentUser.email;
+        var nom = session.user.user_metadata && session.user.user_metadata.full_name
+          ? session.user.user_metadata.full_name : email;
+        renderAll({ fields: { Nom_complet: nom, Email: email, Points: 0 } }, email);
+        go('home');
         var client = await loadClientData(email);
         if (!client) {
-          var nom = session.user.user_metadata && session.user.user_metadata.full_name
-            ? session.user.user_metadata.full_name : email;
           await atCreate('Client', { 'Nom_complet': nom, 'Email': email });
           client = await loadClientData(email);
         }
@@ -1566,7 +1568,6 @@ function initSupabase() {
           try { sessions = await loadSessions(email); } catch(e) {}
           renderSessions(sessions);
           await loadScripts(clientRecord.id, email);
-          go('home');
         } else {
           go('ob1');
         }
