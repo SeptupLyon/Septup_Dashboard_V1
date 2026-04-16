@@ -1554,12 +1554,10 @@ function initSupabase() {
 }
 
 async function checkSession() {
-  // Gérer le retour OAuth Google (token dans l'URL #access_token=...)
-  if (window.location.hash && window.location.hash.includes('access_token')) {
-    // Supabase va intercepter automatiquement le hash et créer la session
-    // On attend un court délai pour que Supabase traite le token
-    await new Promise(function(r) { setTimeout(r, 500); });
-    // Nettoie l'URL sans recharger la page
+  var hasOAuth = (window.location.hash && window.location.hash.includes('access_token'))
+    || (window.location.search && window.location.search.includes('code='));
+  if (hasOAuth) {
+    await new Promise(function(r) { setTimeout(r, 1500); });
     window.history.replaceState({}, document.title, window.location.pathname);
   }
 
