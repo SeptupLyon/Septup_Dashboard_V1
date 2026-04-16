@@ -798,26 +798,51 @@ async function generateHooksOnly() {
   var objectifLabels = { vues: 'Maximiser les vues', engagement: 'Creer de l engagement', leads: 'Generer des prospects', vente: 'Vendre une offre', autorite: 'Renforcer l image d expert' };
   var styleLabel = STYLE_LIBRARY[sk] ? STYLE_LIBRARY[sk].label : sk;
 
-  var prompt = 'Genere EXACTEMENT 3 options de hook differentes pour ce contenu.\n\n'
-    + 'Sujet : ' + genData.sujet + '\n'
-    + 'Format : ' + (formatLabels[genData.format] || genData.format) + '\n'
-    + 'Style narratif : ' + styleLabel + '\n'
-    + 'Objectif : ' + (objectifLabels[genData.objectif] || genData.objectif) + '\n';
-  if (genData.precision) prompt += 'Precision : ' + genData.precision + '\n';
-  prompt += '\nREGLES ABSOLUES :\n'
-    + '• Les 3 hooks sont TOTALEMENT DIFFERENTS — structure, angle et energie distincts. Pas 3 variantes du meme.\n'
-    + '• LANGAGE 100% PARLE : t as / c est / y a / franchement / du coup. Zero francais ecrit.\n'
-    + '• 1 a 3 phrases max par hook. Court, percutant, direct.\n'
-    + '• Aucune numerotation dans le texte du hook lui-meme.\n'
-    + '• Parfaitement adapte au profil du createur — vocabulaire, ton, secteur.\n\n'
-    + 'FORMAT DE REPONSE STRICT (respecte exactement ces separateurs) :\n'
-    + '###HOOK1###\n[texte du hook 1]\n###HOOK2###\n[texte du hook 2]\n###HOOK3###\n[texte du hook 3]';
+  var prompt = 'Genere EXACTEMENT 4 hooks pour ce contenu. Chaque hook utilise une mecanique differente.\n\n'
+    + 'SUJET : ' + genData.sujet + '\n'
+    + 'FORMAT : ' + (formatLabels[genData.format] || genData.format) + '\n'
+    + 'STYLE : ' + styleLabel + '\n'
+    + 'OBJECTIF : ' + (objectifLabels[genData.objectif] || genData.objectif) + '\n';
+  if (genData.precision) prompt += 'PRECISION : ' + genData.precision + '\n';
+
+  if (clientRecord && clientRecord.fields) {
+    var f = clientRecord.fields;
+    var profil = [];
+    if (f['Onboarding_secteur']) profil.push('Secteur : ' + f['Onboarding_secteur']);
+    if (f['Onboarding_cible'])   profil.push('Cible : ' + f['Onboarding_cible']);
+    if (f['Onboarding_offre'])   profil.push('Offre : ' + f['Onboarding_offre']);
+    if (profil.length) prompt += '\nPROFIL CREATEUR :\n' + profil.join('\n') + '\n';
+  }
+
+  if (genData.clarifications && genData.clarifications.length) {
+    prompt += '\nCONTEXTE UTILISATEUR :\n';
+    genData.clarifications.forEach(function(c) { prompt += '- ' + c.q + ' → ' + c.a + '\n'; });
+  }
+
+  prompt += '\nMECANIQUES (une par hook) :\n'
+    + 'Hook 1 — CHOC / FRONTAL : attaque directe, verite brutale, provocation.\n'
+    + 'Hook 2 — INTRIQUE / CURIOSITE : cree un manque d information, donne envie de savoir la suite.\n'
+    + 'Hook 3 — STORYTELLING : commence par une situation reelle et concrete, ancree dans le vecu.\n'
+    + 'Hook 4 — HYPER SPECIFIQUE : base precisement sur l offre, la cible et le probleme de ce createur. Ce hook ne peut pas fonctionner pour quelqu un d autre.\n\n'
+    + 'PERSONNALISATION :\n'
+    + 'Si un hook peut fonctionner pour n importe quel createur → il est refuse. Recommence.\n\n'
+    + 'DIVERSITE :\n'
+    + 'Les 4 hooks doivent utiliser des mecaniques differentes. Si deux hooks utilisent la meme logique → recommence.\n'
+    + 'Chaque hook doit commencer differemment. Pas de repetition de structure. Pas de repetition de rythme.\n\n'
+    + 'QUALITE :\n'
+    + '• Cree une reaction immediate (surprise, accord, desaccord)\n'
+    + '• Specifique — pas de "90% des gens...", pas de formules applicables a toutes les niches\n'
+    + '• Naturel — langage parle, phrases courtes, possibilite de tournures legèrement imperfaites\n'
+    + '• 1 a 3 phrases max par hook\n'
+    + '• Aucune numerotation dans le texte du hook\n\n'
+    + 'FORMAT DE REPONSE STRICT :\n'
+    + '###HOOK1###\n[hook choc]\n###HOOK2###\n[hook intrigue]\n###HOOK3###\n[hook storytelling]\n###HOOK4###\n[hook hyper specifique]';
 
   try {
     var res = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 500, system: buildSystemPrompt(sk), messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 700, system: buildSystemPrompt(sk), messages: [{ role: 'user', content: prompt }] })
     });
     if (!res.ok) throw new Error('err');
     var data = await res.json();
@@ -842,7 +867,7 @@ function showHookOptions(rawText) {
   parts.forEach(function(p) { var t = p.trim(); if (t && t.length > 5) hooks.push(t); });
   // Fallback si le parsing echoue
   if (hooks.length < 2) {
-    hooks = rawText.split(/\n\n+/).map(function(h) { return h.trim(); }).filter(function(h) { return h.length > 10; }).slice(0, 3);
+    hooks = rawText.split(/\n\n+/).map(function(h) { return h.trim(); }).filter(function(h) { return h.length > 10; }).slice(0, 4);
   }
   document.getElementById('gen-hooks-generating').style.display = 'none';
   var html = '';
@@ -1299,6 +1324,12 @@ async function callAPI(prevScript, instruction) {
     if (genData.precision) {
       prompt += 'Precision : ' + genData.precision + '\n';
     }
+    if (genData.clarifications && genData.clarifications.length) {
+      prompt += '\n=== CONTEXTE UTILISATEUR ===\n';
+      genData.clarifications.forEach(function(c) {
+        prompt += '- ' + c.q + ' : ' + c.a + '\n';
+      });
+    }
     if (genData.selectedHook) {
       prompt += '\nCommence exactement par ce hook (mot pour mot) :\n' + genData.selectedHook + '\n';
     }
@@ -1332,9 +1363,22 @@ async function callAPI(prevScript, instruction) {
       + '• Evite les explications longues — privilegia les punchlines\n'
       + '• Le script doit faire ressentir un shift chez l auditeur\n'
       + '• Capte immediatement l attention et donne envie d ecouter jusqu au bout\n'
-      + '\nPriorite absolue : naturel > structure, impact > perfection.\n'
+      + '\nPRIORITE ABSOLUE : naturel > structure, impact > perfection.\n'
       + 'Si le script est generique, trop propre ou ressemble a un template — recommence.\n'
-      + 'Genere uniquement le script.';
+      + '\nUTILISATION DU CONTEXTE UTILISATEUR :\n'
+      + '• Analyse les reponses utilisateur fournies\n'
+      + '• Utilise ces informations uniquement si elles apportent un contexte pertinent, concret ou differenciant\n'
+      + '• Si une reponse permet de rendre le script plus specifique ou plus realiste → integre-la naturellement\n'
+      + '• Si une reponse n apporte pas de valeur claire → ignore-la\n'
+      + '• Ne jamais forcer l integration d une reponse si elle ne s integre pas naturellement\n'
+      + '• Ne pas copier-coller les reponses → toujours reformuler\n'
+      + '\nOBJECTIF :\n'
+      + '• Le script doit sembler naturel et fluide\n'
+      + '• Le contexte utilisateur doit enrichir le contenu, pas le rendre artificiel\n'
+      + '• Profil createur : utilise le secteur, la cible et l offre pour adapter le script\n'
+      + '• Le script doit etre coherent avec l activite du createur\n'
+      + '• Qualite avant tout — ne pas raccourcir, simplifier ou sacrifier la precision pour economiser des tokens\n'
+      + '\nGenere uniquement le script.';
   }
 
   try {
