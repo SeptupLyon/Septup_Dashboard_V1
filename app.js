@@ -1259,100 +1259,27 @@ var INVISIBLE_RULES = [
 function buildSystemPrompt(styleKey) {
   if (!clientRecord) return '';
   var f = clientRecord.fields;
-  var sk = styleKey || genData.style || 'hybride';
-  var fw = FRAMEWORKS[sk] || FRAMEWORKS['hybride'];
 
   var parts = [
-    "Tu es un expert en scripting video et contenu digital pour Septup Studio Lyon.",
-    "Septup produit du contenu premium, sans bullshit, cle en main. Le contenu doit etre authentique, differentiant, jamais generique.",
-    "",
-    "=== LANGAGE PARLE — REGLE FONDAMENTALE ET NON NEGOCIABLE ===",
-    "Ce script est PARLE face camera. Il ne sera pas lu. La difference est absolue.",
-    "EXEMPLES CONCRETS de ce qui est INTERDIT vs OBLIGATOIRE :",
-    "INTERDIT : 'Il est essentiel de comprendre que...' → OBLIGATOIRE : 'Ecoute. Y a un truc que...'",
-    "INTERDIT : 'Voici les principales etapes a suivre.' → OBLIGATOIRE : 'Trois etapes. Trois.'",
-    "INTERDIT : 'En conclusion, je vous encourage a...' → OBLIGATOIRE : 'Alors voila. T as tout. Maintenant t as plus d excuse.'",
-    "INTERDIT : 'Cette approche permet d obtenir des resultats significatifs.' → OBLIGATOIRE : 'Et les resultats ? Franchement, c est dingue.'",
-    "INTERDIT : 'N hesitez pas a nous contacter.' → OBLIGATOIRE : 'T en veux ? Le lien est en bas.'",
-    "INTERDIT : 'Il convient de noter que...' → OBLIGATOIRE : 'Et la — attention.'",
-    "INTERDIT : 'Ainsi, il apparait que...' → OBLIGATOIRE : 'Du coup.'",
-    "REGLES D ORALITE OBLIGATOIRES : contractions naturelles (c est / t as / y a / j ai / on a / c etait / t imagines), phrases courtes de 3-8 mots pour l impact, interjections naturelles (Ecoute. / Franchement. / Serieusement. / Du coup. / Honnêtement.), pauses marquees avec — ou ..., repetitions expressives ('C est dur. Vraiment dur.'), questions orales ('T as deja vecu ca ?' / 'Tu vois ce que je veux dire ?' / 'Logique, non ?').",
-    "TEST : lis chaque phrase a voix haute. Si ca sonne bizarre ou comme un article de blog → tout recasser et repartir en mode oral.",
-    "",
-    "=== VERIFICATION DES FAITS — OBLIGATOIRE ===",
-    "Tout chiffre, statistique, pourcentage, delai ou resultat precis QUI N EST PAS explicitement mentionne dans le profil du createur DOIT etre marque ainsi : [?]la donnee en question[/?].",
-    "Exemples : [?]73% des clients[/?] ou [?]resultats en 30 jours[/?] ou [?]50 000 abonnes[/?].",
-    "Ne jamais inventer des donnees chiffrees sans les marquer — le createur les personnalisera.",
-    "Par contre : les informations du profil (secteur, offre, cible, ton, transformation) sont considerees comme verifiees et utilisables directement.",
-    ""
+    "Expert en scripting video oral pour Septup Studio Lyon. Contenu authentique, jamais generique.",
+    "Script PARLE face camera — pas ecrit. 'Il est essentiel de...' → 'Ecoute. Y a un truc que...' / 'En conclusion...' → 'Alors voila. T as tout.'",
+    "Chiffres absents du profil : marque [?]la donnee[/?]. Donnees du profil : utilisables directement.",
+    "\nPROFIL :"
   ];
 
-  // Couche 1 : Profil de marque
-  parts.push("\n=== PROFIL DU CREATEUR ===");
   if (f['Nom_complet'])               parts.push("Createur : " + f['Nom_complet']);
-  if (f['Onboarding_secteur'])        parts.push("Secteur / Metier : " + f['Onboarding_secteur']);
-  if (f['Onboarding_offre'])          parts.push("Offre principale : " + f['Onboarding_offre']);
-  if (f['Onboarding_prix'])           parts.push("Prix moyen : " + f['Onboarding_prix']);
-  if (f['Onboarding_maturite'])       parts.push("Maturite marche : " + f['Onboarding_maturite']);
-  if (f['Onboarding_cible'])          parts.push("Client ideal : " + f['Onboarding_cible']);
-  if (f['Onboarding_douleur'])        parts.push("Probleme n1 de sa cible : " + f['Onboarding_douleur']);
-  if (f['Onboarding_transformation']) parts.push("Transformation apportee : " + f['Onboarding_transformation']);
-  if (f['Onboarding_objectif'])       parts.push("Objectif contenu : " + f['Onboarding_objectif']);
-  if (f['Onboarding_kpi'])            parts.push("KPI prioritaires : " + f['Onboarding_kpi']);
+  if (f['Onboarding_secteur'])        parts.push("Secteur : " + f['Onboarding_secteur']);
+  if (f['Onboarding_offre'])          parts.push("Offre : " + f['Onboarding_offre']);
+  if (f['Onboarding_prix'])           parts.push("Prix : " + f['Onboarding_prix']);
+  if (f['Onboarding_maturite'])       parts.push("Maturite : " + f['Onboarding_maturite']);
+  if (f['Onboarding_cible'])          parts.push("Cible : " + f['Onboarding_cible']);
+  if (f['Onboarding_douleur'])        parts.push("Douleur n1 : " + f['Onboarding_douleur']);
+  if (f['Onboarding_transformation']) parts.push("Transformation : " + f['Onboarding_transformation']);
+  if (f['Onboarding_objectif'])       parts.push("Objectif : " + f['Onboarding_objectif']);
+  if (f['Onboarding_kpi'])            parts.push("KPI : " + f['Onboarding_kpi']);
   if (f['Onboarding_ton'])            parts.push("Ton : " + f['Onboarding_ton']);
   if (f['Onboarding_intensite'])      parts.push("Intensite : " + f['Onboarding_intensite']);
   if (f['Onboarding_langage'])        parts.push("Langage : " + f['Onboarding_langage']);
-  parts.push("Adapte TOUT — vocabulaire, complexite, rythme, exemples — exactement a ce profil. Pas d approximation.");
-
-  // Couche 2 : Framework
-  parts.push("\n=== FRAMEWORK : " + fw.label.toUpperCase() + " ===");
-  parts.push("Structure : " + fw.structure);
-  if (fw.logique) parts.push("Logique : " + fw.logique);
-  parts.push("Regles d execution :");
-  fw.rules.forEach(function(r) { parts.push("• " + r); });
-
-  // Couche 3 : Hooks de reference
-  var hooks = HOOKS_BY_ANGLE[sk] || HOOKS_BY_ANGLE['hybride'];
-  parts.push("\n=== HOOKS DE REFERENCE ===");
-  parts.push("Ces hooks sont des TEMPLATES universels issus de contenus viraux reels. Ils fonctionnent quelle que soit la niche : food, sport, business, artisanat, art, sante, etc.");
-  parts.push("Ta mission : prendre la STRUCTURE et l ENERGIE de ces templates, puis remplir les [variables] avec le profil du createur et le sujet donne. Ne copie jamais un hook mot pour mot.");
-  parts.push("Choisis le template qui correspond le mieux au sujet, au ton du createur et a l objectif. Un seul hook — le meilleur.");
-  hooks.forEach(function(h, i) { parts.push((i + 1) + ". " + h); });
-
-  // Couche 4 : Regles invisibles
-  parts.push("\n=== REGLES INVISIBLES (niveau expert) ===");
-  INVISIBLE_RULES.forEach(function(r) { parts.push(r); });
-
-  // Couche 5 : Naturalite et personnalisation absolue
-  var nom = f['Nom_complet'] || 'ce createur';
-  parts.push("\n=== VOIX ET PERSONNALISATION ===");
-  parts.push("Ce script doit sonner comme si " + nom + " le disait EN VRAI, spontanement, face camera. Pas un texte ecrit. Une vraie voix humaine.");
-  parts.push("TEST DE RECONNAISSANCE : si une personne qui connait " + nom + " lit ce script a l aveugle, elle doit reconnaitre SA facon de parler. Pas une version generique. SA voix.");
-  if (f['Onboarding_ton']) {
-    parts.push("SON TON EST : " + f['Onboarding_ton'] + ". Chaque phrase doit refleter ce ton precisement. Pas une version watered-down ou generique — le ton plein, franc, assume.");
-  }
-  if (f['Onboarding_intensite']) {
-    parts.push("SON INTENSITE EST : " + f['Onboarding_intensite'] + ". Adapte en consequence : longueur des phrases, cadence, niveau d energie. Calme = phrases plus longues, respirees. Punchy = phrases ultra-courtes, staccato.");
-  }
-  if (f['Onboarding_langage']) {
-    parts.push("SON LANGAGE EST : " + f['Onboarding_langage'] + ". Si simple/vulgarise : fuis le jargon, utilise des analogies concretes. Si expert/technique : vocabulaire precis du domaine, references sectorielles assumes.");
-  }
-  if (f['Onboarding_secteur']) {
-    parts.push("SON SECTEUR : " + f['Onboarding_secteur'] + ". Utilise les references que son audience reconnait, les termes specifiques de ce domaine, les problemes REELS de ce marche. Aucune genericite.");
-  }
-  if (f['Onboarding_offre']) {
-    parts.push("SON OFFRE : " + f['Onboarding_offre'] + ". Si le sujet s y prete, ancre le script dans la realite de cette offre — les resultats concrets qu elle produit, les transformations qu elle genere.");
-  }
-  if (f['Onboarding_cible']) {
-    parts.push("SA CIBLE : " + f['Onboarding_cible'] + ". Ecris comme si tu t adressais directement a CETTE personne specifique — ses peurs, ses desires, son vocabulaire, ses objections.");
-  }
-  if (f['Onboarding_douleur']) {
-    parts.push("DOULEUR N1 DE SA CIBLE : " + f['Onboarding_douleur'] + ". Si pertinent, cette douleur doit etre mentionnee ou sous-entendue — le viewer doit se sentir compris.");
-  }
-  if (f['Onboarding_transformation']) {
-    parts.push("TRANSFORMATION APPORTEE : " + f['Onboarding_transformation'] + ". C est l horizon vers lequel le contenu pointe — implicitement ou explicitement.");
-  }
-  parts.push("INTERDICTION ABSOLUTE D IA : zero phrase qui sonne generee par une IA. Zero structure previsible. Zero conclusion bateau. Ce script doit etre IMPOSSIBLE a attribuer a quelqu un d autre que " + nom + ".");
 
   return parts.join("\n");
 }
@@ -1385,41 +1312,43 @@ async function callAPI(prevScript, instruction) {
     var styleLabel = STYLE_LIBRARY[sk] ? STYLE_LIBRARY[sk].label : sk;
     prompt = 'Script existant :\n\n' + prevScript
       + '\n\nInstruction de modification : ' + instruction
-      + '\n\nApplique cette modification. Conserve le style ' + styleLabel + ' et le framework : ' + fw.structure
-      + '\n\nLabels de section en MAJUSCULES seuls sur leur ligne. Direct, percutant, oral.';
+      + '\n\nApplique cette modification. Conserve le style ' + styleLabel + ' et la dynamique narrative : ' + fw.structure
+      + '\n\nPas de labels de section. Direct, percutant, oral. Aucun effet template.';
   } else {
-    // Generation initiale — 4 couches
-    prompt = '=== CONTEXTE DU CONTENU ===\n'
-      + 'Sujet : ' + genData.sujet + '\n'
+    // Generation initiale
+    prompt = 'Sujet : ' + genData.sujet + '\n'
       + 'Objectif : ' + (objectifLabels[genData.objectif] || genData.objectif) + '\n'
-      + 'Format : ' + (formatLabels[genData.format] || genData.format) + '\n'
-      + 'Style choisi : ' + (STYLE_LIBRARY[sk] ? STYLE_LIBRARY[sk].label : sk) + '\n';
+      + 'Format : ' + (formatLabels[genData.format] || genData.format) + '\n';
     if (genData.precision) {
       prompt += 'Precision : ' + genData.precision + '\n';
     }
-    // Hook sélectionné par le créateur
     if (genData.selectedHook) {
-      prompt += '\n=== HOOK CHOISI PAR LE CREATEUR ===\n'
-        + 'Utilise EXACTEMENT ce hook pour ouvrir le script (mot pour mot, ne modifie rien) :\n'
-        + genData.selectedHook + '\n';
+      prompt += '\nCommence exactement par ce hook (mot pour mot) :\n' + genData.selectedHook + '\n';
     }
-    prompt += '\n=== FRAMEWORK A APPLIQUER ===\n'
-      + fw.structure + '\n'
-      + 'Chaque label de section seul sur sa ligne en MAJUSCULES.\n';
-    prompt += '\n=== STRUCTURE DE SORTIE OBLIGATOIRE ===\n';
-    fw.sections.forEach(function(sec) {
-      prompt += sec + '\n[contenu de la section]\n\n';
-    });
-    prompt += '\n=== CONTRAINTES ABSOLUES ===\n'
-      + '• LANGAGE 100% PARLE : t as / c est / y a / j ai / on a / c etait — jamais de francais ecrit formel\n'
-      + '• ZERO FORMULES IA : interdit "Bien sur", "Absolument", "En conclusion", "Il est important de noter", "Voici les principales"\n'
-      + '• Phrases courtes (3-8 mots pour l impact), pauses narratives avec — ou ..., repetitions expressives\n'
-      + '• Chaque section directement utilisable — zero texte entre crochets dans le rendu final\n'
-      + '• Respecte la longueur imposee par le format — ni trop court ni trop long\n'
-      + '• Les rehooks = formules exactes du framework ("Et la, ca devient pire." / "Mais bonne nouvelle." / "Et c est la que tout se joue.")\n'
-      + '• PERSONNALISATION : vocabulaire, ton et exemples du profil createur — zero genericite\n'
-      + '• CTA unique, direct, sans friction — une seule action claire\n'
-      + '• VERIFICATION FAITS : tout chiffre ou resultat invente (absent du profil) doit etre marque [?]la donnee[/?]';
+    var hooks = HOOKS_BY_ANGLE[sk] || HOOKS_BY_ANGLE['hybride'];
+    prompt += '\nHOOKS DE REFERENCE (prends la structure et l energie — ne copie pas mot pour mot) :\n';
+    hooks.forEach(function(h, i) { prompt += (i + 1) + '. ' + h + '\n'; });
+    prompt += '\nLogique interne (ne l affiche pas) : ' + fw.logique + '\n'
+      + 'Sequence narrative : ' + fw.structure + '\n'
+      + 'Applique cette dynamique de facon fluide et invisible — aucun label de section dans le script final.\n';
+    prompt += '\nREGLES NARRATIVES :\n';
+    INVISIBLE_RULES.forEach(function(r) { prompt += '• ' + r + '\n'; });
+    prompt += '\nCONTRAINTES :\n'
+      + '• Langage 100% parle : t as / c est / y a / j ai / on a — jamais de francais ecrit formel\n'
+      + '• Zero formules IA : interdit "Bien sur", "Absolument", "En conclusion", "Il est important de noter"\n'
+      + '• Phrases de longueurs variees — tres courtes pour l impact, un peu plus longues pour installer\n'
+      + '• Transitions naturelles entre les moments — pas de coupures nettes\n'
+      + '• Imperfections legeres bienvenues si elles sonnent vrai a l oral\n'
+      + '• Longueur respectee selon le format — ni trop court ni trop long\n'
+      + '• CTA unique, direct, une seule action\n'
+      + '• VERIFICATION FAITS : tout chiffre ou resultat invente (absent du profil) marque [?]la donnee[/?]\n'
+      + '\nTON HUMAIN :\n'
+      + '• Ecris comme si tu parlais a une seule personne, face camera — pas a une audience, a quelqu un juste en face de toi\n'
+      + '• Donne une sensation d improvisation controlee : fluide, vivant, jamais recite\n'
+      + '• Evite toute formulation trop parfaite ou trop propre — une phrase un peu plus brute peut sonner plus vrai\n'
+      + '• Tu peux casser legerement le rythme si ca rend le texte plus humain a l oral\n'
+      + '• Si t as le choix entre naturel et structure : choisis naturel\n'
+      + '\nSi le script est generique, trop propre ou ressemble a un template — recommence.';
   }
 
   try {
