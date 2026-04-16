@@ -1328,6 +1328,7 @@ async function callAPI(prevScript, instruction) {
     var hooks = HOOKS_BY_ANGLE[sk] || HOOKS_BY_ANGLE['hybride'];
     prompt += '\nHOOKS DE REFERENCE (prends la structure et l energie — ne copie pas mot pour mot) :\n';
     hooks.forEach(function(h, i) { prompt += (i + 1) + '. ' + h + '\n'; });
+    prompt += '\nTYPES DE HOOKS FORTS : verite derangeante / opposition forte / casse une croyance / constat direct — objectif : arreter le scroll. Evite toute intro classique.\n';
     prompt += '\nLogique interne (ne l affiche pas) : ' + fw.logique + '\n'
       + 'Sequence narrative : ' + fw.structure + '\n'
       + 'Applique cette dynamique de facon fluide et invisible — aucun label de section dans le script final.\n';
@@ -1341,6 +1342,7 @@ async function callAPI(prevScript, instruction) {
       + '• Imperfections legeres bienvenues si elles sonnent vrai a l oral\n'
       + '• Longueur respectee selon le format — ni trop court ni trop long\n'
       + '• CTA unique, direct, une seule action\n'
+      + '• Aucune phrase cliche, aucun ton "formation", aucune intro "aujourd hui on va parler de"\n'
       + '• VERIFICATION FAITS : tout chiffre ou resultat invente (absent du profil) marque [?]la donnee[/?]\n'
       + '\nTON HUMAIN :\n'
       + '• Ecris comme si tu parlais a une seule personne, face camera — pas a une audience, a quelqu un juste en face de toi\n'
@@ -1348,7 +1350,14 @@ async function callAPI(prevScript, instruction) {
       + '• Evite toute formulation trop parfaite ou trop propre — une phrase un peu plus brute peut sonner plus vrai\n'
       + '• Tu peux casser legerement le rythme si ca rend le texte plus humain a l oral\n'
       + '• Si t as le choix entre naturel et structure : choisis naturel\n'
-      + '\nSi le script est generique, trop propre ou ressemble a un template — recommence.';
+      + '\nTENSION & IMPACT :\n'
+      + '• Cree du contraste des le debut (avant/apres, erreur/realite, croyance/verite)\n'
+      + '• Evite les explications longues — privilegia les punchlines\n'
+      + '• Le script doit faire ressentir un shift chez l auditeur\n'
+      + '• Capte immediatement l attention et donne envie d ecouter jusqu au bout\n'
+      + '\nPriorite absolue : naturel > structure, impact > perfection.\n'
+      + 'Si le script est generique, trop propre ou ressemble a un template — recommence.\n'
+      + 'Genere uniquement le script.';
   }
 
   try {
