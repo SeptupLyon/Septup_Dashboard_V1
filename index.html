@@ -474,11 +474,11 @@
         <div class="gen-q">Quel est votre objectif ?</div>
         <div class="gen-sub">L objectif oriente le style et le framework</div>
         <div class="gen-opts">
-          <div class="gen-opt" onclick="selGen(this,'objectif','vues')">Faire des vues</div>
-          <div class="gen-opt" onclick="selGen(this,'objectif','engagement')">Creer de l engagement</div>
-          <div class="gen-opt" onclick="selGen(this,'objectif','leads')">Generer des prospects</div>
-          <div class="gen-opt" onclick="selGen(this,'objectif','vente')">Vendre une offre</div>
-          <div class="gen-opt" onclick="selGen(this,'objectif','autorite')">Renforcer votre image d expert</div>
+          <div class="gen-opt" data-value="vues" onclick="selGen(this,'objectif','vues')">Faire des vues</div>
+          <div class="gen-opt" data-value="engagement" onclick="selGen(this,'objectif','engagement')">Creer de l engagement</div>
+          <div class="gen-opt" data-value="leads" onclick="selGen(this,'objectif','leads')">Generer des prospects</div>
+          <div class="gen-opt" data-value="vente" onclick="selGen(this,'objectif','vente')">Vendre une offre</div>
+          <div class="gen-opt" data-value="autorite" onclick="selGen(this,'objectif','autorite')">Renforcer votre image d expert</div>
         </div>
       </div>
       <!-- ETAPE 3 : Format -->
@@ -487,10 +487,10 @@
         <div class="gen-q">Quel format ?</div>
         <div class="gen-sub">Chaque format a ses propres contraintes de sortie</div>
         <div class="gen-opts">
-          <div class="gen-opt" onclick="selGen(this,'format','video30')">Video courte — 30 s</div>
-          <div class="gen-opt" onclick="selGen(this,'format','video60')">Video courte — 60 s</div>
-          <div class="gen-opt" onclick="selGen(this,'format','linkedin')">Post LinkedIn</div>
-          <div class="gen-opt" onclick="selGen(this,'format','ads')">Script publicitaire</div>
+          <div class="gen-opt" data-value="video30" onclick="selGen(this,'format','video30')">Video courte — 30 s</div>
+          <div class="gen-opt" data-value="video60" onclick="selGen(this,'format','video60')">Video courte — 60 s</div>
+          <div class="gen-opt" data-value="linkedin" onclick="selGen(this,'format','linkedin')">Post LinkedIn</div>
+          <div class="gen-opt" data-value="ads" onclick="selGen(this,'format','ads')">Script publicitaire</div>
         </div>
       </div>
       <!-- ETAPE 4 : Styles recommandes -->
@@ -541,7 +541,8 @@
       </div>
     </div>
     <div class="gen-footer" id="gen-footer">
-      <button class="btn" onclick="nextGenStep()"><span class="btn-txt" id="gen-next-txt">Suivant</span><span class="btn-arr">→</span></button>
+      <button class="btn btn-ghost" id="btn-back" onclick="prevGenStep()" style="display:none"><span class="btn-arr">←</span><span class="btn-txt">Retour</span></button>
+      <button class="btn" id="btn-gen-next" onclick="nextGenStep()"><span class="btn-txt" id="gen-next-txt">Suivant</span><span class="btn-arr">→</span></button>
     </div>
   </div>
 </div>

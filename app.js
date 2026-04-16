@@ -640,6 +640,7 @@ function openGen() {
   document.getElementById('gen-next-txt').textContent = 'Suivant';
   document.getElementById('gen-sujet').value = '';
   document.getElementById('modal-gen').classList.add('open');
+  updateBackBtn();
 }
 
 function goToGenStep(n) {
@@ -648,6 +649,50 @@ function goToGenStep(n) {
   if (el) el.classList.add('active');
 }
 function closeGen() { document.getElementById('modal-gen').classList.remove('open'); if (msgTimer) clearInterval(msgTimer); }
+
+function updateBackBtn() {
+  var btn = document.getElementById('btn-back');
+  if (btn) btn.style.display = (genStep === 1) ? 'none' : 'inline-flex';
+}
+
+function prevGenStep() {
+  if (genStep === '1b') {
+    genStep = 1;
+    document.getElementById('gen-sujet').value = genData.sujet;
+    document.getElementById('gen-next-txt').textContent = 'Suivant';
+    goToGenStep(1);
+  } else if (genStep === 2) {
+    genStep = '1b';
+    goToGenStep('1b');
+  } else if (genStep === 3) {
+    genStep = 2;
+    document.querySelectorAll('#gen-step-2 .gen-opt').forEach(function(o) {
+      o.classList.toggle('sel', o.getAttribute('data-value') === genData.objectif);
+    });
+    goToGenStep(2);
+  } else if (genStep === 4) {
+    genStep = 3;
+    document.querySelectorAll('#gen-step-3 .gen-opt').forEach(function(o) {
+      o.classList.toggle('sel', o.getAttribute('data-value') === genData.format);
+    });
+    goToGenStep(3);
+  } else if (genStep === 5) {
+    genStep = 4;
+    document.getElementById('gen-next-txt').textContent = 'Suivant';
+    renderRecommendedStyles();
+    goToGenStep(4);
+  } else if (genStep === '6h') {
+    genStep = 5;
+    document.getElementById('gen-footer').style.display = 'block';
+    document.getElementById('btn-gen-next').style.display = '';
+    document.getElementById('gen-next-txt').textContent = 'Generer ✦';
+    var precEl = document.getElementById('gen-precision');
+    if (precEl) precEl.value = genData.precision || '';
+    genData.selectedHook = '';
+    goToGenStep(5);
+  }
+  updateBackBtn();
+}
 
 function nextGenStep() {
   // Mode podcast — bypass du flow principal
@@ -714,6 +759,7 @@ function nextGenStep() {
     document.getElementById('btn-continue-hook').style.display = 'none';
     generateHooksOnly();
   }
+  updateBackBtn();
 }
 
 function startGenAnim() {
@@ -787,6 +833,9 @@ function showHookOptions(rawText) {
   });
   document.getElementById('gen-hooks-list').innerHTML = html;
   document.getElementById('gen-hooks-result').style.display = 'block';
+  document.getElementById('gen-footer').style.display = 'block';
+  document.getElementById('btn-gen-next').style.display = 'none';
+  updateBackBtn();
 }
 
 function selectHookOption(el, idx) {
@@ -1894,6 +1943,7 @@ function openGenPodcast() {
   document.querySelector('#modal-gen .modal-title').textContent = 'Intro & Outro Podcast';
   document.getElementById('modal-gen').classList.add('open');
   window._podcastMode = true;
+  updateBackBtn();
 }
 
 async function callAPIPodcast(sujet) {
