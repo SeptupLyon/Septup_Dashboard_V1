@@ -1547,54 +1547,33 @@ function doRegen() {
 function initSupabase() {
   if (window.supabase) {
     sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    checkSession();
+    sb.auth.onAuthStateChange(async function(event, session) {
+      if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session && !currentUser) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+        currentUser = session.user;
+        var email = currentUser.email;
+        var client = await loadClientData(email);
+        if (!client) {
+          var nom = session.user.user_metadata && session.user.user_metadata.full_name
+            ? session.user.user_metadata.full_name : email;
+          await atCreate('Client', { 'Nom_complet': nom, 'Email': email });
+          client = await loadClientData(email);
+        }
+        if (client) {
+          clientRecord = client;
+          renderAll(clientRecord, email);
+          var sessions = [];
+          try { sessions = await loadSessions(email); } catch(e) {}
+          renderSessions(sessions);
+          await loadScripts(clientRecord.id, email);
+          go('home');
+        } else {
+          go('ob1');
+        }
+      }
+    });
   } else {
     setTimeout(initSupabase, 200);
-  }
-}
-
-async function checkSession() {
-  var hasOAuth = (window.location.hash && window.location.hash.includes('access_token'))
-    || (window.location.search && window.location.search.includes('code='));
-  if (hasOAuth) {
-    await new Promise(function(r) { setTimeout(r, 1500); });
-    window.history.replaceState({}, document.title, window.location.pathname);
-  }
-
-  var result = await sb.auth.getSession();
-  if (result.data && result.data.session) {
-    currentUser = result.data.session.user;
-    var email = currentUser.email;
-
-    // Vérifie si le client existe dans Airtable
-    var client = await loadClientData(email);
-
-    if (!client) {
-      // Nouveau client Google → créer automatiquement son profil Airtable
-      // On utilise le nom Google si disponible
-      var nom = currentUser.user_metadata && currentUser.user_metadata.full_name
-        ? currentUser.user_metadata.full_name
-        : email;
-      await atCreate('Client', {
-        'Nom_complet': nom,
-        'Email': email
-      });
-      // Recharger le profil créé
-      client = await loadClientData(email);
-    }
-
-    if (client) {
-      clientRecord = client;
-      renderAll(clientRecord, email);
-      var sessions = [];
-      try { sessions = await loadSessions(email); } catch(e) {}
-      renderSessions(sessions);
-      await loadScripts(clientRecord.id, email);
-      go('home');
-    } else {
-      // Fallback : onboarding si la création Airtable a échoué
-      go('ob1');
-    }
   }
 }
 
