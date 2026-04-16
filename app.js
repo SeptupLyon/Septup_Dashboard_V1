@@ -790,7 +790,7 @@ function startGenAnim() {
 }
 
 // ─────────────────────────────────────────────────────────────
-// GÉNÉRATION DES 3 HOOKS + SÉLECTION
+// GÉNÉRATION DES 4 HOOKS + SÉLECTION
 // ─────────────────────────────────────────────────────────────
 async function generateHooksOnly() {
   var sk = genData.style || 'hybride';
@@ -798,12 +798,15 @@ async function generateHooksOnly() {
   var objectifLabels = { vues: 'Maximiser les vues', engagement: 'Creer de l engagement', leads: 'Generer des prospects', vente: 'Vendre une offre', autorite: 'Renforcer l image d expert' };
   var styleLabel = STYLE_LIBRARY[sk] ? STYLE_LIBRARY[sk].label : sk;
 
-  var prompt = 'Genere EXACTEMENT 4 hooks pour ce contenu. Chaque hook utilise une mecanique differente.\n\n'
-    + 'SUJET : ' + genData.sujet + '\n'
-    + 'FORMAT : ' + (formatLabels[genData.format] || genData.format) + '\n'
-    + 'STYLE : ' + styleLabel + '\n'
-    + 'OBJECTIF : ' + (objectifLabels[genData.objectif] || genData.objectif) + '\n';
-  if (genData.precision) prompt += 'PRECISION : ' + genData.precision + '\n';
+  var prompt = 'MISSION :\n'
+    + 'Genere EXACTEMENT 4 hooks ultra efficaces pour capter l attention dans les 1 a 3 premieres secondes. et arreter le scroll\n\n'
+    + '---\n\n'
+    + 'CONTEXTE :\n\n'
+    + 'Sujet : ' + genData.sujet + '\n'
+    + 'Format : ' + (formatLabels[genData.format] || genData.format) + '\n'
+    + 'Objectif : ' + (objectifLabels[genData.objectif] || genData.objectif) + '\n'
+    + 'Style : ' + styleLabel + '\n';
+  if (genData.precision) prompt += 'Precision : ' + genData.precision + '\n';
 
   if (clientRecord && clientRecord.fields) {
     var f = clientRecord.fields;
@@ -816,27 +819,59 @@ async function generateHooksOnly() {
 
   if (genData.clarifications && genData.clarifications.length) {
     prompt += '\nCONTEXTE UTILISATEUR :\n';
-    genData.clarifications.forEach(function(c) { prompt += '- ' + c.q + ' → ' + c.a + '\n'; });
+    genData.clarifications.forEach(function(c) { prompt += '- ' + c.q + ' : ' + c.a + '\n'; });
   }
 
-  prompt += '\nMECANIQUES (une par hook) :\n'
-    + 'Hook 1 — CHOC / FRONTAL : attaque directe, verite brutale, provocation.\n'
-    + 'Hook 2 — INTRIQUE / CURIOSITE : cree un manque d information, donne envie de savoir la suite.\n'
-    + 'Hook 3 — STORYTELLING : commence par une situation reelle et concrete, ancree dans le vecu.\n'
-    + 'Hook 4 — HYPER SPECIFIQUE : base precisement sur l offre, la cible et le probleme de ce createur. Ce hook ne peut pas fonctionner pour quelqu un d autre.\n\n'
-    + 'PERSONNALISATION :\n'
-    + 'Si un hook peut fonctionner pour n importe quel createur → il est refuse. Recommence.\n\n'
-    + 'DIVERSITE :\n'
-    + 'Les 4 hooks doivent utiliser des mecaniques differentes. Si deux hooks utilisent la meme logique → recommence.\n'
-    + 'Chaque hook doit commencer differemment. Pas de repetition de structure. Pas de repetition de rythme.\n\n'
-    + 'QUALITE :\n'
-    + '• Cree une reaction immediate (surprise, accord, desaccord)\n'
-    + '• Specifique — pas de "90% des gens...", pas de formules applicables a toutes les niches\n'
-    + '• Naturel — langage parle, phrases courtes, possibilite de tournures legèrement imperfaites\n'
-    + '• 1 a 3 phrases max par hook\n'
-    + '• Aucune numerotation dans le texte du hook\n\n'
-    + 'FORMAT DE REPONSE STRICT :\n'
-    + '###HOOK1###\n[hook choc]\n###HOOK2###\n[hook intrigue]\n###HOOK3###\n[hook storytelling]\n###HOOK4###\n[hook hyper specifique]';
+  prompt += '\n---\n\n'
+    + 'PRINCIPE D UN BON HOOK :\n\n'
+    + 'Un bon hook doit :\n'
+    + '- rendre le sujet immediatement clair\n'
+    + '- creer une curiosite forte (envie de continuer)\n'
+    + '- parler directement au spectateur (tu / ton)\n'
+    + '- donner une promesse implicite de valeur\n\n'
+    + '---\n\n'
+    + 'VARIATION OBLIGATOIRE :\n\n'
+    + 'Avant de generer, identifie 4 angles DIFFERENTS.\n\n'
+    + 'Exemples d angles possibles :\n'
+    + '- une erreur frequente\n'
+    + '- une croyance fausse\n'
+    + '- une frustration precise\n'
+    + '- un resultat surprenant\n'
+    + '- une situation vecue\n\n'
+    + 'Chaque hook doit etre base sur un angle DIFFERENT.\n\n'
+    + '---\n\n'
+    + 'REGLES DE CREATION :\n\n'
+    + '- Parle directement au spectateur (tu / ton)\n'
+    + '- Cree un contraste (ex : ce que tu fais vs ce que tu devrais faire)\n'
+    + '- Utilise si pertinent :\n'
+    + '  - chiffres\n'
+    + '  - details precis\n'
+    + '  - situations concretes\n\n'
+    + '- Le hook doit etre comprehensible en moins de 2 secondes\n'
+    + '- Aucune phrase complexe ou floue\n'
+    + '- Aucune introduction inutile\n\n'
+    + '---\n\n'
+    + 'PERSONNALISATION :\n\n'
+    + '- Utilise le contexte utilisateur uniquement si cela rend le hook plus pertinent\n'
+    + '- Si une info rend le hook plus specifique → integre-la\n'
+    + '- Sinon → ignore-la\n\n'
+    + '---\n\n'
+    + 'INTERDICTIONS :\n\n'
+    + '- aucun hook generique\n'
+    + '- pas de "90% des gens..."\n'
+    + '- pas de phrases applicables a toutes les niches\n'
+    + '- pas de blabla\n'
+    + '- pas de clickbait mensonger\n\n'
+    + '---\n\n'
+    + 'TEST QUALITE (OBLIGATOIRE) :\n\n'
+    + 'Pour chaque hook :\n'
+    + '- est-ce que le sujet est clair immediatement ?\n'
+    + '- est-ce que ca donne envie de continuer ?\n'
+    + '- est-ce que c est specifique ?\n\n'
+    + 'Si NON → recommence\n\n'
+    + '---\n\n'
+    + 'FORMAT DE REPONSE :\n\n'
+    + '###HOOK1###\n...\n\n###HOOK2###\n...\n\n###HOOK3###\n...\n\n###HOOK4###\n...';
 
   try {
     var res = await fetch('/api/generate', {
