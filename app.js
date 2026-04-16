@@ -10,6 +10,7 @@ var sb = null;
 var currentUser = null;
 var clientRecord = null;
 var scriptsStore = {};
+var scriptsLoaded = false;
 var selectedScripts = {};
 var currentEditorId = null;
 var currentEditorText = '';
@@ -216,6 +217,7 @@ async function loadScripts(clientId, email) {
   var filter = email ? '{Email_client}="' + email + '"' : 'FALSE()';
   var records = await atFetch('Scripts', filter, 'sort[0][field]=Date_creation&sort[0][direction]=desc');
   scriptsStore = {};
+  scriptsLoaded = false;
   var months = ['jan.','fev.','mars','avr.','mai','juin','juil.','aout','sep.','oct.','nov.','dec.'];
   records.forEach(function(r) {
     var f = r.fields;
@@ -240,6 +242,7 @@ async function loadScripts(clientId, email) {
       airtableId: r.id
     };
   });
+  scriptsLoaded = true;
   renderScriptsList();
   var el = document.getElementById('home-nb-scripts');
   if (el) el.textContent = records.length;
@@ -316,8 +319,18 @@ function renderSessions(records) {
 
   var passEl = document.getElementById('sess-passees');
   var avenirEl = document.getElementById('sess-avenir');
-  if (passEl) passEl.innerHTML = passees.length ? passees.map(function(r) { return makeCard(r, false); }).join('') : '<div style="padding:20px 16px;font-size:13px;color:var(--text3);">Aucune session passee</div>';
-  if (avenirEl) avenirEl.innerHTML = avenir.length ? avenir.map(function(r) { return makeCard(r, true); }).join('') : '<div style="padding:20px 16px;font-size:13px;color:var(--text3);">Aucune session a venir</div>';
+  var emptyPassees = '<div style="padding:32px 16px;text-align:center;">'
+    + '<div style="font-size:17px;font-weight:700;margin-bottom:8px;">Aucune session pass\u00e9e</div>'
+    + '<div style="font-size:13px;color:var(--text3);margin-bottom:20px;">Pas encore de tournage \u00e0 ton actif. Il faut bien commencer quelque part.</div>'
+    + '<button class="btn" onclick="openResa()" style="width:auto;padding:13px 24px;"><span class="btn-txt">R\u00e9server une session</span><span class="btn-arr">\u2192</span></button>'
+    + '</div>';
+  var emptyAvenir = '<div style="padding:32px 16px;text-align:center;">'
+    + '<div style="font-size:17px;font-weight:700;margin-bottom:8px;">Aucune session pr\u00e9vue</div>'
+    + '<div style="font-size:13px;color:var(--text3);margin-bottom:20px;">Ton agenda studio est un peu trop calme l\u00e0\u2026 on r\u00e9serve \u00e7a\u00a0?</div>'
+    + '<button class="btn" onclick="openResa()" style="width:auto;padding:13px 24px;"><span class="btn-txt">R\u00e9server une session</span><span class="btn-arr">\u2192</span></button>'
+    + '</div>';
+  if (passEl) passEl.innerHTML = passees.length ? passees.map(function(r) { return makeCard(r, false); }).join('') : emptyPassees;
+  if (avenirEl) avenirEl.innerHTML = avenir.length ? avenir.map(function(r) { return makeCard(r, true); }).join('') : emptyAvenir;
 
   // Mettre à jour home
   var el = document.getElementById('home-nb-sess'); if (el) el.textContent = records.length;
@@ -383,7 +396,15 @@ function renderScriptsList() {
   if (!list) return;
   var keys = Object.keys(scriptsStore);
   if (keys.length === 0) {
-    list.innerHTML = '<div style="padding:24px 16px;text-align:center;font-size:13px;color:var(--text3);">Aucun script pour l instant.<br>Genere ton premier script avec le bouton +</div>';
+    if (!scriptsLoaded) {
+      list.innerHTML = '<div style="padding:24px 16px;text-align:center;font-size:13px;color:var(--text3);">Chargement...</div>';
+    } else {
+      list.innerHTML = '<div style="padding:32px 16px;text-align:center;">'
+        + '<div style="font-size:17px;font-weight:700;margin-bottom:8px;">Aucun script pour le moment</div>'
+        + '<div style="font-size:13px;color:var(--text3);margin-bottom:20px;">Votre biblioth\u00e8que est encore vide. On cr\u00e9e le premier\u00a0?</div>'
+        + '<button class="btn" onclick="openGen()" style="width:auto;padding:13px 24px;"><span class="btn-txt">G\u00e9n\u00e9rer un script</span><span class="btn-arr">\u2192</span></button>'
+        + '</div>';
+    }
     return;
   }
   var html = '';
@@ -1547,6 +1568,7 @@ async function doLogout() {
   currentUser = null;
   clientRecord = null;
   scriptsStore = {};
+  scriptsLoaded = false;
   selectedScripts = {};
   currentEditorId = null;
   currentEditorText = '';
