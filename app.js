@@ -991,121 +991,6 @@ var STYLE_OBJECTIVE_PRIORITY = {
 };
 
 // ─────────────────────────────────────────────────────────────
-// HOOKS PAR STYLE — source : 1,000 Viral Hooks (PBL)
-// Ces hooks sont des TEMPLATES universels — valables quelle
-// que soit la niche. Claude doit remplir les [variables] avec
-// le profil du createur et le sujet donne.
-// ─────────────────────────────────────────────────────────────
-var HOOKS_BY_ANGLE = {
-  edu: [
-    "Voici exactement combien de [element] il vous faut pour [resultat].",
-    "Il m a fallu [X] ans pour apprendre ca — je vais vous l expliquer en moins d une minute.",
-    "Je vais vous apprendre comment [resultat] avec [methode surprenante].",
-    "Si je me reveillais demain avec [probleme] et que je voulais [resultat] d ici [delai], voici exactement ce que je ferais.",
-    "Tout le monde vous dit de [action] mais personne ne vous explique vraiment comment. Voici le tutoriel etape par etape.",
-    "En 60 secondes je vais vous apprendre plus sur [sujet] que tout ce que vous avez appris jusqu ici.",
-    "3 niveaux de [sujet]. La plupart des gens sont bloques au niveau 1 sans le savoir.",
-    "La vraie raison pour laquelle vous n arrivez pas a [resultat], c est que...",
-    "Ne faites pas [action] avant d apprendre a faire ceci.",
-    "Si vous etes [cible] et que vous voulez [resultat] via [approche], ecoutez bien cette video."
-  ],
-  story: [
-    "Voici comment mon [evenement/resultat] a change ma vie.",
-    "Il y a [X] ans j ai pris une decision. Ce que j ai appris depuis a tout change.",
-    "J ai [vecu quelque chose de difficile] a [age] — mais c est ce qui s est passe apres qui a vraiment tout change.",
-    "Il y a [X] mois, j ai demarre [projet/activite]. Et ca s est avere etre [resultat inattendu].",
-    "Un jour vous allez vous faire [quitter/lacher] — pas par [personne attendue] — mais par [element surprenant].",
-    "C est probablement la chose la plus difficile que j aie jamais faite.",
-    "J ai commence [activite] quand j avais [age] avec [peu de ressources]. Voici ce que ca m a appris.",
-    "Ca m a pris [X] ans pour comprendre ca. Et le jour ou j ai compris, tout a change.",
-    "Je ne savais pas si ca allait marcher. Mais j ai quand meme essaye. Voici ce qui s est passe.",
-    "La verite sur [sujet] — apres [X] annees a le vivre de l interieur."
-  ],
-  direct: [
-    "Arretez de [action courante]. Ca ne va rien regler.",
-    "Voici la verite que personne ne veut vous dire sur [sujet].",
-    "Vous n avez pas [defaut], vous n etes pas [adjectif negatif] — vous avez juste besoin de [solution].",
-    "Ce que [industrie/experts] ne veulent pas que vous sachiez sur [sujet].",
-    "Si vous faites [action], voici ce que vous devez savoir immediatement.",
-    "Ne touchez pas a [element] tant que vous n avez pas vu ca.",
-    "Ce que j aurais voulu savoir a [age] plutot qu a [age plus tard].",
-    "Les [X] choses qui abiment votre [element] sans que vous vous en rendiez compte.",
-    "Pourquoi ca m a pris [X] ans pour realiser que vous pouvez [resultat] en [duree courte].",
-    "[Action] pendant [duree] et vous obtenez [resultat]. Ce n est pas une opinion."
-  ],
-  autorite: [
-    "En [X] ans dans [domaine], voici ce que j aurais aime que quelqu un me dise des le depart.",
-    "Depuis [X] ans je [action], voici comment je suis passe de [avant] a [apres].",
-    "Je ne crois pas en [idee recue courante]. Je crois en [votre conviction].",
-    "En tant que [titre] depuis [duree], on me demande souvent [question]. Voici ma vraie reponse.",
-    "Apres [X] ans a [action], j ai fait passer mon [element] de [avant] a [apres].",
-    "J ai analyse [X] cas de [sujet]. La conclusion est toujours la meme.",
-    "Les [X] choses les plus importantes que j enseignerai a mes enfants en tant que [titre].",
-    "30 secondes de conseils sur [domaine] — ce que je dirais a mon meilleur ami s il repartait de zero.",
-    "Cela fait [X] ans que [action]. Voici ce que la plupart des gens ignorent encore.",
-    "Voici la difference entre [niveau 1], [niveau 2] et [niveau 3] en [sujet]."
-  ],
-  vente: [
-    "Saviez-vous que vous pouviez [resultat] sans [contrainte principale] ?",
-    "Si vous etes [cible] et que vous [probleme], et que vous voulez [resultat], voici un plan simple en [X] etapes.",
-    "Voici [X] facons d obtenir [resultat] sans [obstacle]. Pour reference, j ai personnellement [mon resultat].",
-    "Si vous voulez [resultat] d ici [delai] sans [douleur], ecoutez bien.",
-    "La plupart des [cible] font [erreur commune] — et ca leur coute [consequence concrete].",
-    "Ce que les meilleurs [cible] font differemment — et que personne ne vous explique vraiment.",
-    "Si vous avez [probleme], [probleme], et [probleme], vous faites peut-etre [action] de travers.",
-    "Vous pouvez avoir [resultat ideal] en simplifiant radicalement votre approche.",
-    "Qu est-ce qui se passe quand vous arretez [action commune] pendant [duree] ?",
-    "[Action] + [action] + [action] = [resultat]. J en suis la preuve."
-  ],
-  temo: [
-    "[Profil] avait [probleme precis]. En [duree], on est passe a [resultat concret]. Voici exactement comment.",
-    "Il y a [X] mois, [personne] m a dit [situation difficile]. Aujourd hui : [transformation].",
-    "Je suis [metrique modeste] mais je suis devenu l un des meilleurs [titre] dans [domaine]. Voici comment.",
-    "En grandissant, [personne] me reprenait quand je [action]. Ils avaient peut-etre tort.",
-    "Ce n est pas moi qui le dis — c est [profil] qui a vecu ca de A a Z.",
-    "Avant, [personne] [situation difficile]. Maintenant : [transformation nette].",
-    "Il y a [X] ans j ai achete [element] a [age] avec [peu de moyens] et un emploi a temps plein.",
-    "Voici comment j ai obtenu [resultat] malgre [contrainte ou handicap].",
-    "Tout le monde me demandait comment [personne/moi] avait reussi [resultat]. Voici la vraie reponse.",
-    "Ce projet aurait du echouer. Il n a pas echoue. Voici pourquoi."
-  ],
-  avis: [
-    "Beaucoup de gens me demandent ce qui est mieux : [option 1] ou [option 2] pour [resultat]. J ai obtenu [resultat] avec l un des deux — et ca ne fait pas debat.",
-    "Pas cher vs. Cher : [sujet]. Les resultats vont vous surprendre.",
-    "Je ne crois pas en [idee repandue]. Et voici pourquoi.",
-    "La tendance [X] est l une des pires choses que je vois dans [domaine]. Voici pourquoi.",
-    "[Element A] et [element B] sont exactement pareils. Sauf que l un [resultat A] et l autre [resultat B]. Regardons pourquoi.",
-    "Vous avez [option 1] et [option 2]. Qu est-ce que vous choisissez ? Et voici ce que je repondrais.",
-    "Tout le monde conseille [action]. Mais si vous etes [cible], c est la pire chose a faire.",
-    "On vous a menti sur [sujet]. Voici la verite.",
-    "[Chose populaire] ne signifie pas [qualite supposee] — ca signifie juste [realite].",
-    "Voici pourquoi [action courante] vous donne [mauvais resultat] — et comment l eviter."
-  ],
-  cas: [
-    "Comment j ai fait passer [element] de [avant] a [apres] en [duree]. Chaque etape documentee.",
-    "Est-il vraiment possible de [action A] tout en [action B] en [X] jours ? J ai essaye. Voici ce qui s est passe.",
-    "Jour [X] de ma transformation de [etat avant] a [etat apres].",
-    "Voici comment j ai obtenu [resultat] de facon [approche] — et ce que ca m a vraiment appris.",
-    "Il y a [X] mois nous avons demarre [projet]. Resultat : [bilan reel, avec chiffres].",
-    "J ai essaye [methode] pendant [duree]. Voici l honnete bilan.",
-    "De [point de depart] a [resultat] en [duree]. Voici les vraies etapes — sans raccourcis.",
-    "Ce cas aurait du echouer. Il n a pas echoue. Voici les vraies raisons.",
-    "J ai documente [X] semaines de [action]. Voici ce que les donnees disent vraiment.",
-    "Voici les [X] choses que je ne referais pas si je recommencais [projet/parcours] depuis zero."
-  ],
-  hybride: [
-    "C est exactement le meme [element] — mais le premier [resultat A] et le second [resultat B]. Voici pourquoi.",
-    "Tout le monde vous dit de [action] — mais vous pensez qu il est trop tard. Voici ce que vous devez vraiment savoir.",
-    "[Sujet] pour les debutants. Ce que personne ne vous dit vraiment.",
-    "Les choses qui freinent votre [progression] sans que vous vous en rendiez compte.",
-    "Si vous avez [X] minutes par jour, voici exactement comment [resultat concret].",
-    "Ce [element] m a change la vie — et ce n est pas ce que vous croyez.",
-    "Voici ce que [X] annees de [experience] m ont appris — en moins de 60 secondes.",
-    "La reponse courte : [resultat direct]. La reponse longue : voici pourquoi c est plus complexe que ca.",
-    "J aurais voulu voir cette video a [age]. Voici ce qu elle m aurait appris.",
-    "On m a dit que c etait impossible. J ai quand meme essaye. Le resultat va vous surprendre."
-  ]
-};
 
 // ─────────────────────────────────────────────────────────────
 // FRAMEWORKS — 9 styles narratifs complets
@@ -1396,10 +1281,10 @@ async function callAPI(prevScript, instruction) {
     if (genData.selectedHook) {
       prompt += '\nCommence exactement par ce hook (mot pour mot) :\n' + genData.selectedHook + '\n';
     }
-    var hooks = HOOKS_BY_ANGLE[sk] || HOOKS_BY_ANGLE['hybride'];
-    prompt += '\nHOOKS DE REFERENCE (prends la structure et l energie — ne copie pas mot pour mot) :\n';
-    hooks.forEach(function(h, i) { prompt += (i + 1) + '. ' + h + '\n'; });
-    prompt += '\nTYPES DE HOOKS FORTS : verite derangeante / opposition forte / casse une croyance / constat direct — objectif : arreter le scroll. Evite toute intro classique.\n';
+    prompt += '\nHOOK : construis-le depuis le sujet et le profil, pas depuis un template.\n'
+      + '• Fort : tension immediate, specificite concrete, casse une attente\n'
+      + '• Faible : introduction, "aujourd hui on va voir", formule deja entendue\n'
+      + '• Objectif : les 2 premieres secondes rendent impossible de scroller\n';
     prompt += '\nLogique interne (ne l affiche pas) : ' + fw.logique + '\n'
       + 'Sequence narrative : ' + fw.structure + '\n'
       + 'Applique cette dynamique de facon fluide et invisible — aucun label de section dans le script final.\n';
