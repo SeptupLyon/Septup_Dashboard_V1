@@ -47,7 +47,7 @@
   --tourne-bg: rgba(22,101,25,0.18);
 
   /* Police */
-  --font: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+  --font: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
 
   /* Rayons */
   --radius-sm: 8px;
@@ -58,6 +58,7 @@
 
 /* ── 2. BASE ────────────────────────────────────────────── */
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 body { background: var(--bg); color: var(--text); font-family: var(--font); -webkit-font-smoothing: antialiased; }
 
 /* ── 3. LAYOUT ──────────────────────────────────────────── */
@@ -100,7 +101,9 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .tr { display: flex; align-items: center; gap: 10px; }
 
 /* Bouton icône rond */
-.ibtn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; color: var(--text2); background: transparent; }
+.ibtn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; color: var(--text2); background: transparent; touch-action: manipulation; transition: border-color 0.15s, background 0.15s; }
+.ibtn:hover { border-color: var(--border2); background: var(--bg3); }
+.ibtn:active { transform: scale(0.93); }
 
 /* Avatar (initiales client) */
 .av { border-color: var(--aborder); color: var(--accent); font-size: 11px; font-weight: 700; }
@@ -118,7 +121,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .np-icon { font-size: 22px; color: #000; font-weight: 300; line-height: 1; }
 
 /* Zone scrollable */
-.scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 
 /* ── 4. COMPOSANTS ──────────────────────────────────────── */
 
@@ -157,18 +160,24 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .sec-lbl { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; padding: 0 16px; }
 
 /* Boutons principaux */
-.btn { width: 100%; background: var(--accent); border: none; border-radius: var(--radius-md); padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 8px; }
+.btn { width: 100%; background: var(--accent); border: none; border-radius: var(--radius-md); padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 8px; touch-action: manipulation; transition: opacity 0.15s, transform 0.12s; }
+.btn:hover { opacity: 0.9; }
+.btn:active { transform: scale(0.98); opacity: 0.85; }
 .btn-txt { font-size: 15px; font-weight: 700; color: #000; }
 .btn-arr { font-size: 16px; color: #000; }
-.btn-ghost { width: 100%; background: transparent; border: 1px solid var(--border2); border-radius: var(--radius-md); padding: 14px; cursor: pointer; margin-bottom: 8px; font-size: 14px; color: var(--text2); }
+.btn-ghost { width: 100%; background: transparent; border: 1px solid var(--border2); border-radius: var(--radius-md); padding: 14px; cursor: pointer; margin-bottom: 8px; font-size: 14px; color: var(--text2); touch-action: manipulation; transition: border-color 0.15s, color 0.15s, transform 0.12s; }
+.btn-ghost:hover { border-color: rgba(255,255,255,0.25); color: var(--text); }
+.btn-ghost:active { transform: scale(0.98); }
 
 /* Inputs */
 .field { margin-bottom: 16px; }
 .field-lbl { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 7px; display: block; }
-.field-input { width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-md); padding: 13px 16px; color: var(--text); font-size: 15px; font-family: var(--font); outline: none; }
+.field-input { width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-md); padding: 13px 16px; color: var(--text); font-size: 15px; font-family: var(--font); outline: none; transition: border-color 0.15s; }
 .field-input:focus { border-color: var(--accent); }
-.field-ta { width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-md); padding: 13px 16px; color: var(--text); font-size: 14px; font-family: var(--font); outline: none; resize: none; line-height: 1.5; }
+.field-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.field-ta { width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-md); padding: 13px 16px; color: var(--text); font-size: 14px; font-family: var(--font); outline: none; resize: none; line-height: 1.5; transition: border-color 0.15s; }
 .field-ta:focus { border-color: var(--accent); }
+.field-ta:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .sp { flex: 1; min-height: 16px; }
 
 /* Mot de passe voir/masquer */
@@ -460,3 +469,83 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 
 /* ── 10. ANIMATIONS ─────────────────────────────────────── */
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── 11. UX IMPROVEMENTS ────────────────────────────────── */
+
+/* Cursor pointer sur les éléments cliquables non-button */
+.ni, .pal-card, .rcard, .next-sess, .ob-opt, .ob-chip, .gen-opt,
+.hook-option, .regen-chip, .style-card, .hub-btn, .lrow { cursor: pointer; }
+
+/* Touch-action : supprime le délai 300ms sur mobile */
+.ni, .mini, .cta, .ob-opt, .ob-chip, .gen-opt, .hook-option,
+.regen-chip, .style-card, .hub-btn, .sblock-hdr, .ccard,
+.hero-card, .pal-card, .rcard, .crow, .script-cb, .np,
+.script-info, .script-arrow, .auth-link, .ob-back { touch-action: manipulation; }
+
+/* Hover states — cartes */
+.mini { transition: border-color 0.15s, background 0.15s; }
+.mini:hover { border-color: var(--border2); background: rgba(255,255,255,0.04); }
+.mini:active { transform: scale(0.97); }
+
+.hero-card { transition: border-color 0.15s, background 0.15s; }
+.hero-card:hover { border-color: var(--aborder); }
+.hero-card:active { transform: scale(0.99); }
+
+.cta { transition: opacity 0.15s, transform 0.12s; }
+.cta:hover { opacity: 0.92; }
+.cta:active { transform: scale(0.98); }
+
+.ccard { transition: border-color 0.15s, opacity 0.15s; }
+.ccard:hover { border-color: var(--border2); opacity: 0.85; }
+.ccard:active { opacity: 0.7; }
+
+/* Hover states — options sélectionnables */
+.ob-opt { transition: border-color 0.15s, background 0.15s, color 0.15s; }
+.ob-opt:not(.sel):hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+.ob-opt:active { transform: scale(0.99); }
+
+.gen-opt { transition: border-color 0.15s, background 0.15s, color 0.15s; }
+.gen-opt:not(.sel):hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+
+.hook-option { transition: border-color 0.15s, background 0.15s; }
+.hook-option:not(.sel):hover { border-color: rgba(127,218,247,0.35); background: rgba(127,218,247,0.04); }
+
+.style-card { transition: border-color 0.15s, background 0.15s; }
+.style-card:not(.sel):hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.03); }
+
+.ob-chip { transition: border-color 0.15s, background 0.15s, color 0.15s; }
+.ob-chip:not(.sel):hover { border-color: rgba(255,255,255,0.2); }
+
+.regen-chip { transition: border-color 0.15s, background 0.15s, color 0.15s; }
+.regen-chip:not(.sel):hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+/* Hover states — navigation */
+.ni:hover .nd { opacity: 0.65; }
+.ni:hover .nd.on { opacity: 1; }
+
+.np { transition: transform 0.12s, opacity 0.15s; }
+.np:active { transform: scale(0.93) translateY(0); }
+
+/* Hub buttons */
+.hub-btn { transition: background 0.15s, border-color 0.15s; }
+.hub-btn:not(.primary):hover { background: var(--bg3); border-color: rgba(255,255,255,0.2); }
+.hub-btn.primary:hover { background: rgba(127,218,247,0.16); }
+.hub-btn:active { transform: scale(0.99); }
+
+/* Rows compte */
+.crow { transition: background 0.15s; }
+.crow:hover { background: rgba(255,255,255,0.03); }
+
+/* Focus visible — accessibilité clavier */
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.gen-ta:focus-visible, .regen-ta:focus-visible, .clarify-ta:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+}
+
+/* Prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .gen-spinner, .login-spinner, .spinner { animation: none; border-top-color: var(--accent); opacity: 0.6; }
+  .modal, #screen-compte { transition: none !important; }
+  .btn, .btn-ghost, .mini, .hero-card, .cta, .np, .ibtn { transition: none !important; transform: none !important; }
+}
