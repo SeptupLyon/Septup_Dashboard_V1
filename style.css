@@ -166,6 +166,14 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   width: 240px; height: 240px;
   background: radial-gradient(circle, rgba(127,218,247,0.14) 0%, transparent 65%);
   pointer-events: none;
+  animation: glowDrift 8s ease-in-out infinite;
+}
+@keyframes glowDrift {
+  0%   { transform: translate(0px, 0px); }
+  25%  { transform: translate(-30px, 20px); }
+  50%  { transform: translate(-55px, -10px); }
+  75%  { transform: translate(-20px, 35px); }
+  100% { transform: translate(0px, 0px); }
 }
 .hero-card::after {
   content: '';
