@@ -103,9 +103,9 @@ function toggleTheme() {
     r.setProperty('--border', 'rgba(0,0,0,0.07)'); r.setProperty('--border2', 'rgba(0,0,0,0.12)');
     r.setProperty('--text', '#111'); r.setProperty('--text2', 'rgba(0,0,0,0.5)'); r.setProperty('--text3', 'rgba(0,0,0,0.25)');
   } else {
-    r.setProperty('--bg', '#0e0e0e'); r.setProperty('--bg2', '#1a1a1a'); r.setProperty('--bg3', '#242424');
-    r.setProperty('--border', 'rgba(255,255,255,0.07)'); r.setProperty('--border2', 'rgba(255,255,255,0.12)');
-    r.setProperty('--text', '#fff'); r.setProperty('--text2', 'rgba(255,255,255,0.5)'); r.setProperty('--text3', 'rgba(255,255,255,0.25)');
+    r.setProperty('--bg', '#000000'); r.setProperty('--bg2', '#111113'); r.setProperty('--bg3', '#1c1c1e');
+    r.setProperty('--border', 'rgba(255,255,255,0.06)'); r.setProperty('--border2', 'rgba(255,255,255,0.13)');
+    r.setProperty('--text', '#fff'); r.setProperty('--text2', 'rgba(255,255,255,0.55)'); r.setProperty('--text3', 'rgba(255,255,255,0.28)');
   }
 }
 
