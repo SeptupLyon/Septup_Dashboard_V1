@@ -703,6 +703,19 @@ async function generateIdeas() {
   var objectifLabel = objectifLabels[ideasData.objectif] || '';
   var formatLabel = formatLabels[ideasData.format] || '';
 
+  var objectifGuidance = {
+    vues: 'Les idees doivent maximiser le potentiel viral : angles choc, contre-intuitifs, tension immediate, sujet qui divise ou surprend. Pense aux videos qui font reagir, partager, debattre.',
+    clients: 'Les idees doivent attirer des prospects qualifies : problemes tres concrets de la cible, promesse de transformation claire, preuves de resultat. Chaque idee doit faire penser "c est exactement mon probleme".',
+    expertise: 'Les idees doivent asseoir la credibilite professionnelle : opinions tranchees sur le metier, secrets que les experts ne partagent pas, verites contre-intuitives du secteur.',
+    inspirer: 'Les idees doivent creer une connexion emotionnelle forte : moment de bascule personnel, lecon de vie inattendue, histoire qui change la perspective.'
+  };
+  var formatGuidance = {
+    facecam: 'Format face cam — idees intimes et directes : confessions, opinions personnelles, le createur parle en son nom propre face camera.',
+    storytelling: 'Format storytelling — idees qui permettent une narration : avant/apres, moment de verite, situation concrete vecue par le createur ou un client.',
+    educatif: 'Format educatif — idees qui expliquent ou demystifient : mecanique cachee, comparaison surprenante, processus que personne ne comprend vraiment.',
+    opinion: 'Format opinion — idees polarisantes : prise de position tranchee, affirmation que beaucoup contestent, angle que personne n ose defendre publiquement.'
+  };
+
   var profil = '';
   if (clientRecord && clientRecord.fields) {
     var f = clientRecord.fields;
@@ -718,6 +731,8 @@ async function generateIdeas() {
   var prompt = 'MISSION :\nGenere exactement 5 idees de videos.'
     + (objectifLabel ? '\nObjectif : ' + objectifLabel : '')
     + (formatLabel ? '\nFormat : ' + formatLabel : '')
+    + (objectifGuidance[ideasData.objectif] ? '\n\nCONTEXTE OBJECTIF : ' + objectifGuidance[ideasData.objectif] : '')
+    + (formatGuidance[ideasData.format] ? '\nCONTEXTE FORMAT : ' + formatGuidance[ideasData.format] : '')
     + profil
     + '\n\nREGLES GENERALES :\n'
     + '- Langage naturel, parle, direct\n'
