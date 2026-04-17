@@ -96,11 +96,11 @@
     </div>
     <div class="field">
       <label class="field-lbl">Prix moyen de l offre</label>
-      <div class="ob-opts" id="ob2-prix-opts">
-        <div class="ob-opt" onclick="selOpt(this)">Moins de 500 €</div>
-        <div class="ob-opt" onclick="selOpt(this)">500 € – 2 000 €</div>
-        <div class="ob-opt" onclick="selOpt(this)">2 000 € – 10 000 €</div>
-        <div class="ob-opt" onclick="selOpt(this)">Plus de 10 000 €</div>
+      <div class="ob-chips" id="ob2-prix-opts">
+        <div class="ob-chip" onclick="selOpt(this)">Moins de 500 €</div>
+        <div class="ob-chip" onclick="selOpt(this)">500 € – 2 000 €</div>
+        <div class="ob-chip" onclick="selOpt(this)">2 000 € – 10 000 €</div>
+        <div class="ob-chip" onclick="selOpt(this)">Plus de 10 000 €</div>
       </div>
     </div>
     <div class="field">
@@ -210,20 +210,20 @@
     <div class="ob-q">Comment tu parles ?</div>
     <div class="field">
       <label class="field-lbl">Ton prefere</label>
-      <div class="ob-opts" id="ob5-ton-opts">
-        <div class="ob-opt" onclick="selOpt(this)">Fun et accessible</div>
-        <div class="ob-opt" onclick="selOpt(this)">Serieux et professionnel</div>
-        <div class="ob-opt" onclick="selOpt(this)">Premium et inspire</div>
-        <div class="ob-opt" onclick="selOpt(this)">Provocateur et direct</div>
-        <div class="ob-opt" onclick="selOpt(this)">Inspirant et humain</div>
+      <div class="ob-chips" id="ob5-ton-opts">
+        <div class="ob-chip" onclick="selOpt(this)">Fun et accessible</div>
+        <div class="ob-chip" onclick="selOpt(this)">Serieux et professionnel</div>
+        <div class="ob-chip" onclick="selOpt(this)">Premium et inspire</div>
+        <div class="ob-chip" onclick="selOpt(this)">Provocateur et direct</div>
+        <div class="ob-chip" onclick="selOpt(this)">Inspirant et humain</div>
       </div>
     </div>
     <div class="field" style="margin-top:8px;">
       <label class="field-lbl">Niveau d intensite</label>
-      <div class="ob-opts" id="ob5-intensite-opts">
-        <div class="ob-opt" onclick="selOpt(this)">Calme et pose</div>
-        <div class="ob-opt" onclick="selOpt(this)">Energique</div>
-        <div class="ob-opt" onclick="selOpt(this)">Tres punchy et impactant</div>
+      <div class="ob-chips" id="ob5-intensite-opts">
+        <div class="ob-chip" onclick="selOpt(this)">Calme et pose</div>
+        <div class="ob-chip" onclick="selOpt(this)">Energique</div>
+        <div class="ob-chip" onclick="selOpt(this)">Tres punchy et impactant</div>
       </div>
     </div>
     <div class="field" style="margin-top:8px;">
@@ -664,11 +664,11 @@
       <div class="field"><label class="field-lbl">Offre principale</label><input class="field-input" id="ep-offre" placeholder="Ex: Formation en ligne, Logiciel..."></div>
       <div class="field">
         <label class="field-lbl">Prix moyen de l offre</label>
-        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-prix-opts">
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-prix')">Moins de 500 €</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-prix')">500 € – 2 000 €</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-prix')">2 000 € – 10 000 €</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-prix')">Plus de 10 000 €</div>
+        <div class="ob-chips" id="ep-prix-opts">
+          <div class="ob-chip" onclick="selEditOpt(this,'ep-prix')">Moins de 500 €</div>
+          <div class="ob-chip" onclick="selEditOpt(this,'ep-prix')">500 € – 2 000 €</div>
+          <div class="ob-chip" onclick="selEditOpt(this,'ep-prix')">2 000 € – 10 000 €</div>
+          <div class="ob-chip" onclick="selEditOpt(this,'ep-prix')">Plus de 10 000 €</div>
         </div>
       </div>
       <div class="field">
@@ -721,20 +721,20 @@
       <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">ADN de communication</div>
       <div class="field">
         <label class="field-lbl">Ton prefere</label>
-        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-ton-opts">
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-ton')">Fun et accessible</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-ton')">Serieux et professionnel</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-ton')">Premium et inspire</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-ton')">Provocateur et direct</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-ton')">Inspirant et humain</div>
+        <div class="ob-chips" id="ep-ton-opts">
+          <div class="ob-chip" onclick="selEditOpt(this,'ep-ton')">Fun et accessible</div>
+          <div class="ob-chip" onclick="selEditOpt(this,'ep-ton')">Serieux et professionnel</div>
+          <div class="ob-chip" onclick="selEditOpt(this,'ep-ton')">Premium et inspire</div>
+          <div class="ob-chip" onclick="selEditOpt(this,'ep-ton')">Provocateur et direct</div>
+          <div class="ob-chip" onclick="selEditOpt(this,'ep-ton')">Inspirant et humain</div>
         </div>
       </div>
       <div class="field">
         <label class="field-lbl">Niveau d intensite</label>
-        <div style="display:flex;flex-direction:column;gap:8px;" id="ep-intensite-opts">
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-intensite')">Calme et pose</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-intensite')">Energique</div>
-          <div class="ob-opt" onclick="selEditOpt(this,'ep-intensite')">Tres punchy et impactant</div>
+        <div class="ob-chips" id="ep-intensite-opts">
+          <div class="ob-chip" onclick="selEditOpt(this,'ep-intensite')">Calme et pose</div>
+          <div class="ob-chip" onclick="selEditOpt(this,'ep-intensite')">Energique</div>
+          <div class="ob-chip" onclick="selEditOpt(this,'ep-intensite')">Tres punchy et impactant</div>
         </div>
       </div>
       <div class="field">
