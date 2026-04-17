@@ -771,9 +771,33 @@ function showIdeasCards(rawText) {
 function selectIdea(idx) {
   var text = _ideasList[idx];
   closeIdeas();
-  openGen();
-  document.getElementById('gen-sujet').value = text;
-  genData.sujet = text;
+
+  var objectifMap = { vues: 'vues', clients: 'leads', expertise: 'autorite', inspirer: 'engagement' };
+  var ideasFormatLabels = { facecam: 'face cam', storytelling: 'storytelling', educatif: 'educatif', opinion: 'opinion / point de vue' };
+
+  genData = {
+    sujet: text,
+    objectif: objectifMap[ideasData.objectif] || 'vues',
+    format: 'video60',
+    style: 'hybride',
+    selectedHook: '',
+    precision: ideasFormatLabels[ideasData.format] ? 'Format video : ' + ideasFormatLabels[ideasData.format] : '',
+    clarifications: []
+  };
+  var best = computeRecommendedStyles();
+  if (best && best[0]) genData.style = best[0];
+
+  genStep = 6;
+  document.querySelectorAll('.gen-step').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('gen-step-6').classList.add('active');
+  document.getElementById('gen-footer').style.display = 'none';
+  document.getElementById('gen-generating').style.display = 'block';
+  document.getElementById('script-result').classList.remove('active');
+  document.querySelector('#modal-gen .modal-title').textContent = 'Generation en cours...';
+  document.getElementById('modal-gen').classList.add('open');
+
+  startGenAnim();
+  callAPI();
 }
 // ─────────────────────────────────────────────────────────────
 
