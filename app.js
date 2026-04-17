@@ -673,6 +673,7 @@ function closeGen() { document.getElementById('modal-gen').classList.remove('ope
 
 // ─── IDEAS ────────────────────────────────────────────────────
 var ideasData = { objectif: '', format: '' };
+var _ideasList = [];
 
 function openIdeas() {
   ideasData = { objectif: '', format: '' };
@@ -755,9 +756,10 @@ function showIdeasCards(rawText) {
   if (ideas.length < 2) {
     ideas = rawText.split(/\n\n+/).map(function(h) { return h.trim(); }).filter(function(h) { return h.length > 10; }).slice(0, 5);
   }
+  _ideasList = ideas;
   var html = '';
-  ideas.forEach(function(idea) {
-    html += '<div class="idea-card" onclick="selectIdea(' + JSON.stringify(idea.trim()) + ')">'
+  ideas.forEach(function(idea, i) {
+    html += '<div class="idea-card" onclick="selectIdea(' + i + ')">'
       + escapeHtml(idea.trim())
       + '</div>';
   });
@@ -766,7 +768,8 @@ function showIdeasCards(rawText) {
   document.getElementById('ideas-results').style.display = 'block';
 }
 
-function selectIdea(text) {
+function selectIdea(idx) {
+  var text = _ideasList[idx];
   closeIdeas();
   openGen();
   document.getElementById('gen-sujet').value = text;
