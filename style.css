@@ -154,7 +154,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   margin: 12px 16px;
   background: linear-gradient(145deg, #141b2a 0%, #0f1218 55%, #090d14 100%);
   border-radius: var(--radius-xl);
-  border: 1px solid rgba(127,218,247,0.22);
+  border: 0.5px solid rgba(127,218,247,0.22);
   padding: 24px; cursor: pointer;
   position: relative; overflow: hidden;
   transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1);
@@ -166,7 +166,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   width: 340px; height: 340px;
   background: radial-gradient(circle, rgba(127,218,247,0.45) 0%, transparent 58%);
   pointer-events: none;
-  animation: glowDrift 18s ease-in-out infinite, glowHue 11s ease-in-out infinite;
+  animation: glowDrift 40s ease-in-out infinite, glowHue 11s ease-in-out infinite;
 }
 @keyframes glowDrift {
   0%   { transform: translate(0px,   -20px); }   /* bord haut-droite  */
