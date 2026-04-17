@@ -715,21 +715,24 @@ async function generateIdeas() {
     if (parts.length) profil = '\n\nPROFIL CREATEUR :\n' + parts.join('\n');
   }
 
-  var prompt = 'MISSION :\nGenere exactement 5 idees de videos sous forme de questions percutantes.'
+  var prompt = 'MISSION :\nGenere exactement 5 idees de videos.'
     + (objectifLabel ? '\nObjectif : ' + objectifLabel : '')
     + (formatLabel ? '\nFormat : ' + formatLabel : '')
     + profil
-    + '\n\nREGLES :\n'
-    + '- Chaque idee = une seule question\n'
-    + '- La question doit surprendre, faire reflechir, donner envie de cliquer\n'
-    + '- Angles que personne ne pose habituellement\n'
-    + '- Aucune question generique\n'
-    + '- Pas de "comment faire..."\n'
+    + '\n\nREGLES GENERALES :\n'
     + '- Langage naturel, parle, direct\n'
-    + '- Chaque idee doit etre directement transformable en video\n'
-    + '- Bases-toi sur le profil du createur si fourni pour personnaliser\n\n'
+    + '- Angles que personne ne traite habituellement\n'
+    + '- Chaque idee directement transformable en video\n'
+    + '- Bases-toi sur le profil du createur si fourni\n\n'
+    + 'IDEE 1, 2, 3 — Questions percutantes :\n'
+    + '- Une seule question par idee\n'
+    + '- Doit surprendre, faire reflechir, donner envie de cliquer\n'
+    + '- Aucune question generique, pas de "comment faire..."\n\n'
+    + 'IDEE 4, 5 — Autre format (affirmation forte, constat surprenant, declaration provocatrice) :\n'
+    + '- Pas une question\n'
+    + '- Une phrase directe et frappante qui annonce un point de vue ou une verite contre-intuitive\n\n'
     + 'FORMAT DE REPONSE (strict) :\n'
-    + '###IDEE1###\n[question]\n\n###IDEE2###\n[question]\n\n###IDEE3###\n[question]\n\n###IDEE4###\n[question]\n\n###IDEE5###\n[question]';
+    + '###IDEE1###\n[question]\n\n###IDEE2###\n[question]\n\n###IDEE3###\n[question]\n\n###IDEE4###\n[affirmation ou constat]\n\n###IDEE5###\n[affirmation ou constat]';
 
   try {
     var res = await fetch('/api/generate', {
@@ -1429,7 +1432,7 @@ function buildSystemPrompt(styleKey) {
 
   var parts = [
     "Expert en scripting video oral pour Septup Studio Lyon. Contenu authentique, jamais generique.",
-    "Script PARLE face camera — pas ecrit. 'Il est essentiel de...' → 'Ecoute. Y a un truc que...' / 'En conclusion...' → 'Alors voila. T as tout.'",
+    "Script PARLé face caméra, comme si l'utilisateur faisait un vocal à un amie",
     "Chiffres absents du profil : marque [?]la donnee[/?]. Donnees du profil : utilisables directement.",
     "\nPROFIL :"
   ];
@@ -1592,8 +1595,8 @@ function renderScript(text) {
       flush(); cur = t;
       var isAccent = (t === 'HOOK' || t === 'ACCROCHE' || t === 'CTA' || t.indexOf('CTA') === 0);
       html += '<span class="section-label' + (isAccent ? ' hook' : '') + '">' + escapeHtml(t) + '</span>';
-    } else if (t) {
-      body.push(markVerify(escapeHtml(lines[i])));
+    } else {
+      if (t || cur) body.push(t ? markVerify(escapeHtml(lines[i])) : '');
     }
   }
   flush(); return html;

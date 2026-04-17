@@ -458,7 +458,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
 .result-actions { display: flex; flex-direction: column; gap: 8px; }
 
 /* Sections du script rendu */
-.section-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; margin-top: 16px; display: block; }
+.section-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; margin-top: 24px; display: block; }
 .section-label:first-child { margin-top: 0; }
 .section-label { color: var(--text2); }
 .section-label.accroche  { color: var(--accent); }
