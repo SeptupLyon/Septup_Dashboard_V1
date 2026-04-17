@@ -32,12 +32,16 @@
         <button class="pwd-toggle" type="button" onclick="togglePwd('login-password', this)" tabindex="-1">👁</button>
       </div>
     </div>
+    <div class="auth-link" style="text-align:right;margin-top:8px;" onclick="go('forgot')">Mot de passe oublie ?</div>
     <div class="sp"></div>
     <div class="login-spinner" id="login-spinner"></div>
     <button class="btn" id="login-btn" onclick="doLogin()"><span class="btn-txt">Se connecter</span><span class="btn-arr">→</span></button>
-    <button class="btn-ghost" onclick="go('ob1')">Creer un compte</button>
-    <button class="btn-ghost" style="display:flex;align-items:center;justify-content:center;gap:10px;" onclick="doLoginGoogle()"><span style="font-size:15px;font-weight:700;color:#4285F4;">G</span> Continuer avec Google</button>
-    <div class="auth-link" onclick="go('forgot')">Mot de passe oublie ?</div>
+    <button class="btn-ghost" style="display:flex;align-items:center;justify-content:center;gap:10px;" onclick="doLoginGoogle()"><span style="font-size:15px;font-weight:700;color:#4285F4;">G</span> Se connecter avec Google</button>
+    <div class="auth-signup-section">
+      <div class="auth-divider"><span>Pas encore de compte ?</span></div>
+      <button class="btn-ghost" onclick="go('ob1')">S'inscrire avec un email</button>
+      <button class="btn-ghost" style="display:flex;align-items:center;justify-content:center;gap:10px;opacity:0.8;" onclick="doLoginGoogle()"><span style="font-size:15px;font-weight:700;color:#4285F4;">G</span> S'inscrire avec Google</button>
+    </div>
   </div>
 </div>
 

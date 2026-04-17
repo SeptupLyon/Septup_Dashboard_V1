@@ -1703,13 +1703,20 @@ function initSupabase() {
         var email = currentUser.email;
         var nom = session.user.user_metadata && session.user.user_metadata.full_name
           ? session.user.user_metadata.full_name : email;
+        var isGoogle = session.user.app_metadata && session.user.app_metadata.provider === 'google';
         renderAll({ fields: { Nom_complet: nom, Email: email, Points: 0 } }, email);
-        go('home');
         var client = await loadClientData(email);
         if (!client) {
           await atCreate('Client', { 'Nom_complet': nom, 'Email': email });
           client = await loadClientData(email);
+          if (isGoogle) {
+            clientRecord = client;
+            window._googleNewUser = true;
+            go('ob2');
+            return;
+          }
         }
+        go('home');
         if (client) {
           clientRecord = client;
           renderAll(clientRecord, email);
@@ -1787,6 +1794,47 @@ async function doLogout() {
 }
 
 async function doSignup() {
+  if (window._googleNewUser && currentUser) {
+    window._googleNewUser = false;
+    var gEmail = currentUser.email;
+    var obPrix = document.querySelector('#ob2-prix-opts .ob-opt.sel');
+    var obMaturite = document.querySelector('#ob2-maturite-opts .ob-opt.sel');
+    var obObjectif = document.querySelector('#ob4-objectif-opts .ob-opt.sel');
+    var obTon = document.querySelector('#ob5-ton-opts .ob-opt.sel');
+    var obIntensite = document.querySelector('#ob5-intensite-opts .ob-opt.sel');
+    var obLangage = document.querySelector('#ob5-langage-opts .ob-opt.sel');
+    var obKpi = Array.from(document.querySelectorAll('#ob4-kpi-chips .ob-chip.sel'))
+      .map(function(c) { return c.textContent.trim(); }).join(', ');
+    if (clientRecord) {
+      await fetch('/api/airtable', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ method: 'PATCH', table: 'Client', recordId: clientRecord.id, fields: {
+          'Onboarding_secteur': (document.getElementById('ob2-activite') || {}).value || '',
+          'Onboarding_offre': (document.getElementById('ob2-offre') || {}).value || '',
+          'Onboarding_prix': obPrix ? obPrix.textContent.trim() : '',
+          'Onboarding_maturite': obMaturite ? obMaturite.textContent.trim() : '',
+          'Onboarding_cible': (document.getElementById('ob3-cible') || {}).value || '',
+          'Onboarding_douleur': (document.getElementById('ob3-douleur') || {}).value || '',
+          'Onboarding_transformation': (document.getElementById('ob3-transformation') || {}).value || '',
+          'Onboarding_objectif': obObjectif ? obObjectif.textContent.trim() : '',
+          'Onboarding_kpi': obKpi,
+          'Onboarding_ton': obTon ? obTon.textContent.trim() : '',
+          'Onboarding_intensite': obIntensite ? obIntensite.textContent.trim() : '',
+          'Onboarding_langage': obLangage ? obLangage.textContent.trim() : ''
+        }})
+      });
+      clientRecord = await loadClientData(gEmail);
+      if (clientRecord) renderAll(clientRecord, gEmail);
+    }
+    var sessions = [];
+    try { sessions = await loadSessions(gEmail); } catch(e) {}
+    renderSessions(sessions);
+    if (clientRecord) await loadScripts(clientRecord.id, gEmail);
+    go('home');
+    return;
+  }
+
   var nom = (document.getElementById('ob-nom') || {}).value || '';
   var email = (document.getElementById('ob-email') || {}).value.trim();
   var password = (document.getElementById('ob-password') || {}).value;
