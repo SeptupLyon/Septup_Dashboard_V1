@@ -1546,6 +1546,7 @@ async function callAPI(prevScript, instruction) {
       + '• Profil createur : utilise le secteur, la cible et l offre pour adapter le script\n'
       + '• Le script doit etre coherent avec l activite du createur\n'
       + '• Qualite avant tout — ne pas raccourcir, simplifier ou sacrifier la precision pour economiser des tokens\n'
+      + '\nFORMAT DU SCRIPT : une ligne vide entre chaque phrase ou groupe de 2-3 phrases courtes — ne jamais ecrire le script en bloc continu.\n'
       + '\nGenere uniquement le script.';
   }
 
