@@ -671,6 +671,109 @@ function goToGenStep(n) {
 }
 function closeGen() { document.getElementById('modal-gen').classList.remove('open'); if (msgTimer) clearInterval(msgTimer); }
 
+// ─── IDEAS ────────────────────────────────────────────────────
+var ideasData = { objectif: '', format: '' };
+
+function openIdeas() {
+  ideasData = { objectif: '', format: '' };
+  document.getElementById('ideas-step-1').style.display = 'block';
+  document.getElementById('ideas-step-2').style.display = 'none';
+  document.querySelectorAll('#ideas-objectif-opts .gen-opt, #ideas-format-opts .gen-opt').forEach(function(o) { o.classList.remove('sel'); });
+  document.getElementById('modal-ideas').classList.add('open');
+}
+
+function closeIdeas() { document.getElementById('modal-ideas').classList.remove('open'); }
+
+function selIdeasOpt(el, key, val) {
+  var containerId = 'ideas-' + key + '-opts';
+  document.querySelectorAll('#' + containerId + ' .gen-opt').forEach(function(o) { o.classList.remove('sel'); });
+  el.classList.add('sel');
+  ideasData[key] = val;
+}
+
+async function generateIdeas() {
+  document.getElementById('ideas-step-1').style.display = 'none';
+  document.getElementById('ideas-step-2').style.display = 'block';
+  document.getElementById('ideas-loading').style.display = 'block';
+  document.getElementById('ideas-results').style.display = 'none';
+
+  var objectifLabels = { vues: 'faire des vues', clients: 'attirer des clients', expertise: 'montrer son expertise', inspirer: 'inspirer' };
+  var formatLabels = { facecam: 'face cam', storytelling: 'storytelling', educatif: 'educatif', opinion: 'opinion / point de vue' };
+  var objectifLabel = objectifLabels[ideasData.objectif] || '';
+  var formatLabel = formatLabels[ideasData.format] || '';
+
+  var profil = '';
+  if (clientRecord && clientRecord.fields) {
+    var f = clientRecord.fields;
+    var parts = [];
+    if (f['Onboarding_secteur']) parts.push('Secteur : ' + f['Onboarding_secteur']);
+    if (f['Onboarding_offre']) parts.push('Offre : ' + f['Onboarding_offre']);
+    if (f['Onboarding_cible']) parts.push('Cible : ' + f['Onboarding_cible']);
+    if (f['Onboarding_douleur']) parts.push('Probleme cible : ' + f['Onboarding_douleur']);
+    if (f['Onboarding_transformation']) parts.push('Transformation : ' + f['Onboarding_transformation']);
+    if (parts.length) profil = '\n\nPROFIL CREATEUR :\n' + parts.join('\n');
+  }
+
+  var prompt = 'MISSION :\nGenere exactement 5 idees de videos sous forme de questions percutantes.'
+    + (objectifLabel ? '\nObjectif : ' + objectifLabel : '')
+    + (formatLabel ? '\nFormat : ' + formatLabel : '')
+    + profil
+    + '\n\nREGLES :\n'
+    + '- Chaque idee = une seule question\n'
+    + '- La question doit surprendre, faire reflechir, donner envie de cliquer\n'
+    + '- Angles que personne ne pose habituellement\n'
+    + '- Aucune question generique\n'
+    + '- Pas de "comment faire..."\n'
+    + '- Langage naturel, parle, direct\n'
+    + '- Chaque idee doit etre directement transformable en video\n'
+    + '- Bases-toi sur le profil du createur si fourni pour personnaliser\n\n'
+    + 'FORMAT DE REPONSE (strict) :\n'
+    + '###IDEE1###\n[question]\n\n###IDEE2###\n[question]\n\n###IDEE3###\n[question]\n\n###IDEE4###\n[question]\n\n###IDEE5###\n[question]';
+
+  try {
+    var res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 500, system: 'Tu es un expert en creation de contenu video viral.', messages: [{ role: 'user', content: prompt }] })
+    });
+    if (!res.ok) throw new Error('err');
+    var data = await res.json();
+    var text = data.content && data.content[0] ? data.content[0].text : '';
+    if (!text) throw new Error('empty');
+    showIdeasCards(text);
+  } catch (e) {
+    document.getElementById('ideas-loading').style.display = 'none';
+    document.getElementById('ideas-cards').innerHTML = '<div style="color:var(--red);font-size:13px;text-align:center;padding:16px;">Erreur lors de la generation. Reessaie.</div>';
+    document.getElementById('ideas-results').style.display = 'block';
+  }
+}
+
+function showIdeasCards(rawText) {
+  var ideas = [];
+  var parts = rawText.split(/###IDEE\d+###/);
+  parts.forEach(function(p) { var t = p.trim(); if (t && t.length > 5) ideas.push(t); });
+  if (ideas.length < 2) {
+    ideas = rawText.split(/\n\n+/).map(function(h) { return h.trim(); }).filter(function(h) { return h.length > 10; }).slice(0, 5);
+  }
+  var html = '';
+  ideas.forEach(function(idea) {
+    html += '<div class="idea-card" onclick="selectIdea(' + JSON.stringify(idea.trim()) + ')">'
+      + escapeHtml(idea.trim())
+      + '</div>';
+  });
+  document.getElementById('ideas-loading').style.display = 'none';
+  document.getElementById('ideas-cards').innerHTML = html;
+  document.getElementById('ideas-results').style.display = 'block';
+}
+
+function selectIdea(text) {
+  closeIdeas();
+  openGen();
+  document.getElementById('gen-sujet').value = text;
+  genData.sujet = text;
+}
+// ─────────────────────────────────────────────────────────────
+
 function updateBackBtn() {
   var btn = document.getElementById('btn-back');
   if (btn) btn.style.display = (genStep === 1) ? 'none' : 'inline-flex';

@@ -445,6 +445,7 @@
     <div class="modal-handle"></div>
     <div class="modal-hdr"><div class="modal-title">Que veux-tu faire ?</div><button class="modal-close" onclick="closeHub()">✕</button></div>
     <div class="hub-btn primary" onclick="closeHub();openGen()"><div><div class="hub-title">✦ Generer un script IA</div><div class="hub-sub">Script sur mesure base sur ton profil de marque</div></div><div style="font-size:20px;color:var(--accent);">→</div></div>
+    <div class="hub-btn" onclick="closeHub();openIdeas()"><div><div class="hub-title">💡 Trouver des idees</div><div class="hub-sub">5 idees originales formulees comme des questions percutantes</div></div><div style="font-size:20px;color:var(--text3);">→</div></div>
     <div class="hub-btn" onclick="closeHub();openGenPodcast()"><div><div class="hub-title">🎙 Intro & Outro podcast</div><div class="hub-sub">Genere une introduction et une conclusion pour ton episode</div></div><div style="font-size:20px;color:var(--text3);">→</div></div>
     <div style="height:16px;"></div>
   </div>
@@ -611,6 +612,48 @@
         <button class="sv-btn ghost" onclick="alert('Export PDF disponible en production')">PDF</button>
         <button class="sv-btn ghost" onclick="alert('Export TXT disponible en production')">TXT</button>
         <button class="sv-btn danger" onclick="deleteCurrentScript()">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL IDEAS -->
+<div class="modal-overlay" id="modal-ideas" onclick="if(event.target===this)closeIdeas()">
+  <div class="modal ideas-modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><div class="modal-title">Trouver des idees</div><button class="modal-close" onclick="closeIdeas()">✕</button></div>
+    <div id="ideas-step-1" class="ideas-step">
+      <div style="padding:20px 20px 8px;">
+        <div class="gen-q">2 questions rapides</div>
+        <div class="gen-sub">Pour des idees qui te correspondent vraiment.</div>
+        <div class="field-lbl">Ton objectif ?</div>
+        <div class="gen-opts" id="ideas-objectif-opts">
+          <div class="gen-opt" onclick="selIdeasOpt(this,'objectif','vues')">Faire des vues</div>
+          <div class="gen-opt" onclick="selIdeasOpt(this,'objectif','clients')">Attirer des clients</div>
+          <div class="gen-opt" onclick="selIdeasOpt(this,'objectif','expertise')">Montrer ton expertise</div>
+          <div class="gen-opt" onclick="selIdeasOpt(this,'objectif','inspirer')">Inspirer</div>
+        </div>
+        <div class="field-lbl" style="margin-top:4px;">Format ?</div>
+        <div class="gen-opts" id="ideas-format-opts">
+          <div class="gen-opt" onclick="selIdeasOpt(this,'format','facecam')">Face cam</div>
+          <div class="gen-opt" onclick="selIdeasOpt(this,'format','storytelling')">Storytelling</div>
+          <div class="gen-opt" onclick="selIdeasOpt(this,'format','educatif')">Educatif</div>
+          <div class="gen-opt" onclick="selIdeasOpt(this,'format','opinion')">Opinion</div>
+        </div>
+      </div>
+      <div style="padding:0 20px 28px;">
+        <button class="btn" onclick="generateIdeas()"><span class="btn-txt">Trouver des idees</span><span class="btn-arr">✦</span></button>
+      </div>
+    </div>
+    <div id="ideas-step-2" class="ideas-step" style="display:none;">
+      <div id="ideas-loading" class="generating">
+        <div class="gen-spinner"></div>
+        <div class="gen-anim-txt">Generation de tes idees...</div>
+      </div>
+      <div id="ideas-results" style="display:none;padding:20px 20px 28px;">
+        <div class="gen-q" style="margin-bottom:4px;">Tes idees de videos</div>
+        <div class="gen-sub" style="margin-bottom:16px;">Clique sur une idee pour generer son script.</div>
+        <div id="ideas-cards"></div>
       </div>
     </div>
   </div>
