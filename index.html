@@ -32,7 +32,7 @@
         <button class="pwd-toggle" type="button" onclick="togglePwd('login-password', this)" tabindex="-1">👁</button>
       </div>
     </div>
-    <div class="auth-link" style="text-align:right;margin-top:8px;" onclick="go('forgot')">Mot de passe oublie ?</div>
+    <div class="auth-link" style="text-align:center;margin-top:8px;" onclick="go('forgot')">Mot de passe oublie ?</div>
     <div class="sp"></div>
     <div class="login-spinner" id="login-spinner"></div>
     <button class="btn" id="login-btn" onclick="doLogin()"><span class="btn-txt">Se connecter</span><span class="btn-arr">→</span></button>
@@ -281,7 +281,7 @@
     <div class="mini-grid" style="margin-bottom:16px;">
       <div class="mini" onclick="go('sessions')"><div class="mini-lbl">Sessions</div><div class="mini-val" id="home-nb-sess">0</div><div class="mini-sub" id="home-sess-sub">0 a venir</div></div>
       <div class="mini" onclick="go('scripts')"><div class="mini-lbl">Scripts</div><div class="mini-val" id="home-nb-scripts">0</div><div class="mini-sub">generes</div></div>
-      <div class="mini" onclick="go('scripts')"><div class="mini-lbl">Videos tournees</div><div class="mini-val" id="home-nb-tourne">0</div><div class="mini-sub" style="color:#00FF31;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> Tournée(s)</div></div>
+      <div class="mini" onclick="go('scripts')"><div class="mini-lbl">Videos tournees</div><div class="mini-val" id="home-nb-tourne">0</div><div class="mini-sub" style="color:#00FF31;">Tournée(s)</div></div>
       <div class="mini" onclick="go('sessions')"><div class="mini-lbl">Heures studio</div><div class="mini-val" id="home-nb-heures">0</div><div class="mini-sub">au total</div></div>
     </div>
     <div class="sec-lbl" style="margin-bottom:10px;">Prochaines sessions</div>
@@ -591,7 +591,7 @@
     <div class="modal-handle"></div>
     <div class="modal-hdr" style="padding:14px 20px;"><div class="modal-title" id="editor-title">Script</div><button class="modal-close" style="min-width:34px;min-height:34px;flex-shrink:0;margin-left:8px;" onclick="closeEditor()">✕</button></div>
     <div class="editor-body">
-      <div class="editor-vir">
+     <!--  <div class="editor-vir">
         <div class="editor-vir-left">
           <div class="editor-vir-lbl">Score de viralite</div>
           <div style="display:flex;align-items:baseline;gap:4px;"><div class="editor-vir-num" id="editor-vir-score">-</div><div style="font-size:12px;color:var(--text3);">/10</div></div>
@@ -599,7 +599,7 @@
           <div class="editor-vir-tip" id="editor-vir-tip">Modifie le script pour voir le score</div>
         </div>
         <div><div class="editor-vir-grade" id="editor-vir-grade">-</div></div>
-      </div>
+      </div> -->
       <div class="editor-ta" id="editor-ta" contenteditable="true" oninput="onEditorChange()" data-placeholder="Tape ton script ici..."></div>
       
     </div>
@@ -609,7 +609,7 @@
       <div class="status-btns">
         <button class="status-btn" id="sbtn-draft" onclick="setScriptStatus('Brouillon')">📝 Brouillon</button>
         <button class="status-btn" id="sbtn-valid" onclick="setScriptStatus('Validé')">✓ Validé</button>
-        <button class="status-btn" id="sbtn-tourne" onclick="setScriptStatus('Tourné')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> Tourné</button>
+        <button class="status-btn" id="sbtn-tourne" onclick="setScriptStatus('Tourné')"> 🔴 Tourné</button>
       </div>
       <div style="font-size:11px;color:var(--text3);text-align:center;padding:4px 0;" id="autosave-status">Les modifications sont sauvegardées automatiquement</div>
       <div style="display:flex;gap:8px;">
