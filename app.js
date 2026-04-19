@@ -1805,6 +1805,9 @@ async function generateAdnProfile(scripts) {
   }
 }
 
+var _adnExpanded = false;
+var _adnEditMode = false;
+
 function renderAdnSection() {
   var section = document.getElementById('compte-adn-section');
   if (!section) return;
@@ -1814,17 +1817,58 @@ function renderAdnSection() {
   var modeLabels = { expert: 'Mode Expert', avance: 'Mode Avance', standard: '' };
   var modeLabel = modeLabels[mode] || '';
 
-  var html = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">'
+  var header = '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;">'
+    + '<div style="display:flex;align-items:center;gap:8px;">'
     + '<div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;">ADN de communication</div>'
     + (modeLabel ? '<div style="font-size:10px;color:var(--accent);background:var(--adim2);border:1px solid var(--aborder);border-radius:100px;padding:2px 8px;">' + escapeHtml(modeLabel) + '</div>' : '')
     + '</div>';
 
-  if (adn) {
-    html += '<div class="adn-card">' + escapeHtml(adn) + '</div>';
-  } else {
-    html += '<div class="adn-empty">Profil ADN non configure — ajoute des scripts de reference pour le generer.</div>';
+  if (adn && !_adnEditMode) {
+    header += '<div style="font-size:12px;color:var(--accent);cursor:pointer;" onclick="_adnEditMode=true;renderAdnSection()">Modifier ›</div>';
+  } else if (_adnEditMode) {
+    header += '<div style="font-size:12px;color:var(--text3);cursor:pointer;" onclick="_adnEditMode=false;_adnExpanded=false;renderAdnSection()">Annuler</div>';
   }
-  section.innerHTML = html;
+  header += '</div>';
+
+  var body = '';
+  if (_adnEditMode) {
+    body = '<textarea class="field-ta" id="adn-edit-ta" rows="6" style="margin-bottom:8px;">' + escapeHtml(adn) + '</textarea>'
+      + '<button class="btn" style="width:100%;margin-bottom:8px;" onclick="saveAdnEdit()"><span class="btn-txt">Sauvegarder</span><span class="btn-arr">→</span></button>';
+  } else if (adn) {
+    var PREVIEW_LEN = 150;
+    var isLong = adn.length > PREVIEW_LEN;
+    var displayed = (_adnExpanded || !isLong) ? adn : adn.slice(0, PREVIEW_LEN) + '…';
+    body = '<div class="adn-card">' + escapeHtml(displayed) + '</div>';
+    if (isLong) {
+      body += '<div style="font-size:12px;color:var(--accent);cursor:pointer;margin-top:4px;" onclick="toggleAdnExpand()">'
+        + (_adnExpanded ? '← Afficher moins' : 'Afficher plus ›')
+        + '</div>';
+    }
+  } else {
+    body = '<div class="adn-empty">Profil ADN non configure — ajoute des scripts de reference pour le generer.</div>';
+  }
+
+  section.innerHTML = header + body;
+}
+
+function toggleAdnExpand() {
+  _adnExpanded = !_adnExpanded;
+  renderAdnSection();
+}
+
+async function saveAdnEdit() {
+  var ta = document.getElementById('adn-edit-ta');
+  if (!ta || !clientRecord) return;
+  var newAdn = ta.value.trim();
+  await fetch('/api/airtable', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ method: 'PATCH', table: 'Client', recordId: clientRecord.id, fields: { 'ADN_profil': newAdn } })
+  });
+  clientRecord.fields['ADN_profil'] = newAdn;
+  _adnEditMode = false;
+  _adnExpanded = false;
+  renderAdnSection();
 }
 
 // ═══ REF SCRIPTS CRUD ═══
