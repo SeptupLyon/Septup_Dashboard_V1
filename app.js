@@ -1236,7 +1236,7 @@ var FRAMEWORKS = {
     logique: "Donner de la valeur TRES TOT pour eviter la fuite — reward immediat des les premieres secondes.",
     rules: [
       "Micro-value des les 5 premieres secondes : un insight concret, une info utile, un chiffre surprenant — le viewer doit deja avoir appris quelque chose avant le rehook.",
-      "REHOOK 1 : 'Mais le vrai truc que personne ne dit, c est ca.' ou 'Et ca, la plupart des gens le ratent completement.' — oblige a rester.",
+      "REHOOK 1 :  oblige a rester.",
       "REHOOK 2 : accelere la tension avant la resolution. Demo = cas concret ou etape actionnable. Resultat = benefice chiffre ou transformationnel. CTA = une seule action precise."
     ]
   },
@@ -1246,8 +1246,8 @@ var FRAMEWORKS = {
     structure: 'HOOK → SETUP → TENSION → REHOOK 1 → ESCALADE → REHOOK 2 → TWIST → RESOLUTION',
     logique: "Chaque rehook = mini cliffhanger. Le viewer ne peut pas partir sans connaitre la suite.",
     rules: [
-      "REHOOK 1 (apres tension) : EXACTEMENT 'Et la, ca devient pire.' ou equivalent direct — pas une transition douce, un vrai choc narratif.",
-      "REHOOK 2 (apres escalade) : EXACTEMENT 'Jusqu au moment ou...' — suspense maximum avant le twist. Pause mentale obligatoire.",
+      "REHOOK 1 (apres tension) :pas une transition douce, un vrai choc narratif.",
+      "REHOOK 2 (apres escalade) :suspense maximum avant le twist. Pause mentale obligatoire.",
       "Setup = UNE phrase max, contexte minimum. Twist = inattendu mais logique retrospectivement. Resolution = lecon ou resultat clair, jamais vague."
     ]
   },
@@ -1257,8 +1257,8 @@ var FRAMEWORKS = {
     structure: 'HOOK → VERITE → REHOOK 1 → EXPLICATION → REHOOK 2 → SOLUTION → CTA',
     logique: "Une verite tranchante toutes les 10 secondes. Pas de nuance, pas de politesse. Chaque phrase se tient seule.",
     rules: [
-      "Verite = statement choc, assertion forte, jamais une question ouverte — 'La plupart des [cible] font cette erreur.' / '[Croyance commune] ? C est faux.'",
-      "REHOOK 1 : enfoncer le clou — 'Et le pire dans tout ca...' / 'Ce que les gens ne voient pas encore...' Phrase courte, impact maximal.",
+      "Verite = statement choc, assertion forte, jamais une question ouverte",
+      "REHOOK 1 : enfoncer le clou, Phrase courte, impact maximal.",
       "Pas de conditionnel, pas de peut-etre, pas de 'on pourrait dire'. Solution = directe et actionnable. CTA = tranchant, une seule action."
     ]
   },
@@ -1268,7 +1268,7 @@ var FRAMEWORKS = {
     structure: 'HOOK → CONSTAT → REHOOK → DECRYPTAGE → PREUVE → SYNTHESE → CTA',
     logique: "Positionner le createur comme la reference incontournable de son domaine. Chaque section doit exsuder une expertise que personne d autre ne possede.",
     rules: [
-      "Constat = observation contre-intuitive ou contre-courante — pas une evidence que tout le monde connait. 'Ce que [l industrie] ne veut pas que tu saches.'",
+      "Constat = observation contre-intuitive ou contre-courante — pas une evidence que tout le monde connait. ",
       "REHOOK : 'Et c est la que ca devient interessant.' — promesse que le decryptage va tout changer.",
       "Decryptage = la vraie valeur unique du createur, ce que 95% ne voient pas. Preuve = donnee precise, cas reel, experience vecue. CTA = invitation douce, pas injonction."
     ]
@@ -1279,8 +1279,8 @@ var FRAMEWORKS = {
     structure: 'HOOK → PROBLEME → REHOOK 1 → AGITATION → REHOOK 2 → SOLUTION → PREUVE → CTA',
     logique: "Alternance douleur / espoir = maintien d attention. Le viewer doit sentir la douleur avant de vouloir la solution.",
     rules: [
-      "REHOOK 1 (apres probleme) : intensifier — 'Et le pire dans tout ca...' / 'Ce que la plupart font alors ? L erreur fatale.' Pas d espoir encore.",
-      "REHOOK 2 (apres agitation) : pivot espoir — EXACTEMENT 'Mais bonne nouvelle.' Deux mots. Pause. Puis la solution arrive comme un soulagement.",
+      "REHOOK 1 (apres probleme) : intensifier Pas d espoir encore.",
+      "REHOOK 2 (apres agitation) : pivot espoir puis la solution arrive comme un soulagement.",
       "Agitation = cout de l inaction, pas juste nommer le probleme. Preuve = chiffre precis + delai reel + resultat client — rien de vague. CTA = urgence reelle, une seule action."
     ]
   },
@@ -1291,8 +1291,8 @@ var FRAMEWORKS = {
     logique: "Narration vivante et specifique — pas un temoignage plat et corporate. Le personnage doit etre identifiable.",
     rules: [
       "Commence par un hint du resultat ou une question sur le resultat — pas par la presentation du probleme. Le viewer doit vouloir savoir comment on est arrive la.",
-      "REHOOK 1 : suspense narratif — 'Ce qu il a fait ensuite, personne n y avait pense.' / 'Et la, tout bascule.' Personnage clairement identifiable, situation precise.",
-      "REHOOK 2 : 'Et c est la que tout a change.' Resultat = CONCRET avec chiffres si possible (pas 'ca a bien marche'). Validation = recommandation directe et sincere, pas corporate."
+      "REHOOK 1 : suspense narratif. Personnage clairement identifiable, situation precise.",
+      "REHOOK 2 :  Resultat = CONCRET avec chiffres si possible (pas 'ca a bien marche'). Validation = recommandation directe et sincere, pas corporate."
     ]
   },
   avis: {
@@ -1301,8 +1301,8 @@ var FRAMEWORKS = {
     structure: 'HOOK → POSITION → REHOOK 1 → JUSTIFICATION → REHOOK 2 → EXEMPLE → CONCLUSION → CTA',
     logique: "Provoquer une reaction, pas juste informer. La position doit diviser — ceux qui sont d accord et ceux qui ne le sont pas.",
     rules: [
-      "Position = statement tranche, pas nuance. 'Je pense que [croyance commune] est une erreur.' / '[Pratique populaire] detruit [resultat]. Voila pourquoi.'",
-      "REHOOK 1 : anticiper l objection — 'Je sais ce que tu te dis la...' puis la retourner. REHOOK 2 : exemple concret qui ecrase le doute.",
+      "Position = statement tranche, pas nuance.",
+      "REHOOK 1 : anticiper l objection puis la retourner. REHOOK 2 : exemple concret qui ecrase le doute.",
       "Justification = factuelle et specifique, pas emotionnelle. CTA = provoquer une reaction : commentaire, desaccord bienvenu, partage."
     ]
   },
@@ -1313,7 +1313,7 @@ var FRAMEWORKS = {
     logique: "Raconter un cas reel avec des details specifiques — le viewer doit pouvoir s identifier et voir comment reproduire le resultat.",
     rules: [
       "Contexte = 1-2 phrases max, juste assez pour que l audience s identifie. Pas de biographie, pas d introduction.",
-      "REHOOK (apres probleme) : 'Et c est la que tout a bascule.' / 'Ce qu on a fait ensuite a tout change.' Tension narrative maintenue.",
+      "REHOOK (apres probleme) : Tension narrative maintenue.",
       "Action = etapes reelles et specifiques — pas des generalites. Resultat = chiffre, date, delai precis. Lecon = extractible, actionnable par le viewer."
     ]
   },
@@ -1324,8 +1324,8 @@ var FRAMEWORKS = {
     logique: "Melange educatif + storytelling + persuasion. Le meilleur format pour 2026 — cree une connexion ET delivre de la valeur.",
     rules: [
       "Insight = observation contre-intuitive et immediate — la valeur qui justifie de rester. Pas un recap, une vraie revelation courte.",
-      "REHOOK 1 : 'Et voila ou ca devient vraiment interessant.' Story = UNE mini anecdote concrete : client reel / perso / cas public — une scene precise, pas un resume.",
-      "REHOOK 2 : EXACTEMENT 'Et c est la que tout se joue.' Pause. Puis la lecon. Lecon = conseil concret et actionnable, extractible en 1 phrase. Pas philosophique."
+      "REHOOK 1 :  Story = UNE mini anecdote concrete : client reel / perso / cas public — une scene precise, pas un resume.",
+      "REHOOK 2 : Puis la lecon. Lecon = conseil concret et actionnable, extractible en 1 phrase. Pas philosophique."
     ]
   }
 };
@@ -1450,7 +1450,7 @@ function buildSystemPrompt(styleKey) {
   var f = clientRecord.fields;
 
   var parts = [
-    "Expert en scripting video oral pour Septup Studio Lyon. Contenu authentique, jamais generique.",
+
     "Script PARLé face caméra, comme si l'utilisateur faisait un vocal à un amie",
     "Chiffres absents du profil : marque [?]la donnee[/?]. Donnees du profil : utilisables directement.",
     "\nPROFIL :"
@@ -1484,8 +1484,8 @@ function buildSystemPrompt(styleKey) {
 // ─────────────────────────────────────────────────────────────
 async function callAPI(prevScript, instruction) {
   var formatLabels = {
-    video30: 'Video courte 30s (50 a 80 mots max — chaque mot compte, rythme tres eleve)',
-    video60: 'Video courte 60s (110 a 160 mots — au moins un vrai rehook, structure nerveuse)',
+    video30: 'Video courte 30s (50 a 90 mots max — chaque mot compte, rythme tres eleve)',
+    video60: 'Video courte 60s (110 a 180 mots — au moins un vrai rehook, structure nerveuse)',
     linkedin: 'Post LinkedIn (180 a 260 mots — premiere ligne forte, paragraphes courts, logique conservee)',
     ads:     'Script publicitaire (tension rapide, promesse claire, preuve credible, CTA direct — pas de digression)',
     podcast: 'Intro et Outro podcast (max 400 mots — chaleureux, naturel, fluide)'
