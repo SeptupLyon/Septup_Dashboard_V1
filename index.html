@@ -74,9 +74,44 @@
     </div>
     <div class="ob-nav">
       <div class="ob-back" onclick="go('login')">Annuler</div>
-      <button class="btn" style="width:auto;padding:13px 24px;" onclick="go('ob2')">
+      <button class="btn" style="width:auto;padding:13px 24px;" onclick="goToObMode()">
         <span class="btn-txt">Suivant</span><span class="btn-arr">→</span>
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- OB-MODE : CHOIX DU PARCOURS -->
+<div class="screen" id="screen-ob-mode">
+  <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;">
+    <div class="logo">septup.</div>
+  </div>
+  <div class="ob-wrap">
+    <div class="ob-q" style="margin-bottom:6px;">Comment veux-tu personnaliser ton experience ?</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:24px;">Tu pourras toujours modifier ca depuis ton compte.</div>
+
+    <div class="ob-mode-card" onclick="selectMode('standard')">
+      <div class="ob-mode-main">Passer cette etape</div>
+      <div class="ob-mode-sub">Acces direct au dashboard</div>
+    </div>
+
+    <div class="ob-mode-card" onclick="selectMode('avance')">
+      <div class="ob-mode-main">Mode Avance</div>
+      <div class="ob-mode-sub">Complete ton profil de communication — 4 questions rapides</div>
+    </div>
+
+    <div class="ob-mode-card expert" onclick="selectMode('expert')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+        <div>
+          <div class="ob-mode-main">Mode Expert</div>
+          <div class="ob-mode-sub">Analyse mon style d ecriture reel a partir de scripts existants</div>
+        </div>
+        <div class="ob-mode-badge">Recommande</div>
+      </div>
+    </div>
+
+    <div class="ob-nav" style="margin-top:8px;">
+      <div class="ob-back" onclick="go('ob1')">← Retour</div>
     </div>
   </div>
 </div>
@@ -196,7 +231,7 @@
     </div>
     <div class="ob-nav">
       <div class="ob-back" onclick="go('ob3')">← Retour</div>
-      <button class="btn" style="width:auto;padding:13px 24px;" onclick="go('ob5')">
+      <button class="btn" style="width:auto;padding:13px 24px;" onclick="goToOb5()">
         <span class="btn-txt">Suivant</span><span class="btn-arr">→</span>
       </button>
     </div>
@@ -245,6 +280,38 @@
       <button class="btn" style="width:auto;padding:13px 24px;" onclick="doSignup()">
         <span class="btn-txt">Terminer</span><span class="btn-arr">→</span>
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- OB5-EXPERT : SCRIPTS DE REFERENCE -->
+<div class="screen" id="screen-ob5-expert">
+  <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;">
+    <div class="logo">septup.</div>
+    <div style="font-size:12px;color:var(--text3);">5 / 5</div>
+  </div>
+  <div class="ob-wrap">
+    <div class="ob-prog">
+      <div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot active"></div>
+    </div>
+    <div class="ob-bloc">Etape 5 — Scripts de reference</div>
+    <div class="ob-q">Tes scripts deja tournes</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">Ajoute des scripts qui ont bien performe. L IA va analyser ton style reel pour generer des futurs scripts encore plus proches de toi.</div>
+    <div id="ref-scripts-fields-ob"></div>
+    <div class="auth-link" style="margin-top:12px;display:inline-block;" onclick="addRefScriptField()">+ Ajouter un autre script</div>
+    <div style="font-size:12px;color:var(--text3);margin-top:8px;">1 minimum · 3 scripts recommandes pour un profil precis.</div>
+    <div id="ob5-expert-loading" style="display:none;text-align:center;padding:20px 0;">
+      <div class="gen-spinner" style="margin:0 auto 12px;"></div>
+      <div style="font-size:13px;color:var(--text2);">Analyse de ton style en cours...</div>
+    </div>
+    <div class="ob-nav" style="margin-top:16px;">
+      <div class="ob-back" onclick="go('ob4')">← Retour</div>
+      <button class="btn" id="btn-save-expert" style="width:auto;padding:13px 24px;" onclick="saveExpertScripts()">
+        <span class="btn-txt">Analyser et terminer</span><span class="btn-arr">✦</span>
+      </button>
+    </div>
+    <div style="text-align:center;margin-top:14px;">
+      <span class="auth-link" onclick="doSignup()">Passer cette etape →</span>
     </div>
   </div>
 </div>
@@ -425,10 +492,11 @@
       <div style="font-size:13px;color:var(--text3);margin-bottom:10px;" id="compte-email"></div>
       <div class="palier-badge"><div class="palier-dot"></div><div class="palier-txt" id="compte-palier">Bronze</div></div>
     </div>
+    <div id="compte-adn-section" style="padding:0 16px 12px;"></div>
     <div class="card-sm" style="margin-bottom:16px;">
       <div class="crow" onclick="openEditProfil()"><div class="crow-lbl">Modifier le profil de marque</div><div style="font-size:12px;color:var(--accent);">Editer ›</div></div>
+      <div class="crow" onclick="openRefScripts()"><div class="crow-lbl">Scripts de reference</div><div style="font-size:12px;color:var(--accent);">Gerer ›</div></div>
       <div class="crow" onclick="openEditNom()"><div class="crow-lbl">Modifier le nom</div><div style="color:var(--text3);">›</div></div>
-
       <div class="crow" style="border-bottom:none;"><div class="crow-lbl">Palier actuel</div><div style="font-size:12px;color:var(--accent);" id="compte-palier2">🥉 Bronze</div></div>
     </div>
     <button class="logout-btn" onclick="doLogout()">Se deconnecter</button>
@@ -812,6 +880,52 @@
     </div>
     <div style="padding:0 20px;">
       <button class="btn" onclick="saveEditNom()"><span class="btn-txt">Sauvegarder</span><span class="btn-arr">→</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SCRIPTS DE REFERENCE (liste) -->
+<div class="modal-overlay" id="modal-ref-scripts" onclick="if(event.target===this)closeRefScripts()">
+  <div class="modal" style="max-height:92vh;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><div class="modal-title">Scripts de reference</div><button class="modal-close" onclick="closeRefScripts()">✕</button></div>
+    <div style="flex:1;overflow-y:auto;padding:16px 20px;">
+      <div id="ref-scripts-list-modal"></div>
+      <button class="btn-ghost" style="margin-top:4px;width:100%;" onclick="openAddRefScript()">+ Ajouter un script</button>
+    </div>
+    <div style="padding:12px 20px 24px;border-top:1px solid var(--border);">
+      <button class="btn" id="btn-reanalyze" onclick="reanalyzeStyle()"><span class="btn-txt">Reanalyser mon style</span><span class="btn-arr">✦</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AJOUTER SCRIPT REF -->
+<div class="modal-overlay" id="modal-add-ref-script" onclick="if(event.target===this)closeAddRefScript()">
+  <div class="modal" style="max-height:92vh;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><div class="modal-title">Ajouter un script</div><button class="modal-close" onclick="closeAddRefScript()">✕</button></div>
+    <div style="flex:1;overflow-y:auto;padding:16px 20px;">
+      <div class="field"><label class="field-lbl">Titre (optionnel)</label><input class="field-input" id="add-ref-titre" placeholder="Ex: Script Janvier 2025"></div>
+      <div class="field"><label class="field-lbl">Contenu du script</label><textarea class="field-ta" id="add-ref-contenu" rows="10" placeholder="Colle ton script ici..."></textarea></div>
+    </div>
+    <div style="padding:12px 20px 24px;border-top:1px solid var(--border);">
+      <button class="btn" onclick="saveAddRefScript()"><span class="btn-txt">Sauvegarder</span><span class="btn-arr">→</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VOIR / MODIFIER SCRIPT REF -->
+<div class="modal-overlay" id="modal-view-ref-script" onclick="if(event.target===this)closeViewRefScript()">
+  <div class="modal" style="max-height:92vh;display:flex;flex-direction:column;" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><div class="modal-title" id="view-ref-title">Script</div><button class="modal-close" onclick="closeViewRefScript()">✕</button></div>
+    <div style="flex:1;overflow-y:auto;padding:16px 20px;">
+      <div class="field"><label class="field-lbl">Titre</label><input class="field-input" id="view-ref-titre" placeholder="Titre du script"></div>
+      <div class="field"><label class="field-lbl">Contenu</label><textarea class="field-ta" id="view-ref-contenu" rows="12" placeholder="Contenu du script..."></textarea></div>
+    </div>
+    <div style="padding:12px 20px 24px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;">
+      <button class="btn" onclick="saveViewRefScript()"><span class="btn-txt">Sauvegarder</span><span class="btn-arr">→</span></button>
+      <button class="btn-ghost" style="color:var(--red);border-color:rgba(255,69,58,0.3);" onclick="deleteCurrentRefScript()">Supprimer ce script</button>
     </div>
   </div>
 </div>

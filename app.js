@@ -18,6 +18,9 @@ var filloutLoaded = false;
 var isDark = true;
 var genStep = 1;
 var genData = { sujet: '', objectif: '', format: '', style: '', precision: '' };
+var currentMode = 'standard';
+var refScriptsStore = {};
+var currentViewRefId = null;
 var msgTimer = null;
 var msgIdx = 0;
 var editorTimer = null;
@@ -290,6 +293,7 @@ function renderAll(client, email) {
   el = document.getElementById('compte-palier'); if (el) el.textContent = palier;
   el = document.getElementById('compte-palier2'); if (el) el.textContent = palier;
   el = document.getElementById('sess-av'); if (el) el.textContent = initials;
+  renderAdnSection();
 }
 
 function renderSessions(records) {
@@ -1466,6 +1470,12 @@ function buildSystemPrompt(styleKey) {
   if (f['Onboarding_intensite'])      parts.push("Intensite : " + f['Onboarding_intensite']);
   if (f['Onboarding_langage'])        parts.push("Langage : " + f['Onboarding_langage']);
 
+  if (f['ADN_profil']) {
+    parts.push("\n=== ADN DE COMMUNICATION OBSERVE (PRIORITAIRE) ===");
+    parts.push(f['ADN_profil']);
+    parts.push("Ce profil est issu de vrais scripts. Il prime sur toutes les preferences declarees ci-dessus.");
+  }
+
   return parts.join("\n");
 }
 
@@ -1692,6 +1702,256 @@ function doRegen() {
   callAPI(prevScript, instruction);
 }
 
+// ═══ ONBOARDING MODE ═══
+function goToObMode() {
+  var nom = (document.getElementById('ob-nom') || {}).value || '';
+  var email = ((document.getElementById('ob-email') || {}).value || '').trim();
+  var password = (document.getElementById('ob-password') || {}).value || '';
+  if (!nom) { alert('Ton nom est requis'); return; }
+  if (!email) { alert('Un email est requis'); return; }
+  if (password.length < 8) { alert('Mot de passe trop court (min. 8 caracteres)'); return; }
+  go('ob-mode');
+}
+
+function selectMode(mode) {
+  currentMode = mode;
+  if (mode === 'standard') {
+    doSignup();
+  } else {
+    go('ob2');
+  }
+}
+
+function goToOb5() {
+  if (currentMode === 'expert') {
+    initRefScriptFields();
+    go('ob5-expert');
+  } else {
+    go('ob5');
+  }
+}
+
+// ═══ OB5-EXPERT : SCRIPTS ═══
+function initRefScriptFields() {
+  var container = document.getElementById('ref-scripts-fields-ob');
+  if (!container) return;
+  container.innerHTML = '';
+  addRefScriptField();
+}
+
+function addRefScriptField() {
+  var container = document.getElementById('ref-scripts-fields-ob');
+  if (!container) return;
+  var idx = container.querySelectorAll('.ref-script-block').length + 1;
+  var div = document.createElement('div');
+  div.className = 'ref-script-block';
+  div.style.marginBottom = '16px';
+  div.innerHTML = '<label class="field-lbl">Script ' + idx + '</label>'
+    + '<textarea class="field-ta ref-script-ta" rows="6" placeholder="Colle ton script ici... (100 a 400 mots)"></textarea>'
+    + '<input class="field-input ref-script-title-input" style="margin-top:8px;" placeholder="Titre (optionnel) — ex: Script Janvier 2025">';
+  container.appendChild(div);
+}
+
+async function saveExpertScripts() {
+  var scripts = [];
+  document.querySelectorAll('.ref-script-ta').forEach(function(ta, i) {
+    var content = ta.value.trim();
+    if (content) {
+      var titleInput = ta.nextElementSibling;
+      scripts.push({ content: content, title: titleInput ? titleInput.value.trim() : '' });
+    }
+  });
+  if (scripts.length > 0) {
+    window._expertScriptsPending = scripts;
+    var btn = document.getElementById('btn-save-expert');
+    var loading = document.getElementById('ob5-expert-loading');
+    if (btn) { btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none'; }
+    if (loading) loading.style.display = 'block';
+  }
+  await doSignup();
+}
+
+// ═══ ADN PROFIL ═══
+async function generateAdnProfile(scripts) {
+  var scriptsText = scripts.map(function(s, i) {
+    return 'SCRIPT ' + (i + 1) + (s.title ? ' — ' + s.title : '') + ' :\n' + s.content;
+  }).join('\n\n---\n\n');
+
+  var system = 'Tu es un expert en analyse de style d ecriture et de communication video orale. Tu analyses des scripts video pour extraire un profil ADN de communication precis et actionnable.';
+  var prompt = 'Analyse ces scripts video et genere un profil ADN de communication. Ce profil sera utilise pour generer de futurs scripts qui correspondent exactement au style de ce createur.\n\n'
+    + 'SCRIPTS :\n\n' + scriptsText + '\n\n'
+    + 'PROFIL ADN A GENERER :\n'
+    + 'En 6 a 10 lignes, synthetise :\n'
+    + '- Ton dominant observe (direct, chaleureux, autoritaire, humain, provocateur...)\n'
+    + '- Niveau d energie et rythme (calme, energique, tres punchy...)\n'
+    + '- Structures narratives recurrentes\n'
+    + '- Niveau de langage (familier, professionnel, hybride...)\n'
+    + '- Formulations ou expressions caracteristiques\n'
+    + '- Longueur typique des phrases\n'
+    + '- Points forts du style\n\n'
+    + 'FORMAT : texte court et dense, sans tirets ni JSON. Ecris comme si tu decrivais la voix de ce createur a quelqu un qui doit l imiter.';
+
+  try {
+    var res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 500, system: system, messages: [{ role: 'user', content: prompt }] })
+    });
+    var data = await res.json();
+    return data.content && data.content[0] ? data.content[0].text : '';
+  } catch(e) {
+    console.error('[generateAdnProfile]', e);
+    return '';
+  }
+}
+
+function renderAdnSection() {
+  var section = document.getElementById('compte-adn-section');
+  if (!section) return;
+  var f = clientRecord ? clientRecord.fields : {};
+  var adn = f['ADN_profil'] || '';
+  var mode = f['Onboarding_mode'] || '';
+  var modeLabels = { expert: 'Mode Expert', avance: 'Mode Avance', standard: '' };
+  var modeLabel = modeLabels[mode] || '';
+
+  var html = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">'
+    + '<div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;">ADN de communication</div>'
+    + (modeLabel ? '<div style="font-size:10px;color:var(--accent);background:var(--adim2);border:1px solid var(--aborder);border-radius:100px;padding:2px 8px;">' + escapeHtml(modeLabel) + '</div>' : '')
+    + '</div>';
+
+  if (adn) {
+    html += '<div class="adn-card">' + escapeHtml(adn) + '</div>';
+  } else {
+    html += '<div class="adn-empty">Profil ADN non configure — ajoute des scripts de reference pour le generer.</div>';
+  }
+  section.innerHTML = html;
+}
+
+// ═══ REF SCRIPTS CRUD ═══
+async function loadRefScripts(email) {
+  var records = await atFetch('ScriptsRef', '{User_email}="' + email + '"', 'sort[0][field]=Date_ajout&sort[0][direction]=desc');
+  refScriptsStore = {};
+  records.forEach(function(r) {
+    refScriptsStore[r.id] = { title: r.fields['Titre'] || 'Sans titre', content: r.fields['Contenu'] || '', date: r.fields['Date_ajout'] || '', airtableId: r.id };
+  });
+}
+
+function openRefScripts() {
+  renderRefScriptsList();
+  document.getElementById('modal-ref-scripts').classList.add('open');
+}
+function closeRefScripts() { document.getElementById('modal-ref-scripts').classList.remove('open'); }
+
+function renderRefScriptsList() {
+  var list = document.getElementById('ref-scripts-list-modal');
+  if (!list) return;
+  var keys = Object.keys(refScriptsStore);
+  if (keys.length === 0) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--text3);padding:4px 0 16px;">Aucun script de reference. Ajoute-en un pour enrichir ton profil ADN.</div>';
+    return;
+  }
+  var months = ['jan.','fev.','mars','avr.','mai','juin','juil.','aout','sep.','oct.','nov.','dec.'];
+  var html = '';
+  keys.forEach(function(id) {
+    var s = refScriptsStore[id];
+    var d = s.date ? new Date(s.date) : null;
+    var dateStr = d ? d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear() : '';
+    html += '<div class="card-sm" style="margin-bottom:10px;">'
+      + '<div class="crow" style="border-bottom:none;" onclick="openViewRefScript(\'' + id + '\')">'
+      + '<div><div class="crow-lbl">' + escapeHtml(s.title) + '</div>'
+      + (dateStr ? '<div style="font-size:12px;color:var(--text3);margin-top:2px;">' + dateStr + '</div>' : '')
+      + '</div><div style="font-size:12px;color:var(--accent);">Editer ›</div>'
+      + '</div></div>';
+  });
+  list.innerHTML = html;
+}
+
+function openAddRefScript() {
+  document.getElementById('add-ref-titre').value = '';
+  document.getElementById('add-ref-contenu').value = '';
+  document.getElementById('modal-add-ref-script').classList.add('open');
+}
+function closeAddRefScript() { document.getElementById('modal-add-ref-script').classList.remove('open'); }
+
+async function saveAddRefScript() {
+  if (!currentUser) return;
+  var title = document.getElementById('add-ref-titre').value.trim();
+  var content = document.getElementById('add-ref-contenu').value.trim();
+  if (!content) { alert('Le contenu du script est requis'); return; }
+  var rec = await atCreate('ScriptsRef', {
+    'User_email': currentUser.email,
+    'Titre': title || 'Sans titre',
+    'Contenu': content,
+    'Date_ajout': new Date().toISOString()
+  });
+  if (rec.id) {
+    refScriptsStore[rec.id] = { title: title || 'Sans titre', content: content, date: new Date().toISOString(), airtableId: rec.id };
+    renderRefScriptsList();
+    renderAdnSection();
+  }
+  closeAddRefScript();
+}
+
+function openViewRefScript(id) {
+  currentViewRefId = id;
+  var s = refScriptsStore[id];
+  if (!s) return;
+  document.getElementById('view-ref-title').textContent = s.title || 'Script';
+  document.getElementById('view-ref-titre').value = s.title || '';
+  document.getElementById('view-ref-contenu').value = s.content || '';
+  document.getElementById('modal-view-ref-script').classList.add('open');
+}
+function closeViewRefScript() { document.getElementById('modal-view-ref-script').classList.remove('open'); }
+
+async function saveViewRefScript() {
+  if (!currentViewRefId) return;
+  var s = refScriptsStore[currentViewRefId];
+  if (!s || !s.airtableId) return;
+  var title = document.getElementById('view-ref-titre').value.trim();
+  var content = document.getElementById('view-ref-contenu').value.trim();
+  await fetch('/api/airtable', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ method: 'PATCH', table: 'ScriptsRef', recordId: s.airtableId, fields: { 'Titre': title, 'Contenu': content } })
+  });
+  s.title = title;
+  s.content = content;
+  renderRefScriptsList();
+  closeViewRefScript();
+}
+
+async function deleteCurrentRefScript() {
+  if (!currentViewRefId) return;
+  if (!confirm('Supprimer ce script ? Action irreversible.')) return;
+  var s = refScriptsStore[currentViewRefId];
+  if (s && s.airtableId) await atDelete('ScriptsRef', s.airtableId);
+  delete refScriptsStore[currentViewRefId];
+  currentViewRefId = null;
+  renderRefScriptsList();
+  renderAdnSection();
+  closeViewRefScript();
+}
+
+async function reanalyzeStyle() {
+  var scripts = Object.values(refScriptsStore);
+  if (scripts.length === 0) { alert('Ajoute au moins un script de reference d abord.'); return; }
+  var btn = document.getElementById('btn-reanalyze');
+  if (btn) { btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none'; btn.querySelector('.btn-txt').textContent = 'Analyse en cours...'; }
+  var adn = await generateAdnProfile(scripts.map(function(s) { return { content: s.content, title: s.title }; }));
+  if (adn && clientRecord) {
+    await fetch('/api/airtable', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ method: 'PATCH', table: 'Client', recordId: clientRecord.id, fields: { 'ADN_profil': adn, 'ADN_date': new Date().toISOString() } })
+    });
+    clientRecord.fields['ADN_profil'] = adn;
+    clientRecord.fields['ADN_date'] = new Date().toISOString();
+    renderAdnSection();
+  }
+  if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; btn.querySelector('.btn-txt').textContent = 'Reanalyser mon style'; }
+  closeRefScripts();
+}
+
 // ═══ AUTH ═══
 function initSupabase() {
   if (window.supabase) {
@@ -1712,7 +1972,7 @@ function initSupabase() {
           if (isGoogle) {
             clientRecord = client;
             window._googleNewUser = true;
-            go('ob2');
+            go('ob-mode');
             return;
           }
         }
@@ -1749,6 +2009,7 @@ async function loadUserData(email) {
   try { sessions = await loadSessions(email); } catch(e) { console.error('Sessions error:', e); }
   renderSessions(sessions);
   await loadScripts(clientRecord.id, email);
+  await loadRefScripts(email);
   go('home');
 }
 
@@ -1785,6 +2046,9 @@ async function doLogout() {
   selectedScripts = {};
   currentEditorId = null;
   currentEditorText = '';
+  refScriptsStore = {};
+  currentViewRefId = null;
+  currentMode = 'standard';
   // Reset UI
   document.getElementById('scripts-list').innerHTML = '<div style="padding:24px 16px;text-align:center;font-size:13px;color:var(--text3);">Chargement...</div>';
   document.getElementById('sess-passees').innerHTML = '<div style="padding:20px 16px;font-size:13px;color:var(--text3);">Chargement...</div>';
@@ -1810,6 +2074,7 @@ async function doSignup() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ method: 'PATCH', table: 'Client', recordId: clientRecord.id, fields: {
+          'Onboarding_mode': currentMode,
           'Onboarding_secteur': (document.getElementById('ob2-activite') || {}).value || '',
           'Onboarding_offre': (document.getElementById('ob2-offre') || {}).value || '',
           'Onboarding_prix': obPrix ? obPrix.textContent.trim() : '',
@@ -1826,11 +2091,24 @@ async function doSignup() {
       });
       clientRecord = await loadClientData(gEmail);
       if (clientRecord) renderAll(clientRecord, gEmail);
+      if (currentMode === 'expert' && window._expertScriptsPending && window._expertScriptsPending.length) {
+        var gScripts = window._expertScriptsPending;
+        window._expertScriptsPending = null;
+        for (var gi = 0; gi < gScripts.length; gi++) {
+          await atCreate('ScriptsRef', { 'User_email': gEmail, 'Titre': gScripts[gi].title || 'Script ' + (gi + 1), 'Contenu': gScripts[gi].content, 'Date_ajout': new Date().toISOString() });
+        }
+        var gAdn = await generateAdnProfile(gScripts);
+        if (gAdn && clientRecord) {
+          await fetch('/api/airtable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'PATCH', table: 'Client', recordId: clientRecord.id, fields: { 'ADN_profil': gAdn, 'ADN_date': new Date().toISOString() } }) });
+          clientRecord.fields['ADN_profil'] = gAdn;
+        }
+      }
     }
     var sessions = [];
     try { sessions = await loadSessions(gEmail); } catch(e) {}
     renderSessions(sessions);
     if (clientRecord) await loadScripts(clientRecord.id, gEmail);
+    if (currentUser) await loadRefScripts(gEmail);
     go('home');
     return;
   }
@@ -1859,20 +2137,19 @@ async function doSignup() {
   if (existing) {
     clientRecord = existing;
   } else {
-    // Lire les réponses onboarding
     var obPrix = document.querySelector('#ob2-prix-opts .ob-opt.sel');
     var obMaturite = document.querySelector('#ob2-maturite-opts .ob-opt.sel');
     var obObjectif = document.querySelector('#ob4-objectif-opts .ob-opt.sel');
     var obTon = document.querySelector('#ob5-ton-opts .ob-opt.sel');
     var obIntensite = document.querySelector('#ob5-intensite-opts .ob-opt.sel');
     var obLangage = document.querySelector('#ob5-langage-opts .ob-opt.sel');
-    // KPI = chips multiples
     var obKpi = Array.from(document.querySelectorAll('#ob4-kpi-chips .ob-chip.sel'))
       .map(function(c) { return c.textContent.trim(); }).join(', ');
 
     await atCreate('Client', {
       'Nom_complet': nom,
       'Email': email,
+      'Onboarding_mode': currentMode,
       'Onboarding_secteur': (document.getElementById('ob2-activite') || {}).value || '',
       'Onboarding_offre': (document.getElementById('ob2-offre') || {}).value || '',
       'Onboarding_prix': obPrix ? obPrix.textContent.trim() : '',
@@ -1887,6 +2164,19 @@ async function doSignup() {
       'Onboarding_langage': obLangage ? obLangage.textContent.trim() : ''
     });
     clientRecord = await loadClientData(email);
+
+    if (currentMode === 'expert' && window._expertScriptsPending && window._expertScriptsPending.length && clientRecord) {
+      var eScripts = window._expertScriptsPending;
+      window._expertScriptsPending = null;
+      for (var ei = 0; ei < eScripts.length; ei++) {
+        await atCreate('ScriptsRef', { 'User_email': email, 'Titre': eScripts[ei].title || 'Script ' + (ei + 1), 'Contenu': eScripts[ei].content, 'Date_ajout': new Date().toISOString() });
+      }
+      var eAdn = await generateAdnProfile(eScripts);
+      if (eAdn) {
+        await fetch('/api/airtable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'PATCH', table: 'Client', recordId: clientRecord.id, fields: { 'ADN_profil': eAdn, 'ADN_date': new Date().toISOString() } }) });
+        clientRecord.fields['ADN_profil'] = eAdn;
+      }
+    }
   }
 
   currentUser = { email: email };
