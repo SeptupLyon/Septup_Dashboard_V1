@@ -3,7 +3,7 @@
 // ═══ CONFIG ═══
 
 var CONFETTI_CONFIG = {
-  colors: ['#00FF31', '#ffffff', '#a0ffc8'],
+  colors: ['#7FDAF7', '#ffffff', '#7600FF'],
   particleCount: 120,
   duration: 3000
 };
