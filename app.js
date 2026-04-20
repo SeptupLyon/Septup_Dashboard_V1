@@ -725,6 +725,9 @@ function toggleVoiceInput() {
     _mediaRecorder.onstop = function() {
       stopWaveform();
       stream.getTracks().forEach(function(t) { t.stop(); });
+
+      if (_audioChunks.length === 0) { setVoiceBtn('idle'); return; }
+
       setVoiceBtn('loading');
       var blob = new Blob(_audioChunks, { type: mimeType });
       var reader = new FileReader();
@@ -735,15 +738,23 @@ function toggleVoiceInput() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ audio: base64, mimeType: mimeType })
         })
-        .then(function(r) { return r.json(); })
+        .then(function(r) {
+          if (!r.ok) return r.text().then(function(t) { throw new Error(t); });
+          return r.json();
+        })
         .then(function(data) {
           if (data.text) {
             var ta = document.getElementById('gen-sujet');
             ta.value = (ta.value ? ta.value + ' ' : '') + data.text;
+          } else if (data.error) {
+            console.error('[transcribe]', data.error);
           }
           setVoiceBtn('idle');
         })
-        .catch(function() { setVoiceBtn('idle'); });
+        .catch(function(err) {
+          console.error('[transcribe]', err);
+          setVoiceBtn('error');
+        });
       };
       reader.readAsDataURL(blob);
     };
@@ -828,6 +839,8 @@ function setVoiceBtn(state) {
     btn.classList.add('loading');
     btn.disabled = true;
     txt.textContent = 'Transcription...';
+  } else if (state === 'error') {
+    txt.textContent = 'Erreur — réessayer';
   } else {
     txt.textContent = 'Parler';
   }
