@@ -1689,7 +1689,7 @@ function openFeedbackModal() {
   document.querySelectorAll('.fkey').forEach(function(k) { k.classList.remove('sel'); });
   var btn = document.getElementById('btn-submit-feedback');
   btn.classList.add('fb-disabled');
-  document.getElementById('modal-feedback').classList.add('active');
+  document.getElementById('modal-feedback').classList.add('open');
 }
 
 function selectFeedbackRating(n) {
@@ -1714,7 +1714,7 @@ function skipFeedback() {
 }
 
 function closeFeedbackModal() {
-  document.getElementById('modal-feedback').classList.remove('active');
+  document.getElementById('modal-feedback').classList.remove('open');
   closeGen();
   go('scripts');
 }
