@@ -700,7 +700,146 @@ function goToGenStep(n) {
   var el = document.getElementById('gen-step-' + n);
   if (el) el.classList.add('active');
 }
-function closeGen() { document.getElementById('modal-gen').classList.remove('open'); if (msgTimer) clearInterval(msgTimer); }
+function closeGen() { document.getElementById('modal-gen').classList.remove('open'); if (msgTimer) clearInterval(msgTimer); stopVoiceInput(); }
+
+// ─── VOICE INPUT (Whisper AI) ──────────────────────────────────
+var _mediaRecorder = null;
+var _audioChunks = [];
+var _audioCtx = null;
+var _waveAnimId = null;
+
+function toggleVoiceInput() {
+  if (_mediaRecorder && _mediaRecorder.state === 'recording') {
+    _mediaRecorder.stop();
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+    _audioChunks = [];
+    var mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+    _mediaRecorder = new MediaRecorder(stream, { mimeType: mimeType });
+
+    _mediaRecorder.ondataavailable = function(e) {
+      if (e.data.size > 0) _audioChunks.push(e.data);
+    };
+
+    _mediaRecorder.onstop = function() {
+      stopWaveform();
+      stream.getTracks().forEach(function(t) { t.stop(); });
+      setVoiceBtn('loading');
+      var blob = new Blob(_audioChunks, { type: mimeType });
+      var reader = new FileReader();
+      reader.onloadend = function() {
+        var base64 = reader.result.split(',')[1];
+        fetch('/api/transcribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ audio: base64, mimeType: mimeType })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.text) {
+            var ta = document.getElementById('gen-sujet');
+            ta.value = (ta.value ? ta.value + ' ' : '') + data.text;
+          }
+          setVoiceBtn('idle');
+        })
+        .catch(function() { setVoiceBtn('idle'); });
+      };
+      reader.readAsDataURL(blob);
+    };
+
+    _mediaRecorder.start();
+    setVoiceBtn('recording');
+    startWaveform(stream);
+  }).catch(function() {
+    alert('Impossible d\'accéder au micro. Vérifie les permissions.');
+  });
+}
+
+function startWaveform(stream) {
+  var wrap = document.getElementById('waveform-wrap');
+  var canvas = document.getElementById('waveform-canvas');
+  wrap.classList.add('active');
+  canvas.width = canvas.offsetWidth || 300;
+
+  _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  var source = _audioCtx.createMediaStreamSource(stream);
+  var analyser = _audioCtx.createAnalyser();
+  analyser.fftSize = 128;
+  source.connect(analyser);
+
+  var bufferLen = analyser.frequencyBinCount;
+  var dataArray = new Uint8Array(bufferLen);
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width;
+  var H = canvas.height;
+  var accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#7FDAF7';
+
+  function draw() {
+    _waveAnimId = requestAnimationFrame(draw);
+    analyser.getByteFrequencyData(dataArray);
+    ctx.clearRect(0, 0, W, H);
+
+    var barCount = bufferLen;
+    var gap = 2;
+    var barW = (W - gap * (barCount - 1)) / barCount;
+
+    for (var i = 0; i < barCount; i++) {
+      var val = dataArray[i] / 255;
+      var barH = Math.max(3, val * H * 0.9);
+      var x = i * (barW + gap);
+      var y = (H - barH) / 2;
+      var alpha = 0.4 + val * 0.6;
+      ctx.fillStyle = accentColor.startsWith('#')
+        ? hexToRgba(accentColor, alpha)
+        : accentColor;
+      ctx.beginPath();
+      ctx.roundRect(x, y, barW, barH, barW / 2);
+      ctx.fill();
+    }
+  }
+  draw();
+}
+
+function stopWaveform() {
+  if (_waveAnimId) { cancelAnimationFrame(_waveAnimId); _waveAnimId = null; }
+  if (_audioCtx) { try { _audioCtx.close(); } catch(e) {} _audioCtx = null; }
+  var wrap = document.getElementById('waveform-wrap');
+  var canvas = document.getElementById('waveform-canvas');
+  if (wrap) wrap.classList.remove('active');
+  if (canvas) { var ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); }
+}
+
+function hexToRgba(hex, alpha) {
+  var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+}
+
+function setVoiceBtn(state) {
+  var btn = document.getElementById('voice-btn');
+  var txt = document.getElementById('voice-btn-txt');
+  if (!btn) return;
+  btn.classList.remove('recording', 'loading');
+  btn.disabled = false;
+  if (state === 'recording') {
+    btn.classList.add('recording');
+    txt.textContent = 'Arrêter';
+  } else if (state === 'loading') {
+    btn.classList.add('loading');
+    btn.disabled = true;
+    txt.textContent = 'Transcription...';
+  } else {
+    txt.textContent = 'Parler';
+  }
+}
+
+function stopVoiceInput() {
+  if (_mediaRecorder && _mediaRecorder.state === 'recording') {
+    _mediaRecorder.stop();
+  }
+  _mediaRecorder = null;
+  setVoiceBtn('idle');
+}
 
 // ─── IDEAS ────────────────────────────────────────────────────
 var ideasData = { objectif: '', format: '' };
