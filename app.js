@@ -10,9 +10,18 @@ var CONFETTI_CONFIG = {
 
 function launchConfetti() {
   var end = Date.now() + CONFETTI_CONFIG.duration;
+  var perFrame = Math.max(2, Math.round(CONFETTI_CONFIG.particleCount / 60));
   (function frame() {
-    confetti({ particleCount: 6, angle: 60, spread: 55, origin: { x: 0 }, colors: CONFETTI_CONFIG.colors });
-    confetti({ particleCount: 6, angle: 120, spread: 55, origin: { x: 1 }, colors: CONFETTI_CONFIG.colors });
+    confetti({
+      particleCount: perFrame,
+      angle: 270,
+      spread: 90,
+      startVelocity: 20,
+      gravity: 1.2,
+      origin: { x: Math.random(), y: 0 },
+      colors: CONFETTI_CONFIG.colors,
+      zIndex: 99999
+    });
     if (Date.now() < end) requestAnimationFrame(frame);
   })();
 }
@@ -1694,7 +1703,6 @@ function validateScript() {
   renderScriptsList();
   var el = document.getElementById('home-nb-scripts');
   if (el) el.textContent = Object.keys(scriptsStore).length;
-  launchConfetti();
   openFeedbackModal();
 }
 
@@ -1731,6 +1739,7 @@ function skipFeedback() {
 
 function closeFeedbackModal() {
   document.getElementById('modal-feedback').classList.remove('open');
+  launchConfetti();
   closeGen();
   go('scripts');
 }
