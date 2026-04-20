@@ -951,7 +951,7 @@ async function generateHooksOnly() {
   var styleLabel = STYLE_LIBRARY[sk] ? STYLE_LIBRARY[sk].label : sk;
 
   var prompt = 'MISSION :\n'
-    + 'Genere EXACTEMENT 4 hooks ultra efficaces pour capter l attention dans les 1 a 3 premieres secondes. et arreter le scroll\n\n'
+    + 'Genere EXACTEMENT 4 hooks ultra efficaces pour capter l attention dans les 1 a 3 premieres secondes et arreter le scroll. Le hook dois donner envie de continuer à regarder la video, il dois intriguer le viewers.\n\n'
     + '---\n\n'
     + 'CONTEXTE :\n\n'
     + 'Sujet : ' + genData.sujet + '\n'
@@ -1002,11 +1002,6 @@ async function generateHooksOnly() {
     + '- Le hook doit etre comprehensible en moins de 2 secondes\n'
     + '- Aucune phrase complexe ou floue\n'
     + '- Aucune introduction inutile\n\n'
-    + '---\n\n'
-    + 'PERSONNALISATION :\n\n'
-    + '- Utilise le contexte utilisateur uniquement si cela rend le hook plus pertinent\n'
-    + '- Si une info rend le hook plus specifique → integre-la\n'
-    + '- Sinon → ignore-la\n\n'
     + '---\n\n'
     + 'INTERDICTIONS :\n\n'
     + '- aucun hook generique\n'
