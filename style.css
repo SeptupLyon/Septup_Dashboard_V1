@@ -85,7 +85,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font); -web
   display: flex; align-items: center; justify-content: space-between;
   padding: 18px 20px 8px;
 }
-.logo { font-size: 18px; font-weight: 800; color: var(--accent); letter-spacing: -0.3px; }
+.logo { height: 28px; width: auto; display: block; }
 .tr { display: flex; align-items: center; gap: 8px; }
 
 .ibtn {
