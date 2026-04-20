@@ -1,6 +1,21 @@
 // ═══ CONFIG ═══
 
 // ═══ CONFIG ═══
+
+var CONFETTI_CONFIG = {
+  colors: ['#00FF31', '#ffffff', '#a0ffc8'],
+  particleCount: 120,
+  duration: 3000
+};
+
+function launchConfetti() {
+  var end = Date.now() + CONFETTI_CONFIG.duration;
+  (function frame() {
+    confetti({ particleCount: 6, angle: 60, spread: 55, origin: { x: 0 }, colors: CONFETTI_CONFIG.colors });
+    confetti({ particleCount: 6, angle: 120, spread: 55, origin: { x: 1 }, colors: CONFETTI_CONFIG.colors });
+    if (Date.now() < end) requestAnimationFrame(frame);
+  })();
+}
 var SUPABASE_URL = 'https://vruwzwzokyyzwdyfnfpp.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_5EcH8Gb_4DKFLUUSBWMrOg_rl2ZieSR';
 // AT_TOKEN et AT_BASE sont maintenant côté serveur (api/airtable.js)
@@ -1679,6 +1694,7 @@ function validateScript() {
   renderScriptsList();
   var el = document.getElementById('home-nb-scripts');
   if (el) el.textContent = Object.keys(scriptsStore).length;
+  launchConfetti();
   openFeedbackModal();
 }
 
@@ -2419,6 +2435,7 @@ async function setScriptStatus(newStatut) {
   if (!info) return;
 
   // UI immédiate
+  if (newStatut === 'Validé') launchConfetti();
   updateStatusBtns(newStatut);
   var statusEl = document.getElementById('autosave-status');
   if (statusEl) statusEl.textContent = 'Mise a jour...';
