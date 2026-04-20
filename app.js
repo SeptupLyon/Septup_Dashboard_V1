@@ -1280,46 +1280,16 @@ async function generateClarifyingQuestions() {
     if (f['Onboarding_offre'])   sys += ' Offre : ' + f['Onboarding_offre'] + '.';
   }
 
-  var motCount = genData.sujet.trim().split(/\s+/).length;
-  var hasExample = /\d|%|client|cas|exemple|histoire|fois|jour|mois|an|euro|€|\$/.test(genData.sujet.toLowerCase());
-  var nQuestions = (motCount < 6 || !hasExample) ? '4 ou 5' : (motCount < 14 ? '3' : '2');
-
-  var prompt = 'Tu es un expert en strategie de contenu.\n\n'
-    + 'Ta mission :\n'
-    + 'generer 3 a 5 questions ultra pertinentes pour aider un createur a preciser son idee de contenu.\n\n'
-    + 'CONTEXTE :\n'
-    + 'Sujet : ' + genData.sujet + '\n\n'
-    + '---\n\n'
-    + 'OBJECTIF :\n\n'
-    + 'Les questions doivent permettre de creer un contenu fort.\n\n'
-    + 'Elles doivent :\n'
-    + '- faire emerger un angle clair\n'
-    + '- creer de la tension ou du contraste\n'
-    + '- faire ressortir une opinion ou une prise de position\n'
-    + '- declencher une reflexion reelle\n\n'
-    + '---\n\n'
-    + 'INTERDIT :\n\n'
-    + '- aucune question generique (cible, objectif, ton...)\n'
-    + '- aucune question evidente ou deja vue\n'
-    + '- aucune question administrative\n\n'
-    + '---\n\n'
-    + 'STYLE :\n\n'
-    + '- questions courtes\n'
-    + '- directes\n'
-    + '- orientees contenu\n'
-    + '- qui poussent a reflechir immediatement\n\n'
-    + '---\n\n'
-    + 'EXIGENCES :\n\n'
-    + 'Chaque question doit :\n'
-    + '- pouvoir devenir un contenu a elle seule\n'
-    + '- etre suffisamment forte pour declencher une idee de video\n'
-    + '- ne pas ressembler a une question "IA"\n\n'
-    + 'Si une question est banale ou generique → supprime-la\n\n'
-    + 'IMPORTANT :\n\n'
-    + 'Privilegie impact > completude.\n\n'
-    + '---\n\n'
-    + 'Genere uniquement les questions.\n\n'
-    + 'FORMAT STRICT :\n###Q1###\n[question]\n###Q2###\n[question]\n(etc.)';
+  var prompt = 'Le createur veut faire un contenu sur ce sujet precis :\n\n'
+    + '« ' + genData.sujet + ' »\n\n'
+    + 'Genere ' + (genData.sujet.trim().split(/\s+/).length < 8 ? '4' : '3') + ' questions courtes et directes pour extraire des informations concretes sur CE sujet specifiquement.\n\n'
+    + 'Chaque question doit viser a obtenir :\n'
+    + '- un exemple reel ou une anecdote personnelle liee a CE sujet\n'
+    + '- un chiffre, resultat ou fait precis sur CE sujet\n'
+    + '- la position ou opinion du createur sur CE sujet\n'
+    + '- le declencheur ou la cause racine de CE sujet\n\n'
+    + 'Interdit : questions generiques non liees au sujet, questions sur la cible ou le format.\n\n'
+    + 'FORMAT : ###Q1###\n[question]\n###Q2###\n[question]\n(etc.)';
 
   try {
     var res = await fetch('/api/generate', {
