@@ -902,19 +902,21 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 /* ── DESKTOP LAYOUT (≥768px) ──────────────────────────────── */
 @media (min-width: 768px) {
 
-  /* App shell — full width */
+  /* App shell */
   .app { max-width: 100%; }
 
-  /* ── Sidebar nav ── */
+  /* ════════════════════════
+     SIDEBAR
+  ════════════════════════ */
   .bnav {
     position: fixed;
-    left: 0; top: 0; bottom: 0;
-    width: 240px; height: 100vh;
+    left: 0; top: 0; bottom: 0; height: 100vh;
+    width: 260px;
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
-    gap: 2px;
-    padding: 28px 12px 24px;
+    gap: 0;
+    padding: 0 0 24px;
     border-top: none;
     border-right: 1px solid var(--border);
     background: var(--bg2);
@@ -924,102 +926,200 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     z-index: 50;
   }
 
-  /* Logo placeholder at sidebar top */
+  /* Logo */
   .bnav::before {
     content: '';
     display: block;
-    width: 80px; height: 26px;
+    order: -10;
+    width: 88px; height: 28px;
     background: url('/Logo-septup.png') no-repeat left center / contain;
-    margin: 0 6px 24px;
+    margin: 28px 20px 16px;
     flex-shrink: 0;
   }
 
-  /* Nav items — horizontal row */
-  .ni {
-    flex: none;
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 12px;
-    padding: 11px 14px;
-    border-radius: var(--radius-md);
-    width: 100%;
-    transition: background 0.15s;
-  }
-  .ni:hover { background: rgba(255,255,255,0.04); }
-  .ni:hover .nd { opacity: 0.7; }
-  .ni:active .nd { transform: none; }
-
-  .nd { opacity: 0.4; }
-  .nd.on { opacity: 1; }
-
-  .nl {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text3);
-    letter-spacing: 0;
-  }
-  .nl.on { color: var(--accent); font-weight: 600; font-size: 14px; }
-
-  /* + button — full width in sidebar */
+  /* CTA "Générer un script" — en avant, juste après le logo */
   .np {
-    width: 100%;
-    height: 46px;
-    border-radius: var(--radius-md);
-    margin: 10px 0;
+    order: -5;
+    width: calc(100% - 24px);
+    height: auto;
+    min-height: 50px;
+    border-radius: var(--radius-lg);
+    margin: 0 12px 20px;
     border: none;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 0 14px;
-    gap: 10px;
-    box-shadow: 0 2px 12px rgba(127,218,247,0.25);
+    padding: 0 18px;
+    gap: 11px;
+    background: var(--accent);
+    box-shadow: 0 4px 20px rgba(127,218,247,0.32);
+    transition: box-shadow 0.2s, opacity 0.15s;
   }
+  .np:hover { opacity: 0.9; box-shadow: 0 6px 28px rgba(127,218,247,0.45); }
+  .np:active { transform: scale(0.98) !important; }
+  .np-icon { font-size: 17px; color: #000; font-weight: 400; margin-top: 0; }
   .np::after {
-    content: 'Nouveau';
+    content: 'Générer un script';
     font-size: 14px;
     font-weight: 700;
     color: #000;
+    font-family: var(--font);
+    letter-spacing: -0.1px;
   }
-  .np-icon { font-size: 20px; margin-top: 0; }
 
-  /* ── Main screens — offset for sidebar ── */
+  /* Section label in sidebar */
+  .bnav::after {
+    content: 'NAVIGATION';
+    display: block;
+    order: -3;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text3);
+    letter-spacing: 1.4px;
+    padding: 0 20px 8px;
+    flex-shrink: 0;
+  }
+
+  /* Nav items */
+  .ni {
+    order: 0;
+    flex: none;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 10px 16px;
+    border-radius: var(--radius-md);
+    width: calc(100% - 24px);
+    margin: 1px 12px;
+    transition: background 0.15s;
+  }
+  .ni:hover { background: rgba(255,255,255,0.05); }
+  .ni:hover .nd { opacity: 0.65; }
+  .ni:active .nd { transform: none; }
+
+  .nd { opacity: 0.35; }
+  .nd.on { opacity: 1; }
+  .nd svg { width: 19px; height: 19px; }
+
+  .nl {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0;
+  }
+  .nl.on { color: var(--accent); font-weight: 600; }
+
+  /* ════════════════════════
+     ÉCRANS PRINCIPAUX
+  ════════════════════════ */
   #screen-home,
   #screen-sessions,
   #screen-cours,
   #screen-scripts,
   #screen-points {
-    padding-left: 240px;
+    padding-left: 260px;
   }
 
-  /* ── Compte screen — slides over content area only ── */
   #screen-compte {
-    left: 240px;
-    max-width: calc(100% - 240px);
+    left: 260px;
+    max-width: calc(100% - 260px);
     margin: 0;
   }
 
-  /* ── Auth / onboarding — centered column ── */
-  #screen-login,
-  #screen-forgot,
-  #screen-ob1,
-  #screen-ob-mode,
-  #screen-ob2,
-  #screen-ob3,
-  #screen-ob4,
-  #screen-ob5,
+  /* Auth / onboarding — centré */
+  #screen-login, #screen-forgot,
+  #screen-ob1, #screen-ob-mode,
+  #screen-ob2, #screen-ob3,
+  #screen-ob4, #screen-ob5,
   #screen-ob5-expert {
     max-width: 520px;
     margin: 0 auto;
   }
 
-  /* ── Content width cap ── */
-  .scroll { max-width: 900px; }
+  /* ════════════════════════
+     TOPBAR WEB
+  ════════════════════════ */
+  .topbar {
+    padding: 20px 32px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { display: none; }
 
-  /* ── Grid improvements ── */
-  .mini-grid { grid-template-columns: repeat(4, 1fr); }
-  .cours-grid { grid-template-columns: repeat(4, 1fr); }
+  /* ════════════════════════
+     HOME DASHBOARD
+  ════════════════════════ */
+  .hero-card { margin: 20px 24px 0; }
+  .cta { margin: 14px 24px; }
+  .mini-grid {
+    grid-template-columns: repeat(4, 1fr);
+    margin: 0 24px;
+    gap: 12px;
+  }
+  .mini { padding: 20px; }
+  .mini-val { font-size: 32px; }
+  .sec-lbl { padding: 0 24px; }
+  .next-sess { margin: 0 24px; }
+  .card-sm { margin: 0 24px; }
 
-  /* ── Modals — centered dialogs instead of bottom sheets ── */
+  /* ════════════════════════
+     SCRIPTS — GRID DE CARDS
+  ════════════════════════ */
+  #scripts-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+    padding: 12px 24px 32px;
+    align-items: start;
+  }
+
+  .script-card {
+    position: relative;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0;
+    padding: 20px;
+    min-height: 140px;
+    justify-content: flex-start;
+    gap: 0;
+    border-radius: var(--radius-lg);
+    transition: border-color 0.2s, background 0.15s, transform 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+  }
+  .script-card:hover {
+    border-color: rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.025);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+    transform: translateY(-2px);
+  }
+  .script-card:active { transform: translateY(0) scale(0.99); }
+
+  .script-cb {
+    position: absolute;
+    top: 16px; right: 16px;
+    margin: 0;
+  }
+
+  .script-info { width: 100%; padding-right: 28px; cursor: pointer; }
+  .script-title { font-size: 15px; font-weight: 600; line-height: 1.4; margin-bottom: 8px; }
+  .script-meta { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .script-status { margin-top: 16px; display: inline-block; }
+  .script-arrow { display: none; }
+
+  .export-bar { margin: 8px 24px 4px; }
+
+  /* ════════════════════════
+     SESSIONS & COURS
+  ════════════════════════ */
+  .tab-row { margin: 0 24px 16px; }
+  .sblock { margin: 0 24px 10px; }
+  .cours-grid {
+    grid-template-columns: repeat(4, 1fr);
+    margin: 0 24px;
+  }
+
+  /* ════════════════════════
+     MODALS — DIALOGUES CENTRÉS
+  ════════════════════════ */
   .modal-overlay { align-items: center; }
 
   .modal {
@@ -1028,18 +1128,16 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     max-width: 90vw;
     max-height: 88vh;
     border-bottom: 1px solid var(--border2);
-    transform: translateY(16px);
+    transform: translateY(20px) scale(0.98);
     opacity: 0;
-    transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.28s ease;
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.25s ease;
   }
-  .modal-overlay.open .modal { transform: translateY(0); opacity: 1; }
-
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); opacity: 1; }
   .modal-handle { display: none; }
 
-  .gen-modal { height: 88vh; width: 640px; max-width: 90vw; }
-  .editor-modal { height: 88vh; width: 680px; max-width: 90vw; }
+  .gen-modal    { height: 88vh; width: 640px; max-width: 90vw; }
+  .editor-modal { height: 88vh; width: 700px; max-width: 90vw; }
   .fillout-modal { height: 88vh; }
-  .ideas-modal { max-height: 88vh; }
-
-  /* Topbar stays within padded screen — no changes needed */
+  .ideas-modal   { max-height: 88vh; }
+  .cours-modal   { height: 88vh; }
 }
