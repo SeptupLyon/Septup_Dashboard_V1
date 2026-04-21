@@ -83,6 +83,20 @@ function go(id) {
   });
   var el = document.getElementById('screen-' + id);
   if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
+
+  // ── Sync nav globale desktop ──
+  var globalNav = document.getElementById('global-nav');
+  if (globalNav) {
+    globalNav.querySelectorAll('.ni[data-screen]').forEach(function(ni) {
+      var s = ni.getAttribute('data-screen');
+      var nd = ni.querySelector('.nd'), nl = ni.querySelector('.nl');
+      if (nd) nd.classList.toggle('on', s === id);
+      if (nl) nl.classList.toggle('on', s === id);
+    });
+  }
+  var titles = { home: 'Accueil', sessions: 'Sessions', scripts: 'Scripts', cours: 'Cours', points: 'Fidélité' };
+  var titleEl = document.getElementById('global-page-title');
+  if (titleEl && titles[id]) titleEl.textContent = titles[id];
 }
 
 // Ferme le compte et revient sur la page d'où on venait
