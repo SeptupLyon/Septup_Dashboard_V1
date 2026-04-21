@@ -1317,15 +1317,15 @@ async function generateClarifyingQuestions() {
     if (f['Onboarding_offre'])   sys += ' Offre : ' + f['Onboarding_offre'] + '.';
   }
 
-  var prompt = 'Le createur veut faire un contenu sur ce sujet precis :\n\n'
+  var prompt = 'Un createur de contenu veut faire une video sur ce sujet precis :\n\n'
     + '« ' + genData.sujet + ' »\n\n'
-    + 'Genere ' + (genData.sujet.trim().split(/\s+/).length < 8 ? '4' : '3') + ' questions courtes et directes pour extraire des informations concretes sur CE sujet specifiquement.\n\n'
-    + 'Chaque question doit viser a obtenir :\n'
-    + '- un exemple reel ou une anecdote personnelle liee a CE sujet\n'
-    + '- un chiffre, resultat ou fait precis sur CE sujet\n'
-    + '- la position ou opinion du createur sur CE sujet\n'
-    + '- le declencheur ou la cause racine de CE sujet\n\n'
-    + 'Interdit : questions generiques non liees au sujet, questions sur la cible ou le format.\n\n'
+    + 'Pour ecrire un script percutant et personnel, tu as besoin d informations concretes que seul ce createur possede sur CE sujet.\n\n'
+    + 'Genere ' + (genData.sujet.trim().split(/\s+/).length < 8 ? '4' : '3') + ' questions ultra-specifiques a « ' + genData.sujet + ' ».\n\n'
+    + 'Chaque question doit :\n'
+    + '- etre directement ancree dans le contenu de CE sujet (pas une question qui marcherait pour n importe quel sujet)\n'
+    + '- viser un detail vecu et concret : une situation reelle, un chiffre precis, une erreur commise, un moment marquant\n'
+    + '- etre impossible a reformuler pour un autre sujet sans perdre son sens\n\n'
+    + 'INTERDIT ABSOLU : questions generiques type "quel est votre exemple ?", "quelle est votre opinion ?", "quel chiffre pouvez-vous citer ?", questions sur la cible ou le format.\n\n'
     + 'FORMAT : ###Q1###\n[question]\n###Q2###\n[question]\n(etc.)';
 
   try {
@@ -1841,7 +1841,7 @@ function validateScript() {
   if (clientRecord) {
     atCreate('Scripts', {
       'Titre': title, 'Contenu': text,
-      'Score_viralite': 0,
+      'score_viralite': 0,
       'Statut': 'Brouillon', 'Client': [clientRecord.id],
       'Email_client': currentUser ? currentUser.email : '',
       'Date_creation': new Date().toISOString()
@@ -1854,7 +1854,7 @@ function validateScript() {
         if (window._pendingFeedbackData) {
           var d = window._pendingFeedbackData;
           window._pendingFeedbackData = null;
-          fetch('/api/airtable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'PATCH', table: 'Scripts', recordId: rec.id, fields: { 'Score_viralite': d.score, 'Commentaire_feedback': d.comment } }) }).catch(function(e) { console.error('[feedback] deferred PATCH:', e); });
+          fetch('/api/airtable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'PATCH', table: 'Scripts', recordId: rec.id, fields: { 'score_viralite': d.score, 'feedback': d.comment } }) }).catch(function(e) { console.error('[feedback] deferred PATCH:', e); });
         }
       }
     }).catch(function(err) { console.error('[validateScript] atCreate error:', err); });
@@ -1885,7 +1885,7 @@ async function submitFeedback() {
   if (!feedbackRating) return;
   var comment = document.getElementById('feedback-comment').value.trim();
   if (pendingFeedbackRecordId) {
-    fetch('/api/airtable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'PATCH', table: 'Scripts', recordId: pendingFeedbackRecordId, fields: { 'Score_viralite': feedbackRating, 'Commentaire_feedback': comment } }) }).catch(function(e) { console.error('[feedback] PATCH:', e); });
+    fetch('/api/airtable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'PATCH', table: 'Scripts', recordId: pendingFeedbackRecordId, fields: { 'score_viralite': feedbackRating, 'feedback': comment } }) }).catch(function(e) { console.error('[feedback] PATCH:', e); });
   } else {
     window._pendingFeedbackData = { score: feedbackRating, comment: comment };
   }
