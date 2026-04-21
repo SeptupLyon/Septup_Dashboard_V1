@@ -1811,7 +1811,7 @@ function showScript(text) {
   document.getElementById('gen-vir-score').textContent = v.score.toFixed(1);
 }
 
-function validateScript() {
+async function validateScript() {
   var text = document.getElementById('script-result').getAttribute('data-raw') || '';
   var title = (genData.sujet || 'Script').substring(0, 45);
   var formatLabels = { video30: 'Video 30s', video60: 'Video 60s', linkedin: 'LinkedIn', ads: 'Publicite', podcast: 'Podcast' };
@@ -1823,28 +1823,21 @@ function validateScript() {
   var meta = (formatLabels[genData.format] || 'Script') + ' · ' + styleLabel + ' · ' + dateStr;
   scriptsStore[id] = { title: title, content: text, meta: meta, status: 'st-draft', statusLabel: 'Brouillon', airtableId: null };
   pendingFeedbackRecordId = null;
-  pendingFeedbackScriptLocalId = id;
-  window._pendingFeedbackData = null;
   if (clientRecord) {
-    atCreate('Scripts', {
-      'Titre': title, 'Contenu': text,
-      'score_viralite': 0,
-      'Statut': 'Brouillon', 'Client': [clientRecord.id],
-      'Email_client': currentUser ? currentUser.email : '',
-      'Date_creation': new Date().toISOString()
-    }).then(function(rec) {
-      if (rec.id && scriptsStore[id]) {
+    try {
+      var rec = await atCreate('Scripts', {
+        'Titre': title, 'Contenu': text,
+        'score_viralite': 0,
+        'Statut': 'Brouillon', 'Client': [clientRecord.id],
+        'Email_client': currentUser ? currentUser.email : '',
+        'Date_creation': new Date().toISOString()
+      });
+      if (rec && rec.id && scriptsStore[id]) {
         scriptsStore[id].airtableId = rec.id; scriptsStore[rec.id] = scriptsStore[id]; delete scriptsStore[id];
         if (currentEditorId === id) currentEditorId = rec.id;
-        renderScriptsList();
         pendingFeedbackRecordId = rec.id;
-        if (window._pendingFeedbackData) {
-          var d = window._pendingFeedbackData;
-          window._pendingFeedbackData = null;
-          fetch('/api/airtable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'PATCH', table: 'Scripts', recordId: rec.id, fields: { 'score_viralite': d.score, 'feedback': d.comment } }) }).catch(function(e) { console.error('[feedback] deferred PATCH:', e); });
-        }
       }
-    }).catch(function(err) { console.error('[validateScript] atCreate error:', err); });
+    } catch(err) { console.error('[validateScript] atCreate error:', err); }
   }
   renderScriptsList();
   var el = document.getElementById('home-nb-scripts');
@@ -1931,9 +1924,11 @@ async function submitFeedback() {
   if (!feedbackRating) return;
   var comment = document.getElementById('feedback-comment').value.trim();
   if (pendingFeedbackRecordId) {
-    fetch('/api/airtable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'PATCH', table: 'Scripts', recordId: pendingFeedbackRecordId, fields: { 'score_viralite': feedbackRating, 'feedback': comment } }) }).catch(function(e) { console.error('[feedback] PATCH:', e); });
-  } else {
-    window._pendingFeedbackData = { score: feedbackRating, comment: comment };
+    try {
+      var res = await fetch('/api/airtable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'PATCH', table: 'Scripts', recordId: pendingFeedbackRecordId, fields: { 'score_viralite': feedbackRating, 'feedback': comment } }) });
+      var data = await res.json();
+      if (data.error) console.error('[feedback] PATCH error:', JSON.stringify(data));
+    } catch(e) { console.error('[feedback] PATCH:', e); }
   }
   closeFeedbackModal();
 }
