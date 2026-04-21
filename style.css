@@ -898,3 +898,148 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .screen.active, .gen-step.active { animation: none !important; }
   .btn, .btn-ghost, .mini, .hero-card, .cta, .np, .ibtn { transition: none !important; transform: none !important; }
 }
+
+/* ── DESKTOP LAYOUT (≥768px) ──────────────────────────────── */
+@media (min-width: 768px) {
+
+  /* App shell — full width */
+  .app { max-width: 100%; }
+
+  /* ── Sidebar nav ── */
+  .bnav {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 240px; height: 100vh;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 2px;
+    padding: 28px 12px 24px;
+    border-top: none;
+    border-right: 1px solid var(--border);
+    background: var(--bg2);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    overflow-y: auto;
+    z-index: 50;
+  }
+
+  /* Logo placeholder at sidebar top */
+  .bnav::before {
+    content: '';
+    display: block;
+    width: 80px; height: 26px;
+    background: url('/Logo-septup.png') no-repeat left center / contain;
+    margin: 0 6px 24px;
+    flex-shrink: 0;
+  }
+
+  /* Nav items — horizontal row */
+  .ni {
+    flex: none;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: var(--radius-md);
+    width: 100%;
+    transition: background 0.15s;
+  }
+  .ni:hover { background: rgba(255,255,255,0.04); }
+  .ni:hover .nd { opacity: 0.7; }
+  .ni:active .nd { transform: none; }
+
+  .nd { opacity: 0.4; }
+  .nd.on { opacity: 1; }
+
+  .nl {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text3);
+    letter-spacing: 0;
+  }
+  .nl.on { color: var(--accent); font-weight: 600; font-size: 14px; }
+
+  /* + button — full width in sidebar */
+  .np {
+    width: 100%;
+    height: 46px;
+    border-radius: var(--radius-md);
+    margin: 10px 0;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 14px;
+    gap: 10px;
+    box-shadow: 0 2px 12px rgba(127,218,247,0.25);
+  }
+  .np::after {
+    content: 'Nouveau';
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+  }
+  .np-icon { font-size: 20px; margin-top: 0; }
+
+  /* ── Main screens — offset for sidebar ── */
+  #screen-home,
+  #screen-sessions,
+  #screen-cours,
+  #screen-scripts,
+  #screen-points {
+    padding-left: 240px;
+  }
+
+  /* ── Compte screen — slides over content area only ── */
+  #screen-compte {
+    left: 240px;
+    max-width: calc(100% - 240px);
+    margin: 0;
+  }
+
+  /* ── Auth / onboarding — centered column ── */
+  #screen-login,
+  #screen-forgot,
+  #screen-ob1,
+  #screen-ob-mode,
+  #screen-ob2,
+  #screen-ob3,
+  #screen-ob4,
+  #screen-ob5,
+  #screen-ob5-expert {
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* ── Content width cap ── */
+  .scroll { max-width: 900px; }
+
+  /* ── Grid improvements ── */
+  .mini-grid { grid-template-columns: repeat(4, 1fr); }
+  .cours-grid { grid-template-columns: repeat(4, 1fr); }
+
+  /* ── Modals — centered dialogs instead of bottom sheets ── */
+  .modal-overlay { align-items: center; }
+
+  .modal {
+    border-radius: var(--radius-xl);
+    width: 560px;
+    max-width: 90vw;
+    max-height: 88vh;
+    border-bottom: 1px solid var(--border2);
+    transform: translateY(16px);
+    opacity: 0;
+    transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.28s ease;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); opacity: 1; }
+
+  .modal-handle { display: none; }
+
+  .gen-modal { height: 88vh; width: 640px; max-width: 90vw; }
+  .editor-modal { height: 88vh; width: 680px; max-width: 90vw; }
+  .fillout-modal { height: 88vh; }
+  .ideas-modal { max-height: 88vh; }
+
+  /* Topbar stays within padded screen — no changes needed */
+}
