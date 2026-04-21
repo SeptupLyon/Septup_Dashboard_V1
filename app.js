@@ -52,6 +52,8 @@ var genMsgs = ['Analyse de ton profil...', 'Selection du framework...', 'Calibra
 var feedbackRating = null;
 var pendingFeedbackRecordId = null;
 var pendingFeedbackScriptLocalId = null;
+var urlFetchTimeout = null;
+var urlFetched = '';
 
 // ═══ UTILITAIRES ═══
 function escapeHtml(str) {
@@ -722,7 +724,9 @@ function updateEditorVirality() {
 // ═══ GENERATION ═══
 function openGen() {
   genStep = 1;
-  genData = { sujet: '', objectif: '', format: '', style: '', selectedHook: '', precision: '', clarifications: [] };
+  genData = { sujet: '', objectif: '', format: '', style: '', selectedHook: '', precision: '', clarifications: [], urlContent: '', urlTitle: '' };
+  urlFetched = '';
+  setUrlStatus('hidden');
   document.querySelectorAll('.gen-step').forEach(function(s) { s.classList.remove('active'); });
   document.getElementById('gen-step-1').classList.add('active');
   document.getElementById('gen-footer').style.display = 'block';
@@ -1020,7 +1024,9 @@ function selectIdea(idx) {
     style: 'hybride',
     selectedHook: '',
     precision: ideasFormatLabels[ideasData.format] ? 'Format video : ' + ideasFormatLabels[ideasData.format] : '',
-    clarifications: []
+    clarifications: [],
+    urlContent: '',
+    urlTitle: ''
   };
   var best = computeRecommendedStyles();
   if (best && best[0]) genData.style = best[0];
@@ -1166,81 +1172,68 @@ async function generateHooksOnly() {
   var objectifLabels = { vues: 'Maximiser les vues', engagement: 'Creer de l engagement', leads: 'Generer des prospects', vente: 'Vendre une offre', autorite: 'Renforcer l image d expert' };
   var styleLabel = STYLE_LIBRARY[sk] ? STYLE_LIBRARY[sk].label : sk;
 
-  var prompt = 'MISSION :\n'
-    + 'Genere EXACTEMENT 4 hooks ultra efficaces pour capter l attention dans les 1 a 3 premieres secondes et arreter le scroll. Le hook dois donner envie de continuer à regarder la video, il dois intriguer le viewers.\n\n'
-    + '---\n\n'
-    + 'CONTEXTE :\n\n'
-    + 'Sujet : ' + genData.sujet + '\n'
-    + 'Format : ' + (formatLabels[genData.format] || genData.format) + '\n'
-    + 'Objectif : ' + (objectifLabels[genData.objectif] || genData.objectif) + '\n'
-    + 'Style : ' + styleLabel + '\n';
+  var hookSys = 'Tu es un expert en hooks pour videos courtes (TikTok, Reels, YouTube Shorts, LinkedIn). Tu ne generes que des hooks — pas de scripts, pas d introductions. Ton seul critere : est-ce que les 2 premieres secondes rendent impossible de scroller ?';
+  if (clientRecord && clientRecord.fields) {
+    var f2 = clientRecord.fields;
+    if (f2['Onboarding_secteur']) hookSys += ' Secteur du createur : ' + f2['Onboarding_secteur'] + '.';
+    if (f2['Onboarding_cible'])   hookSys += ' Cible : ' + f2['Onboarding_cible'] + '.';
+  }
+
+  var prompt = 'Sujet de la video : « ' + genData.sujet + ' »\n'
+    + 'Objectif : ' + (objectifLabels[genData.objectif] || genData.objectif) + '\n';
   if (genData.precision) prompt += 'Precision : ' + genData.precision + '\n';
 
   if (clientRecord && clientRecord.fields) {
     var f = clientRecord.fields;
     var profil = [];
-    if (f['Onboarding_secteur']) profil.push('Secteur : ' + f['Onboarding_secteur']);
     if (f['Onboarding_cible'])   profil.push('Cible : ' + f['Onboarding_cible']);
     if (f['Onboarding_offre'])   profil.push('Offre : ' + f['Onboarding_offre']);
-    if (profil.length) prompt += '\nPROFIL CREATEUR :\n' + profil.join('\n') + '\n';
+    if (profil.length) prompt += profil.join(' | ') + '\n';
   }
 
   if (genData.clarifications && genData.clarifications.length) {
-    prompt += '\nCONTEXTE UTILISATEUR :\n';
+    prompt += '\nCONTEXTE :\n';
     genData.clarifications.forEach(function(c) { prompt += '- ' + c.q + ' : ' + c.a + '\n'; });
   }
 
+  prompt += getUrlContext();
+
   prompt += '\n---\n\n'
-    + 'PRINCIPE D UN BON HOOK :\n\n'
-    + 'Un bon hook doit :\n'
-    + '- rendre le sujet immediatement clair\n'
-    + '- creer une curiosite forte (envie de continuer)\n'
-    + '- parler directement au spectateur (tu / ton)\n'
-    + '- donner une promesse implicite de valeur\n\n'
-    + '---\n\n'
-    + 'VARIATION OBLIGATOIRE :\n\n'
-    + 'Avant de generer, identifie 4 angles DIFFERENTS.\n\n'
-    + 'Exemples d angles possibles :\n'
-    + '- une erreur frequente\n'
-    + '- une croyance fausse\n'
-    + '- une frustration precise\n'
-    + '- un resultat surprenant\n'
-    + '- une situation vecue\n\n'
-    + 'Chaque hook doit etre base sur un angle DIFFERENT.\n\n'
-    + '---\n\n'
-    + 'REGLES DE CREATION :\n\n'
-    + '- Parle directement au spectateur (tu / ton)\n'
-    + '- Cree un contraste (ex : ce que tu fais vs ce que tu devrais faire)\n'
-    + '- Utilise si pertinent :\n'
-    + '  - chiffres\n'
-    + '  - details precis\n'
-    + '  - situations concretes\n\n'
-    + '- Le hook doit etre comprehensible en moins de 2 secondes\n'
-    + '- Aucune phrase complexe ou floue\n'
-    + '- Aucune introduction inutile\n\n'
-    + '---\n\n'
-    + 'INTERDICTIONS :\n\n'
-    + '- aucun hook generique\n'
-    + '- pas de "90% des gens..."\n'
-    + '- pas de phrases applicables a toutes les niches\n'
-    + '- pas de blabla\n'
-    + '- pas de clickbait mensonger\n\n'
-    + '---\n\n'
-    + 'TEST QUALITE (OBLIGATOIRE) :\n\n'
-    + 'Pour chaque hook :\n'
-    + '- est-ce que le sujet est clair immediatement ?\n'
-    + '- est-ce que ca donne envie de continuer ?\n'
-    + '- est-ce que c est specifique ?\n\n'
-    + 'Si NON → recommence\n\n'
-    + '---\n\n'
-    + 'FORMAT DE REPONSE :\n\n'
-    + '###HOOK1###\n...\n\n###HOOK2###\n...\n\n###HOOK3###\n...\n\n###HOOK4###\n...';
+    + 'Genere EXACTEMENT 4 hooks, un par format impose. Chaque format a une mecanique de phrase differente — respecte-la strictement.\n\n'
+
+    + 'FORMAT 1 — CONSTAT BRUTAL\n'
+    + 'Une affirmation courte (1-2 phrases max). Casse une evidence sur le sujet. Pas de question, pas de "tu". Direct, tranchant.\n'
+    + 'Mecanique : "[Ce que tout le monde croit]. [La realite inverse, en une phrase sèche]."\n\n'
+
+    + 'FORMAT 2 — SITUATION VECUE\n'
+    + 'Decris une scene precise que vit la cible, qu elle peut visualiser en 1 seconde. Commence par une action concrete a la 2e personne ou "T\'as deja". Aucun chiffre. Aucune promesse de solution — juste le miroir.\n'
+    + 'Mecanique : "Tu [action concrete liee au sujet], et pourtant [resultat frustrant ou paradoxal]."\n\n'
+
+    + 'FORMAT 3 — CHIFFRE INATTENDU\n'
+    + 'Commence obligatoirement par un nombre ou une duree precise. Suivi d un resultat contre-intuitif. Court, factuel, zero adjectif marketing. Le chiffre doit etre plausible et ancre dans le sujet.\n'
+    + 'Mecanique : "[Chiffre] [contexte]. [Resultat surprenant en une phrase]."\n\n'
+
+    + 'FORMAT 4 — QUESTION IMPOSSIBLE\n'
+    + 'Une question courte qui force a remettre en question quelque chose que la cible fait deja. Pas une question generique ("comment faire X"). Cree un inconfort ou une curiosite inconfortable.\n'
+    + 'Mecanique : "Pourquoi [comportement logique que la cible adopte] [donne un resultat contre-intuitif ou injuste] ?"\n\n'
+
+    + 'REGLES ABSOLUES :\n'
+    + '- Chaque hook doit contenir des mots specifiques au sujet « ' + genData.sujet + ' » — impossible a recycler pour un autre sujet\n'
+    + '- 1 a 3 phrases maximum par hook\n'
+    + '- Interdit : "90% des gens", "la plupart des gens", "peu de gens savent", "voici comment", "dans cette video", "aujourd hui on va voir"\n'
+    + '- Interdit : phrases applicables a toutes les niches\n'
+    + '- Interdit : clickbait vide de sens\n\n'
+
+    + '###HOOK1###\n[hook format 1 — CONSTAT BRUTAL]\n\n'
+    + '###HOOK2###\n[hook format 2 — SITUATION VECUE]\n\n'
+    + '###HOOK3###\n[hook format 3 — CHIFFRE INATTENDU]\n\n'
+    + '###HOOK4###\n[hook format 4 — QUESTION IMPOSSIBLE]';
 
   try {
     var res = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 700, system: buildSystemPrompt(sk), messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 800, system: hookSys, messages: [{ role: 'user', content: prompt }] })
     });
     if (!res.ok) throw new Error('err');
     var data = await res.json();
@@ -1268,10 +1261,12 @@ function showHookOptions(rawText) {
     hooks = rawText.split(/\n\n+/).map(function(h) { return h.trim(); }).filter(function(h) { return h.length > 10; }).slice(0, 4);
   }
   document.getElementById('gen-hooks-generating').style.display = 'none';
+  var hookLabels = ['Constat brutal', 'Situation vécue', 'Chiffre inattendu', 'Question impossible'];
   var html = '';
   hooks.forEach(function(h, i) {
+    var label = hookLabels[i] || ('Option ' + (i + 1));
     html += '<div class="hook-option" id="hook-opt-' + i + '" onclick="selectHookOption(this, ' + i + ')">'
-      + '<div class="hook-option-num">Option ' + (i + 1) + '</div>'
+      + '<div class="hook-option-num">' + label + '</div>'
       + '<div>' + escapeHtml(h.trim()) + '</div>'
       + '</div>';
   });
@@ -1319,6 +1314,7 @@ async function generateClarifyingQuestions() {
 
   var prompt = 'Un createur de contenu veut faire une video sur ce sujet precis :\n\n'
     + '« ' + genData.sujet + ' »\n\n'
+    + getUrlContext()
     + 'Pour ecrire un script percutant et personnel, tu as besoin d informations concretes que seul ce createur possede sur CE sujet.\n\n'
     + 'Genere ' + (genData.sujet.trim().split(/\s+/).length < 8 ? '4' : '3') + ' questions ultra-specifiques a « ' + genData.sujet + ' ».\n\n'
     + 'Chaque question doit :\n'
@@ -1704,6 +1700,7 @@ async function callAPI(prevScript, instruction) {
         prompt += '- ' + c.q + ' : ' + c.a + '\n';
       });
     }
+    prompt += getUrlContext();
     if (genData.selectedHook) {
       prompt += '\nCommence exactement par ce hook (mot pour mot) :\n' + genData.selectedHook + '\n';
     }
@@ -1863,6 +1860,65 @@ function validateScript() {
   var el = document.getElementById('home-nb-scripts');
   if (el) el.textContent = Object.keys(scriptsStore).length;
   openFeedbackModal();
+}
+
+// ═══ URL FETCH ═══
+function onSujetInput() {
+  clearTimeout(urlFetchTimeout);
+  var val = document.getElementById('gen-sujet').value;
+  var m = val.match(/https?:\/\/[^\s]+/);
+  var url = m ? m[0] : null;
+  if (!url) { if (genData.urlContent) clearUrlContent(); return; }
+  if (url === urlFetched) return;
+  urlFetchTimeout = setTimeout(function() { fetchUrlContent(url); }, 700);
+}
+
+async function fetchUrlContent(url) {
+  urlFetched = url;
+  setUrlStatus('loading');
+  try {
+    var res = await fetch('/api/fetch-url', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: url }) });
+    var data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || 'error');
+    genData.urlContent = data.content;
+    genData.urlTitle = data.title;
+    setUrlStatus('success', data.title, url);
+  } catch(e) {
+    urlFetched = '';
+    genData.urlContent = '';
+    genData.urlTitle = '';
+    setUrlStatus('error', e.message === 'no_captions' ? 'Cette vidéo n\'a pas de sous-titres disponibles' : null);
+  }
+}
+
+function setUrlStatus(state, label, url) {
+  var el = document.getElementById('url-fetch-status');
+  if (!el) return;
+  if (state === 'hidden') { el.style.display = 'none'; el.innerHTML = ''; el.className = 'url-status'; return; }
+  el.style.display = 'flex';
+  if (state === 'loading') {
+    el.className = 'url-status loading';
+    el.innerHTML = '<span class="url-spinner"></span><span>Analyse du contenu en cours...</span>';
+  } else if (state === 'success') {
+    var domain = ''; try { domain = new URL(url).hostname.replace('www.', ''); } catch(e) {}
+    el.className = 'url-status success';
+    el.innerHTML = '<span>✓</span><span class="url-status-title"><strong>' + escapeHtml(label) + '</strong>' + (domain ? ' · ' + domain : '') + '</span><button class="url-status-remove" onclick="clearUrlContent()">✕</button>';
+  } else if (state === 'error') {
+    el.className = 'url-status error';
+    el.innerHTML = '<span>⚠</span><span>' + escapeHtml(label || 'Impossible d\'analyser ce lien') + '</span>';
+  }
+}
+
+function clearUrlContent() {
+  genData.urlContent = '';
+  genData.urlTitle = '';
+  urlFetched = '';
+  setUrlStatus('hidden');
+}
+
+function getUrlContext() {
+  if (!genData.urlContent) return '';
+  return '\n=== CONTENU SOURCE' + (genData.urlTitle ? ' : ' + genData.urlTitle : '') + ' ===\n' + genData.urlContent + '\n';
 }
 
 // ═══ FEEDBACK ═══

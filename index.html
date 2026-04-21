@@ -551,7 +551,8 @@
         <div class="gen-prog"><div class="gen-prog-dot done"></div><div class="gen-prog-dot"></div><div class="gen-prog-dot"></div><div class="gen-prog-dot"></div><div class="gen-prog-dot"></div></div>
         <div class="gen-q">De quoi voulez-vous parler ?</div>
         <div class="gen-sub">Decris le sujet principal de ton contenu</div>
-        <textarea class="gen-ta" id="gen-sujet" placeholder="Ex: Pourquoi vos contenus ne ramenent aucun client..."></textarea>
+        <textarea class="gen-ta" id="gen-sujet" placeholder="Ex: Pourquoi vos contenus ne ramenent aucun client... ou colle un lien YouTube / article" oninput="onSujetInput()"></textarea>
+        <div id="url-fetch-status" style="display:none"></div>
         <div class="waveform-wrap" id="waveform-wrap">
           <canvas id="waveform-canvas" height="48"></canvas>
         </div>
