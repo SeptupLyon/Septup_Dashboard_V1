@@ -1172,7 +1172,10 @@ async function generateHooksOnly() {
   var objectifLabels = { vues: 'Maximiser les vues', engagement: 'Creer de l engagement', leads: 'Generer des prospects', vente: 'Vendre une offre', autorite: 'Renforcer l image d expert' };
   var styleLabel = STYLE_LIBRARY[sk] ? STYLE_LIBRARY[sk].label : sk;
 
-  var hookSys = 'Tu es un expert en hooks pour videos courtes (TikTok, Reels, YouTube Shorts, LinkedIn). Tu ne generes que des hooks — pas de scripts, pas d introductions. Ton seul critere : est-ce que les 2 premieres secondes rendent impossible de scroller ?';
+  var hookSys = 'Tu es un expert en hooks pour videos courtes (TikTok, Reels, YouTube Shorts, LinkedIn). Tu ne generes que des hooks — pas de scripts, pas d introductions. Ton seul critere : est-ce que les 2 premieres secondes rendent impossible de scroller ?'
+    + ' LANGAGE 100% PARLE : contractions naturelles (t as / c est / y a / j ai / on a / du coup / en fait). Commencer par "Et" ou "Mais" est autorise et souhaitable.'
+    + ' BLACKLIST ABSOLUE — ces mots = hook rate et a refaire : desormais / neanmoins / toutefois / cependant / par ailleurs / en outre / en effet / certes / notamment / il convient / il est important / il est essentiel / en conclusion / afin de / s averer / voici / permettre de.'
+    + ' Un hook qui sonne ecrit plutot que dit = echec.';
   if (clientRecord && clientRecord.fields) {
     var f2 = clientRecord.fields;
     if (f2['Onboarding_secteur']) hookSys += ' Secteur du createur : ' + f2['Onboarding_secteur'] + '.';
@@ -1199,35 +1202,21 @@ async function generateHooksOnly() {
   prompt += getUrlContext();
 
   prompt += '\n---\n\n'
-    + 'Genere EXACTEMENT 4 hooks, un par format impose. Chaque format a une mecanique de phrase differente — respecte-la strictement.\n\n'
-
-    + 'FORMAT 1 — CONSTAT BRUTAL\n'
-    + 'Une affirmation courte (1-2 phrases max). Casse une evidence sur le sujet. Pas de question, pas de "tu". Direct, tranchant.\n'
-    + 'Mecanique : "[Ce que tout le monde croit]. [La realite inverse, en une phrase sèche]."\n\n'
-
-    + 'FORMAT 2 — SITUATION VECUE\n'
-    + 'Decris une scene precise que vit la cible, qu elle peut visualiser en 1 seconde. Commence par une action concrete a la 2e personne ou "T\'as deja". Aucun chiffre. Aucune promesse de solution — juste le miroir.\n'
-    + 'Mecanique : "Tu [action concrete liee au sujet], et pourtant [resultat frustrant ou paradoxal]."\n\n'
-
-    + 'FORMAT 3 — CHIFFRE INATTENDU\n'
-    + 'Commence obligatoirement par un nombre ou une duree precise. Suivi d un resultat contre-intuitif. Court, factuel, zero adjectif marketing. Le chiffre doit etre plausible et ancre dans le sujet.\n'
-    + 'Mecanique : "[Chiffre] [contexte]. [Resultat surprenant en une phrase]."\n\n'
-
-    + 'FORMAT 4 — QUESTION IMPOSSIBLE\n'
-    + 'Une question courte qui force a remettre en question quelque chose que la cible fait deja. Pas une question generique ("comment faire X"). Cree un inconfort ou une curiosite inconfortable.\n'
-    + 'Mecanique : "Pourquoi [comportement logique que la cible adopte] [donne un resultat contre-intuitif ou injuste] ?"\n\n'
-
-    + 'REGLES ABSOLUES :\n'
-    + '- Chaque hook doit contenir des mots specifiques au sujet « ' + genData.sujet + ' » — impossible a recycler pour un autre sujet\n'
-    + '- 1 a 3 phrases maximum par hook\n'
-    + '- Interdit : "90% des gens", "la plupart des gens", "peu de gens savent", "voici comment", "dans cette video", "aujourd hui on va voir"\n'
-    + '- Interdit : phrases applicables a toutes les niches\n'
-    + '- Interdit : clickbait vide de sens\n\n'
-
-    + '###HOOK1###\n[hook format 1 — CONSTAT BRUTAL]\n\n'
-    + '###HOOK2###\n[hook format 2 — SITUATION VECUE]\n\n'
-    + '###HOOK3###\n[hook format 3 — CHIFFRE INATTENDU]\n\n'
-    + '###HOOK4###\n[hook format 4 — QUESTION IMPOSSIBLE]';
+    + 'Genere 4 hooks pour ce sujet. Pas de format impose — laisse le sujet dicter la forme.\n\n'
+    + 'SEULE CONTRAINTE STRUCTURELLE : les 4 hooks doivent etre incompatibles entre eux. Si tu peux echanger la structure de deux hooks sans que ca change grand chose, c est qu ils sont trop similaires — recommence.\n\n'
+    + 'Pour chaque hook, pars de cette question : qu est-ce qui est vraiment surprenant, contre-intuitif ou charge emotionnellement dans ce sujet pour cette cible precise ? La reponse dicte la forme.\n\n'
+    + 'CE QUI FAIT UN BON HOOK :\n'
+    + '- Cree une tension immediate — le viewer ne peut pas partir sans savoir la suite\n'
+    + '- Ancre dans le sujet a 100% — impossible a recycler pour un autre contenu\n'
+    + '- Sonne comme dit, pas comme ecrit — contractions, rythme oral, phrases courtes\n'
+    + '- 1 a 3 phrases max\n\n'
+    + 'INTERDIT :\n'
+    + '- "90% des gens", "la plupart des gens", "peu de gens savent"\n'
+    + '- "voici comment", "dans cette video", "aujourd hui on va voir"\n'
+    + '- Phrases applicables a n importe quel sujet\n'
+    + '- Clickbait sans substance\n'
+    + '- Mots ecrits/IA : desormais / neanmoins / en effet / il est important / afin de / cependant\n\n'
+    + '###HOOK1###\n\n###HOOK2###\n\n###HOOK3###\n\n###HOOK4###';
 
   try {
     var res = await fetch('/api/generate', {
@@ -1261,10 +1250,9 @@ function showHookOptions(rawText) {
     hooks = rawText.split(/\n\n+/).map(function(h) { return h.trim(); }).filter(function(h) { return h.length > 10; }).slice(0, 4);
   }
   document.getElementById('gen-hooks-generating').style.display = 'none';
-  var hookLabels = ['Constat brutal', 'Situation vécue', 'Chiffre inattendu', 'Question impossible'];
   var html = '';
   hooks.forEach(function(h, i) {
-    var label = hookLabels[i] || ('Option ' + (i + 1));
+    var label = 'Option ' + (i + 1);
     html += '<div class="hook-option" id="hook-opt-' + i + '" onclick="selectHookOption(this, ' + i + ')">'
       + '<div class="hook-option-num">' + label + '</div>'
       + '<div>' + escapeHtml(h.trim()) + '</div>'
@@ -1616,7 +1604,7 @@ var INVISIBLE_RULES = [
   "BOUCLES OUVERTES : Plante des promesses en cours de route. 'Je t'explique ca a la fin.' / 'Le plus important arrive.' / 'Retiens bien ca.' Le cerveau reste accroche pour la resolution.",
   "MONTAGE PENSE : Chaque coupe = nouveau rehook. Chaque pause = impact. Ce script est ecrit pour etre tourne — anticipe les zooms, les silences, les gestes.",
   "DENSITE MAXIMALE : Pas un mot de trop. Chaque phrase justifie sa presence. Si elle peut etre coupee sans rien perdre, elle est coupee.",
-  "ORAL AVANT TOUT : Lis a voix haute. Si ca sonne ecrit, recris. Contractions naturelles, phrases courtes, rythme oral. Zero jargon sauf si le profil l'exige explicitement."
+  "ORAL AVANT TOUT : Chaque phrase doit pouvoir etre dite face cam sans qu on entende les guillemets. Phrases tres courtes. Ellipses. Repetitions voulues. On coupe tout ce qui sonne scolaire, formel ou redige. Si t hesites entre naturel et structure : naturel gagne toujours."
 ];
 
 // ─────────────────────────────────────────────────────────────
@@ -1628,7 +1616,9 @@ function buildSystemPrompt(styleKey) {
 
   var parts = [
 
-    "Script PARLé face caméra, comme si l'utilisateur faisait un vocal à un amie",
+    "Script 100% PARLE face camera. Regle absolue n1 : lis chaque phrase a voix haute — si ca sonne ecrit, c est rate, recommence.",
+    "BLACKLIST ABSOLUE (un seul de ces mots dans le script = script a refaire) : desormais / dorenavant / neanmoins / toutefois / cependant / par ailleurs / en outre / en effet / certes / notamment / il convient de / il est essentiel / il est important de / permettre de / mettre en place / dans le cadre de / c est pourquoi / voici pourquoi / en conclusion / en resume / pour conclure / en definitive / afin de / quant a / s averer / contribuer a / dans cette video / dans cet episode / aujourd hui nous allons / j espere que / n hesitez pas a",
+    "ORAL OBLIGATOIRE : t as / c est / y a / j ai / on a / du coup / en fait / genre / t vois / t facon — commencer une phrase par Et / Mais / Parce que / Donc est normal et souhaitable a l oral — phrases tres courtes — phrases inachevees si ca sonne naturel — imperfections orales bienvenues",
     "Chiffres absents du profil : marque [?]la donnee[/?]. Donnees du profil : utilisables directement.",
     "\nPROFIL :"
   ];
@@ -1714,8 +1704,8 @@ async function callAPI(prevScript, instruction) {
     prompt += '\nREGLES NARRATIVES :\n';
     INVISIBLE_RULES.forEach(function(r) { prompt += '• ' + r + '\n'; });
     prompt += '\nCONTRAINTES :\n'
-      + '• Langage 100% parle : t as / c est / y a / j ai / on a — jamais de francais ecrit formel\n'
-      + '• Zero formules IA : interdit "Bien sur", "Absolument", "En conclusion", "Il est important de noter"\n'
+      + '• Langage 100% parle — contractions : t as / c est / y a / j ai / on a / du coup / en fait / genre / t vois — commencer par "Et", "Mais", "Parce que", "Donc" est correct a l oral — phrases inachevees si ca sonne naturel\n'
+      + '• BLACKLIST ECRIT/IA (un seul de ces mots = script a refaire) : desormais / neanmoins / toutefois / cependant / par ailleurs / certes / notamment / il convient de / il est essentiel / il est important / en conclusion / en resume / pour conclure / en definitive / afin de / s averer / dans cette video / dans cet episode / "Bien sur" / "Absolument" / "En effet" / "Permettez-moi" / j espere que / n hesitez pas a\n'
       + '• Phrases de longueurs variees — tres courtes pour l impact, un peu plus longues pour installer\n'
       + '• Transitions naturelles entre les moments — pas de coupures nettes\n'
       + '• Imperfections legeres bienvenues si elles sonnent vrai a l oral\n'
