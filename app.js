@@ -88,6 +88,14 @@ function go(id) {
   var el = document.getElementById('screen-' + id);
   if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
 
+  // ── Masquer nav sur pages auth ──
+  var authScreens = ['login','forgot','ob1','ob-mode','ob2','ob3','ob4','ob5','ob5-expert'];
+  var isAuth = authScreens.indexOf(id) !== -1;
+  var topbar = document.getElementById('global-topbar');
+  var nav = document.getElementById('global-nav');
+  if (topbar) topbar.style.display = isAuth ? 'none' : '';
+  if (nav) nav.style.display = isAuth ? 'none' : '';
+
   // ── Sync nav globale desktop ──
   var globalNav = document.getElementById('global-nav');
   if (globalNav) {

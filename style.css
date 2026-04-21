@@ -1101,6 +1101,14 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     gap: 12px;
   }
   #screen-compte .topbar .ibtn { display: none; }
+  #screen-compte .scroll {
+    max-width: 640px;
+    width: 100%;
+    margin: 0 auto;
+    padding-top: 8px;
+  }
+  #screen-compte .card-sm { max-width: 100%; margin: 0 0 16px; }
+  #screen-compte .logout-btn { max-width: 100%; width: 100%; margin: 20px 0; }
 
   /* Auth / onboarding — centré */
   #screen-login, #screen-forgot,
