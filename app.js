@@ -54,6 +54,7 @@ var pendingFeedbackRecordId = null;
 var pendingFeedbackScriptLocalId = null;
 var urlFetchTimeout = null;
 var urlFetched = '';
+var pendingCreatePromise = null;
 
 // ═══ UTILITAIRES ═══
 function escapeHtml(str) {
@@ -1811,7 +1812,7 @@ function showScript(text) {
   document.getElementById('gen-vir-score').textContent = v.score.toFixed(1);
 }
 
-async function validateScript() {
+function validateScript() {
   var text = document.getElementById('script-result').getAttribute('data-raw') || '';
   var title = (genData.sujet || 'Script').substring(0, 45);
   var formatLabels = { video30: 'Video 30s', video60: 'Video 60s', linkedin: 'LinkedIn', ads: 'Publicite', podcast: 'Podcast' };
@@ -1823,21 +1824,22 @@ async function validateScript() {
   var meta = (formatLabels[genData.format] || 'Script') + ' · ' + styleLabel + ' · ' + dateStr;
   scriptsStore[id] = { title: title, content: text, meta: meta, status: 'st-draft', statusLabel: 'Brouillon', airtableId: null };
   pendingFeedbackRecordId = null;
+  pendingCreatePromise = null;
   if (clientRecord) {
-    try {
-      var rec = await atCreate('Scripts', {
-        'Titre': title, 'Contenu': text,
-        'score_viralite': 0,
-        'Statut': 'Brouillon', 'Client': [clientRecord.id],
-        'Email_client': currentUser ? currentUser.email : '',
-        'Date_creation': new Date().toISOString()
-      });
+    pendingCreatePromise = atCreate('Scripts', {
+      'Titre': title, 'Contenu': text,
+      'score_viralite': 0,
+      'Statut': 'Brouillon', 'Client': [clientRecord.id],
+      'Email_client': currentUser ? currentUser.email : '',
+      'Date_creation': new Date().toISOString()
+    }).then(function(rec) {
       if (rec && rec.id && scriptsStore[id]) {
         scriptsStore[id].airtableId = rec.id; scriptsStore[rec.id] = scriptsStore[id]; delete scriptsStore[id];
         if (currentEditorId === id) currentEditorId = rec.id;
+        renderScriptsList();
         pendingFeedbackRecordId = rec.id;
       }
-    } catch(err) { console.error('[validateScript] atCreate error:', err); }
+    }).catch(function(err) { console.error('[validateScript] atCreate error:', err); });
   }
   renderScriptsList();
   var el = document.getElementById('home-nb-scripts');
@@ -1923,6 +1925,9 @@ function selectFeedbackRating(n) {
 async function submitFeedback() {
   if (!feedbackRating) return;
   var comment = document.getElementById('feedback-comment').value.trim();
+  if (!pendingFeedbackRecordId && pendingCreatePromise) {
+    await pendingCreatePromise;
+  }
   if (pendingFeedbackRecordId) {
     try {
       var res = await fetch('/api/airtable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'PATCH', table: 'Scripts', recordId: pendingFeedbackRecordId, fields: { 'score_viralite': feedbackRating, 'feedback': comment } }) });
