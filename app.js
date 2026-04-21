@@ -66,6 +66,21 @@ function escapeHtml(str) {
 // ═══ NAVIGATION ═══
 // Mémorise la page active avant d'ouvrir le compte
 var _pageAvantCompte = 'home';
+var _authScreens = ['login','forgot','ob1','ob-mode','ob2','ob3','ob4','ob5','ob5-expert'];
+
+function setNavVisibility(id) {
+  var isAuth = _authScreens.indexOf(id) !== -1;
+  var topbar = document.getElementById('global-topbar');
+  var nav = document.getElementById('global-nav');
+  if (topbar) topbar.style.display = isAuth ? 'none' : '';
+  if (nav) nav.style.display = isAuth ? 'none' : '';
+}
+
+// Masquer la nav au chargement si on est sur une page auth
+(function() {
+  var active = document.querySelector('.screen.active');
+  if (active) setNavVisibility(active.id.replace('screen-', ''));
+})();
 
 function go(id) {
   if (id === 'compte') {
@@ -89,12 +104,7 @@ function go(id) {
   if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
 
   // ── Masquer nav sur pages auth ──
-  var authScreens = ['login','forgot','ob1','ob-mode','ob2','ob3','ob4','ob5','ob5-expert'];
-  var isAuth = authScreens.indexOf(id) !== -1;
-  var topbar = document.getElementById('global-topbar');
-  var nav = document.getElementById('global-nav');
-  if (topbar) topbar.style.display = isAuth ? 'none' : '';
-  if (nav) nav.style.display = isAuth ? 'none' : '';
+  setNavVisibility(id);
 
   // ── Sync nav globale desktop ──
   var globalNav = document.getElementById('global-nav');
