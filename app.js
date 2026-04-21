@@ -72,8 +72,12 @@ function go(id) {
     // Mémoriser quelle page est active en ce moment
     var active = document.querySelector('.screen.active:not(#screen-compte)');
     _pageAvantCompte = active ? active.id.replace('screen-', '') : 'home';
-    // Ouvrir compte PAR-DESSUS sans toucher aux autres
     var compte = document.getElementById('screen-compte');
+    if (window.innerWidth >= 768) {
+      document.querySelectorAll('.screen').forEach(function(s) {
+        if (s.id !== 'screen-compte') s.classList.remove('active');
+      });
+    }
     if (compte) { compte.classList.add('active'); compte.scrollTop = 0; }
     return;
   }
