@@ -84,10 +84,11 @@ function setNavVisibility(id) {
 
 function go(id) {
   if (id === 'compte') {
+    var compte = document.getElementById('screen-compte');
+    if (compte && compte.classList.contains('active')) { closeCompte(); return; }
     // Mémoriser quelle page est active en ce moment
     var active = document.querySelector('.screen.active:not(#screen-compte)');
     _pageAvantCompte = active ? active.id.replace('screen-', '') : 'home';
-    var compte = document.getElementById('screen-compte');
     if (window.innerWidth >= 768) {
       document.querySelectorAll('.screen').forEach(function(s) {
         if (s.id !== 'screen-compte') s.classList.remove('active');
