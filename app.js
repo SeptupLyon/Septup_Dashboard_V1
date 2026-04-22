@@ -671,7 +671,8 @@ async function autoSaveEditor() {
   if (!clientRecord || !currentEditorId) return;
   var content = getEditorText();
   if (!content.trim()) return;
-  var score = document.getElementById('editor-vir-score').textContent;
+  var scoreEl = document.getElementById('editor-vir-score');
+  var score = scoreEl ? scoreEl.textContent : '0';
   var statusEl = document.getElementById('autosave-status');
   
   var s = scriptsStore[currentEditorId];
@@ -716,10 +717,14 @@ async function autoSaveEditor() {
 function updateEditorVirality() {
   var text = getEditorText();
   var r = computeVirality(text);
-  document.getElementById('editor-vir-score').textContent = r.score.toFixed(1);
-  document.getElementById('editor-vir-bar').style.width = (r.score * 10) + '%';
-  document.getElementById('editor-vir-tip').textContent = r.tip;
-  document.getElementById('editor-vir-grade').textContent = r.grade;
+  var scoreEl = document.getElementById('editor-vir-score');
+  var barEl = document.getElementById('editor-vir-bar');
+  var tipEl = document.getElementById('editor-vir-tip');
+  var gradeEl = document.getElementById('editor-vir-grade');
+  if (scoreEl) scoreEl.textContent = r.score.toFixed(1);
+  if (barEl) barEl.style.width = (r.score * 10) + '%';
+  if (tipEl) tipEl.textContent = r.tip;
+  if (gradeEl) gradeEl.textContent = r.grade;
 }
 
 // ═══ GENERATION ═══
