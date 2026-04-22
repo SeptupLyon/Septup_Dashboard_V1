@@ -577,7 +577,7 @@ async function saveEditor() {
         'Date_creation': new Date().toISOString()
       });
     }
-    await loadScripts(clientRecord.id);
+    await loadScripts(clientRecord.id, currentUser ? currentUser.email : '');
   }
   alert('Script sauvegarde !');
   closeEditor();
@@ -1828,7 +1828,7 @@ function validateScript() {
   if (clientRecord) {
     pendingCreatePromise = atCreate('Scripts', {
       'Titre': title, 'Contenu': text,
-      'score_viralite': 0,
+      'Score_viralite': 0,
       'Statut': 'Brouillon', 'Client': [clientRecord.id],
       'Email_client': currentUser ? currentUser.email : '',
       'Date_creation': new Date().toISOString()
@@ -1930,7 +1930,7 @@ async function submitFeedback() {
   }
   if (pendingFeedbackRecordId) {
     try {
-      var res = await fetch('/api/airtable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'PATCH', table: 'Scripts', recordId: pendingFeedbackRecordId, fields: { 'score_viralite': feedbackRating, 'feedback': comment } }) });
+      var res = await fetch('/api/airtable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'PATCH', table: 'Scripts', recordId: pendingFeedbackRecordId, fields: { 'Note': feedbackRating, 'Feedback': comment } }) });
       var data = await res.json();
       if (data.error) console.error('[feedback] PATCH error:', JSON.stringify(data));
     } catch(e) { console.error('[feedback] PATCH:', e); }
