@@ -69,7 +69,7 @@ function escapeHtml(str) {
 // ═══ NAVIGATION ═══
 // Mémorise la page active avant d'ouvrir le compte
 var _pageAvantCompte = 'home';
-var _authScreens = ['login','forgot','ob1','ob-mode','ob2','ob3','ob4','ob5','ob5-expert'];
+var _authScreens = ['login','forgot','ob1','ob-mode','ob2','ob3','ob4','ob5','ob5-expert','ob-podcast'];
 
 function setNavVisibility(id) {
   var isAuth = _authScreens.indexOf(id) !== -1;
@@ -1617,11 +1617,8 @@ var INVISIBLE_RULES = [
 // buildSystemPrompt — v3 : profil + framework + hooks + regles
 // ─────────────────────────────────────────────────────────────
 function buildSystemPrompt(styleKey) {
-  if (!clientRecord) return '';
-  var f = clientRecord.fields;
-
   var parts = [
-
+    "Tu es un expert en ecriture de scripts video courts percutants. Ta seule mission : ecrire le script demande, rien d autre.",
     "Script 100% PARLE face camera. Regle absolue n1 : lis chaque phrase a voix haute — si ca sonne ecrit, c est rate, recommence.",
     "BLACKLIST ABSOLUE (un seul de ces mots dans le script = script a refaire) : desormais / dorenavant / neanmoins / toutefois / cependant / par ailleurs / en outre / en effet / certes / notamment / il convient de / il est essentiel / il est important de / permettre de / mettre en place / dans le cadre de / c est pourquoi / voici pourquoi / en conclusion / en resume / pour conclure / en definitive / afin de / quant a / s averer / contribuer a / dans cette video / dans cet episode / aujourd hui nous allons / j espere que / n hesitez pas a",
     "ORAL OBLIGATOIRE : t as / c est / y a / j ai / on a / du coup / en fait / genre / t vois / t facon — commencer une phrase par Et / Mais / Parce que / Donc est normal et souhaitable a l oral — phrases tres courtes — phrases inachevees si ca sonne naturel — imperfections orales bienvenues",
@@ -1629,24 +1626,27 @@ function buildSystemPrompt(styleKey) {
     "\nPROFIL :"
   ];
 
-  if (f['Nom_complet'])               parts.push("Createur : " + f['Nom_complet']);
-  if (f['Onboarding_secteur'])        parts.push("Secteur : " + f['Onboarding_secteur']);
-  if (f['Onboarding_offre'])          parts.push("Offre : " + f['Onboarding_offre']);
-  if (f['Onboarding_prix'])           parts.push("Prix : " + f['Onboarding_prix']);
-  if (f['Onboarding_maturite'])       parts.push("Maturite : " + f['Onboarding_maturite']);
-  if (f['Onboarding_cible'])          parts.push("Cible : " + f['Onboarding_cible']);
-  if (f['Onboarding_douleur'])        parts.push("Douleur n1 : " + f['Onboarding_douleur']);
-  if (f['Onboarding_transformation']) parts.push("Transformation : " + f['Onboarding_transformation']);
-  if (f['Onboarding_objectif'])       parts.push("Objectif : " + f['Onboarding_objectif']);
-  if (f['Onboarding_kpi'])            parts.push("KPI : " + f['Onboarding_kpi']);
-  if (f['Onboarding_ton'])            parts.push("Ton : " + f['Onboarding_ton']);
-  if (f['Onboarding_intensite'])      parts.push("Intensite : " + f['Onboarding_intensite']);
-  if (f['Onboarding_langage'])        parts.push("Langage : " + f['Onboarding_langage']);
+  if (clientRecord) {
+    var f = clientRecord.fields;
+    if (f['Nom_complet'])               parts.push("Createur : " + f['Nom_complet']);
+    if (f['Onboarding_secteur'])        parts.push("Secteur : " + f['Onboarding_secteur']);
+    if (f['Onboarding_offre'])          parts.push("Offre : " + f['Onboarding_offre']);
+    if (f['Onboarding_prix'])           parts.push("Prix : " + f['Onboarding_prix']);
+    if (f['Onboarding_maturite'])       parts.push("Maturite : " + f['Onboarding_maturite']);
+    if (f['Onboarding_cible'])          parts.push("Cible : " + f['Onboarding_cible']);
+    if (f['Onboarding_douleur'])        parts.push("Douleur n1 : " + f['Onboarding_douleur']);
+    if (f['Onboarding_transformation']) parts.push("Transformation : " + f['Onboarding_transformation']);
+    if (f['Onboarding_objectif'])       parts.push("Objectif : " + f['Onboarding_objectif']);
+    if (f['Onboarding_kpi'])            parts.push("KPI : " + f['Onboarding_kpi']);
+    if (f['Onboarding_ton'])            parts.push("Ton : " + f['Onboarding_ton']);
+    if (f['Onboarding_intensite'])      parts.push("Intensite : " + f['Onboarding_intensite']);
+    if (f['Onboarding_langage'])        parts.push("Langage : " + f['Onboarding_langage']);
 
-  if (f['ADN_profil']) {
-    parts.push("\n=== ADN DE COMMUNICATION OBSERVE (PRIORITAIRE) ===");
-    parts.push(f['ADN_profil']);
-    parts.push("Ce profil est issu de vrais scripts. Il prime sur toutes les preferences declarees ci-dessus.");
+    if (f['ADN_profil']) {
+      parts.push("\n=== ADN DE COMMUNICATION OBSERVE (PRIORITAIRE) ===");
+      parts.push(f['ADN_profil']);
+      parts.push("Ce profil est issu de vrais scripts. Il prime sur toutes les preferences declarees ci-dessus.");
+    }
   }
 
   return parts.join("\n");
@@ -2710,6 +2710,11 @@ function updateHomeHeures(sessions) {
 }
 
 function openGenPodcast() {
+  if (clientRecord && !clientRecord.fields['Podcast_nom']) {
+    window._podcastOnboardingReturn = 'gen';
+    openPodcastOnboarding();
+    return;
+  }
   genStep = 1;
   genData = { sujet: '', objectif: 'engagement', format: 'podcast', style: 'story', precision: '' };
   document.querySelectorAll('.gen-step').forEach(function(s) { s.classList.remove('active'); });
@@ -2724,13 +2729,60 @@ function openGenPodcast() {
   updateBackBtn();
 }
 
+function openPodcastOnboarding() {
+  var f = clientRecord ? clientRecord.fields : {};
+  var nomEl = document.getElementById('obp-nom');
+  if (nomEl) nomEl.value = f['Podcast_nom'] || '';
+  document.querySelectorAll('#obp-thematiques .ob-chip').forEach(function(c) {
+    c.classList.toggle('sel', (f['Podcast_thematiques'] || '').includes(c.textContent.trim()));
+  });
+  document.querySelectorAll('#obp-but-opts .ob-opt').forEach(function(o) {
+    o.classList.toggle('sel', o.textContent.trim() === (f['Podcast_but'] || ''));
+  });
+  document.querySelectorAll('#obp-plateformes .ob-chip').forEach(function(c) {
+    c.classList.toggle('sel', (f['Podcast_plateformes'] || '').includes(c.textContent.trim()));
+  });
+  var modal = document.getElementById('modal-hub');
+  if (modal) modal.classList.remove('open');
+  go('ob-podcast');
+}
+
+async function savePodcastOnboarding() {
+  var nom = (document.getElementById('obp-nom') || {}).value || '';
+  if (!nom.trim()) { alert('Donne un nom a ton podcast'); return; }
+  var thematiques = Array.from(document.querySelectorAll('#obp-thematiques .ob-chip.sel')).map(function(c) { return c.textContent.trim(); }).join(', ');
+  var butEl = document.querySelector('#obp-but-opts .ob-opt.sel');
+  var but = butEl ? butEl.textContent.trim() : '';
+  var plateformes = Array.from(document.querySelectorAll('#obp-plateformes .ob-chip.sel')).map(function(c) { return c.textContent.trim(); }).join(', ');
+  var fields = { 'Podcast_nom': nom, 'Podcast_thematiques': thematiques, 'Podcast_but': but, 'Podcast_plateformes': plateformes };
+  if (clientRecord) {
+    await fetch('/api/airtable', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ method: 'PATCH', table: 'Client', recordId: clientRecord.id, fields: fields }) });
+    Object.assign(clientRecord.fields, fields);
+  }
+  var ret = window._podcastOnboardingReturn || 'compte';
+  window._podcastOnboardingReturn = null;
+  if (ret === 'gen') {
+    openGenPodcast();
+  } else {
+    go('compte');
+  }
+}
+
 async function callAPIPodcast(sujet) {
   var profil = clientRecord ? clientRecord.fields : {};
-  var parts = ["Tu es un expert en podcasting. Cree une INTRODUCTION et une CONCLUSION pour un episode de podcast sur : " + sujet + "."];
+  var podNom = profil['Podcast_nom'] || '';
+  var podThematiques = profil['Podcast_thematiques'] || '';
+  var podBut = profil['Podcast_but'] || '';
+  var podPlateformes = profil['Podcast_plateformes'] || '';
+  var parts = ["Tu es un expert en podcasting. Cree une INTRODUCTION et une CONCLUSION pour un episode de podcast" + (podNom ? ' intitule « ' + podNom + ' »' : '') + " sur le sujet suivant : " + sujet + "."];
   if (profil["Nom_complet"]) parts.push("Animateur : " + profil["Nom_complet"]);
+  if (podThematiques) parts.push("Thematiques du podcast : " + podThematiques);
+  if (podBut) parts.push("But du podcast : " + podBut);
+  if (podPlateformes) parts.push("Plateformes de diffusion : " + podPlateformes + ". Mentionne-les naturellement dans le CTA.");
   if (profil["Onboarding_ton"]) parts.push("Ton : " + profil["Onboarding_ton"]);
   if (profil["Onboarding_cible"]) parts.push("Audience : " + profil["Onboarding_cible"]);
-  parts.push("Structure OBLIGATOIRE - ACCROCHE [Introduction engageante 30sec] CORPS [Presentation episode] CONCLUSION [Outro chaleureux] CTA [Phrase finale]. Direct, chaleureux, naturel a loral.");
+  parts.push("Structure OBLIGATOIRE - INTRODUCTION [accroche + presentation episode 30-45sec] CONCLUSION [outro chaleureux + CTA plateformes]. Direct, naturel, oral. Pas de crochets dans le texte final.");
   var prompt = parts.join(" ");
   try {
     var res = await fetch("/api/generate", {
@@ -2742,7 +2794,7 @@ async function callAPIPodcast(sujet) {
     var data = await res.json();
     showScript(data.content && data.content[0] ? data.content[0].text : "Erreur de generation.");
   } catch(e) {
-    showScript("ACCROCHE\n\nBienvenue dans cet episode sur " + sujet + ".\n\nCORPS\n\nOn explore ce sujet en profondeur.\n\nCONCLUSION\n\nMerci d avoir ete la.\n\nCTA\n\nOn se retrouve la semaine prochaine !");
+    showScript("INTRODUCTION\n\nBienvenue dans cet episode de " + (podNom || "votre podcast") + " sur " + sujet + ".\n\nCONCLUSION\n\nMerci d avoir ete la. Retrouvez-nous sur " + (podPlateformes || "vos plateformes preferees") + " !");
   }
 }
 

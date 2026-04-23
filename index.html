@@ -333,6 +333,62 @@
   </div>
 </div>
 
+<!-- OB-PODCAST : PROFIL PODCAST -->
+<div class="screen" id="screen-ob-podcast">
+  <div style="padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center;">
+    <img src="/Logo-septup.png" class="logo" alt="Sept Up">
+  </div>
+  <div class="ob-wrap">
+    <div class="ob-bloc">Profil Podcast</div>
+    <div class="ob-q">Parle-moi de ton podcast</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">Ces infos seront utilisees pour personnaliser chaque intro et outro.</div>
+    <div class="field">
+      <label class="field-lbl">Nom du podcast</label>
+      <input class="field-input" id="obp-nom" placeholder="Ex: Le Business Autrement, Objectif Liberte...">
+    </div>
+    <div class="field">
+      <label class="field-lbl">Thematiques</label>
+      <div class="ob-chips" id="obp-thematiques">
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Business</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Marketing</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Dev perso</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Tech</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Finance</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Sante</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Sport</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Lifestyle</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Education</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Immobilier</div>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-lbl">But du podcast</label>
+      <div class="ob-opts" id="obp-but-opts">
+        <div class="ob-opt" onclick="selOpt(this)">Notoriete — etre connu dans ma niche</div>
+        <div class="ob-opt" onclick="selOpt(this)">Generer des leads</div>
+        <div class="ob-opt" onclick="selOpt(this)">Monetisation — sponsoring ou offres</div>
+        <div class="ob-opt" onclick="selOpt(this)">Fideliser une communaute</div>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-lbl">Plateformes de diffusion</label>
+      <div class="ob-chips" id="obp-plateformes">
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Spotify</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Apple Podcasts</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">YouTube</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Deezer</div>
+        <div class="ob-chip" onclick="this.classList.toggle('sel')">Amazon Music</div>
+      </div>
+    </div>
+    <div class="ob-nav">
+      <div class="ob-back" onclick="history.back()">← Retour</div>
+      <button class="btn" style="width:auto;padding:13px 24px;" onclick="savePodcastOnboarding()">
+        <span class="btn-txt">Enregistrer</span><span class="btn-arr">→</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- FORGOT -->
 <div class="screen" id="screen-forgot">
   <div class="auth-hero"><div class="auth-studio">Studio Lyon</div><div class="auth-title">Mot de passe<br><span>oublie</span></div></div>
@@ -513,6 +569,7 @@
     <div class="card-sm" style="margin-bottom:16px;">
       <div class="crow" onclick="openEditProfil()"><div class="crow-lbl">Modifier le profil de marque</div><div style="font-size:12px;color:var(--accent);">Editer ›</div></div>
       <div class="crow" onclick="openRefScripts()"><div class="crow-lbl">Scripts de reference</div><div style="font-size:12px;color:var(--accent);">Gerer ›</div></div>
+      <div class="crow" onclick="window._podcastOnboardingReturn='compte';openPodcastOnboarding()"><div class="crow-lbl">Profil podcast</div><div style="font-size:12px;color:var(--accent);">Editer ›</div></div>
       <div class="crow" onclick="openEditNom()"><div class="crow-lbl">Modifier le nom</div><div style="color:var(--text3);">›</div></div>
       <div class="crow" style="border-bottom:none;"><div class="crow-lbl">Palier actuel</div><div style="font-size:12px;color:var(--accent);" id="compte-palier2">🥉 Bronze</div></div>
     </div>
